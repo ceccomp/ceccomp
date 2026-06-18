@@ -67,7 +67,7 @@ CC := {{CC}}
 
 LOCALE_DIR := {{LOCALEDIR}}
 CFLAGS := -fpie -fstack-protector -Wall -Wextra {{SYS_INC_DIR}} {{EXTRA_CFLAGS}}
-LDFLAGS := -z now -z noexecstack -fpie -fstack-protector -Wall -Wextra {{SYS_LIB_DIR}} -lseccomp {{LIBARGP}} {{EXTRA_LDFLAGS}}
+LDFLAGS := -z now -z noexecstack -fpie -fstack-protector -Wall -Wextra {{SYS_LIB_DIR}} {{LIBSECCOMP_FLAG}} {{LIBARGP_FLAG}} {{EXTRA_LDFLAGS}}
 DEBUG := {{DEBUG_LEVEL}}
 
 ifdef DEBUG

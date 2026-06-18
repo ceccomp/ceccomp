@@ -388,6 +388,22 @@ def run_command(argv: list[str], stdin: str | None=None, push_sys_dir: bool=Fals
     else:
         return proc.returncode, proc.stdout, proc.stderr
 
+pkg_config = shutil.which('pkg-config')
+def probe_library_flags(lib: str) -> list[str]:
+    """
+    Retrieve compiler link flag via pkg-config, or simply `-llib`. lib is library name
+    without lib prefix like seccomp.
+    """
+    if not pkg_config:
+        return [f'-l{lib}']
+    argv = [pkg_config, '--libs', f'lib{lib}']
+    if buildopts.is_static:
+        argv.append('--static')
+    code, flags, _ = run_command(argv)
+    if code:
+        return [f'-l{lib}']
+    return flags.strip().split()
+
 def new_task(func: Callable) -> Callable:
     taskmgr.add_task(func)
     return func
@@ -539,9 +555,12 @@ int main() {
 }
 '''
 @new_task
-def check_libseccomp(_: Makefile):
+def check_libseccomp(makefile: Makefile):
     pcheck('libseccomp')
-    code, _, stderr = run_command([*buildopts.cc, '-x', 'c', '-', '-lseccomp', '-o', '/dev/null'], libseccomp, push_sys_dir=True)
+    link_flags = probe_library_flags('seccomp')
+    code, _, stderr = run_command([*buildopts.cc, '-x', 'c', '-',
+                                   *link_flags, '-o', '/dev/null'],
+                                  libseccomp, push_sys_dir=True)
     if code:
         info(TXT_MAGENTA('no'))
         if code == -1:
@@ -551,6 +570,7 @@ def check_libseccomp(_: Makefile):
         info(f'Compiler returned non-zero returncode with message:\n{stderr}', end='')
         error(f'Can not compile libseccomp unit, you may install libseccomp package')
     info(TXT_GREEN('yes'))
+    makefile.inject('LIBSECCOMP_FLAG', ' '.join(link_flags))
 
 
 argp = '''
@@ -572,7 +592,10 @@ def check_argp(makefile: Makefile):
             error(f'Unexpected error: {stderr}')
         # code > 0
         # some system need external argp package, so we try to link
-        code, _, stderr = run_command([*buildopts.cc, '-x', 'c', '-', '-largp', '-o', '/dev/null'], argp)
+        argp_flags = probe_library_flags('argp')
+        code, _, stderr = run_command([*buildopts.cc, '-x', 'c', '-',
+                                       *argp_flags, '-o', '/dev/null'],
+                                      argp, push_sys_dir=True)
         if code:
             info(TXT_MAGENTA('no'))
             if code == -1:
@@ -584,11 +607,11 @@ def check_argp(makefile: Makefile):
             info(f'Compiler returned non-zero returncode with message:\n{stderr}', end='')
             error(f'Can not compile argp unit, you may install argp package')
         # code == 0 and link argp
-        makefile.inject('LIBARGP', '-largp')
+        makefile.inject('LIBARGP_FLAG', ' '.join(argp_flags))
         info(TXT_CYAN('external'))
         return
     # code == 0
-    makefile.inject('LIBARGP', '')
+    makefile.inject('LIBARGP_FLAG', '')
     info(TXT_GREEN('builtin'))
 
 @new_task
@@ -761,7 +784,10 @@ def check_libbpf(makefile: Makefile):
     if not buildopts.ebpf:
         info(TXT_BLUE('skipped'))
         return
-    code, _, stderr = run_command([*buildopts.cc, '-x', 'c', '-', '-lbpf', '-o', '/dev/null'], libbpf)
+    link_flags = probe_library_flags('bpf')
+    code, _, stderr = run_command([*buildopts.cc, '-x', 'c', '-',
+                                   *link_flags, '-o', '/dev/null'],
+                                  libbpf, push_sys_dir=True)
     if code:
         info(TXT_MAGENTA('no'))
         if code == -1:
