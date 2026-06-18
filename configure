@@ -745,10 +745,14 @@ def check_ebpf_infra(makefile: Makefile):
         return
     if not buildopts.bpftool:
         info(TXT_MAGENTA('no bpftool'))
-        error('Can not find bpftool, you may install it')
+        warn('Can not find bpftool, you may install it to enable eBPF support')
+        buildopts.ebpf = False
+        return
     if not buildopts.bpf_cc:
         info(TXT_MAGENTA('no bpf compiler'))
-        error('Can not find compiler for BPF')
+        warn('Can not find compiler for BPF, you may install clang to enable eBPF support')
+        buildopts.ebpf = False
+        return
     bpf_c_code = 'int main() {}'
     code, _, stderr = run_command([*buildopts.bpf_cc, '-x', 'c', '-', '-c', '-o', '/dev/null'], bpf_c_code)
     if code:
@@ -758,7 +762,7 @@ def check_ebpf_infra(makefile: Makefile):
         if code == -2:
             error(f'Unexpected error: {stderr}')
         info(f'Compiler returned non-zero returncode with message:\n{stderr}', end='')
-        error(f'Can not compile a minimum unit of bpf code, you may provide clang')
+        error('Can not compile a minimum unit of bpf code, you may provide clang or disable eBPF support')
 
     try:
         with open('/sys/kernel/btf/vmlinux') as _:
@@ -795,7 +799,7 @@ def check_libbpf(makefile: Makefile):
         if code == -2:
             error(f'Unexpected error: {stderr}')
         info(f'Compiler returned non-zero returncode with message:\n{stderr}', end='')
-        error(f'Can not compile a minimum unit of libbpf, you may install it')
+        error('Can not compile a minimum unit of libbpf, you may install it or disable eBPF support')
     info(TXT_GREEN('yes'))
 
 @new_task
