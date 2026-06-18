@@ -64,10 +64,15 @@ IMG_SRCS := $(shell find $(SRC_IMG_DIR) -name "*.webp")
 {{DOC_ENDIF}}
 
 CC := {{CC}}
+{{EBPF_IF}}
+BPF_CC := {{BPF_CC}}
+BPFTOOL := {{BPFTOOL}}
+BPF_FLAGS := -O2 -g -D__TARGET_ARCH_{{BPF_ARCH}}
+{{EBPF_ENDIF}}
 
 LOCALE_DIR := {{LOCALEDIR}}
 CFLAGS := -fpie -fstack-protector -Wall -Wextra {{SYS_INC_DIR}} {{EXTRA_CFLAGS}}
-LDFLAGS := -z now -z noexecstack -fpie -fstack-protector -Wall -Wextra {{SYS_LIB_DIR}} {{LIBSECCOMP_FLAG}} {{LIBARGP_FLAG}} {{EXTRA_LDFLAGS}}
+LDFLAGS := -z now -z noexecstack -fpie -fstack-protector -Wall -Wextra {{SYS_LIB_DIR}} {{LIBSECCOMP_FLAG}} {{LIBARGP_FLAG}} {{LIBBPF_FLAG}} {{EXTRA_LDFLAGS}}
 DEBUG := {{DEBUG_LEVEL}}
 
 ifdef DEBUG
@@ -92,7 +97,7 @@ endif
 all: ceccomp {{DOC_IF}}doc{{DOC_ENDIF}} {{I18N_IF}}mo{{I18N_ENDIF}}
 
 {{I18N_IF}}
-##### INTERNATIONALIZATION
+##### INTERNATIONALIZATION PART #####
 
 I18N_DIR := po
 
@@ -223,13 +228,27 @@ uninstall:
 
 .PHONY: uninstall
 
+{{EBPF_IF}}
+##### EBPF PART #####
 
-#### C OBJECTS ###
+VMLINUX_HEADER := $(INC_DIR)/vmlinux.h
+VMLINUX_FILE := /sys/kernel/btf/vmlinux
+$(VMLINUX_HEADER): | $(MARK)
+	$Q$(call ECHO,BPFTOOL,dump $(VMLINUX_FILE))
+	$Q$(BPFTOOL) btf dump file $(VMLINUX_FILE) format c > $@
+
+{{EBPF_ENDIF}}
+
+##### C OBJECTS #####
 
 CONFIG_HEADER := $(INC_DIR)/config.h
 $(CONFIG_HEADER): Makefile | $(MARK)
 	$Q$(call ECHO,SED,$@)
-	$Qsed 's/@@VERSION@@/$(VERSION)/;s/@@TAG_TIME@@/$(TAG_TIME)/;s^@@BUILDER@@^{{BUILDER}}^;{{LOCALE_SED}}' \
+	$Qsed -e 's/@@VERSION@@/$(VERSION)/;' \
+		-e 's/@@TAG_TIME@@/$(TAG_TIME)/;' \
+		-e 's^@@BUILDER@@^{{BUILDER}}^;' \
+		-e 's^@@EBPF_ON@@^{{EBPF_ON}}^;' \
+		-e '{{LOCALE_SED}}' \
 		$(CONFIG_HEADER).in > $(CONFIG_HEADER)
 
 ceccomp: $(BUILD_DIR)/ceccomp
@@ -269,5 +288,9 @@ clean:
 	$Qrm -rf $(BUILD_DIR)
 	$Q$(call ECHO_NOPROG,RM,$(CONFIG_HEADER))
 	$Qrm -f $(CONFIG_HEADER)
+	{{EBPF_IF}}
+	$Q$(call ECHO_NOPROG,RM,$(VMLINUX_HEADER))
+	$Qrm -f $(VMLINUX_HEADER)
+	{{EBPF_ENDIF}}
 
 endif

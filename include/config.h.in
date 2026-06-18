@@ -4,6 +4,7 @@
 #define CECCOMP_VERSION "@@VERSION@@"
 #define CECCOMP_TAG_TIME "@@TAG_TIME@@"
 #define CECCOMP_BUILDER "@@BUILDER@@"
+#define EBPF_SUPPORT @@EBPF_ON@@
 #ifndef LOCALEDIR
 @@LOCALEDIR@@
 #endif

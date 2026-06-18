@@ -741,7 +741,6 @@ def check_ebpf_infra(makefile: Makefile):
     pcheck('eBPF support tools')
     if not buildopts.ebpf:
         info(TXT_BLUE('excluded'))
-        # TODO: update makefile
         return
     if not buildopts.bpftool:
         info(TXT_MAGENTA('no bpftool'))
@@ -772,6 +771,7 @@ def check_ebpf_infra(makefile: Makefile):
         warn(f'Failed to read /sys/kernel/btf/vmlinux due to {e}')
         buildopts.ebpf = False
         return
+
     info(TXT_GREEN('yes'))
 
 libbpf = '''
@@ -787,6 +787,7 @@ def check_libbpf(makefile: Makefile):
     pcheck('libbpf')
     if not buildopts.ebpf:
         info(TXT_BLUE('skipped'))
+        makefile.inject('LIBBPF_FLAG', '')
         return
     link_flags = probe_library_flags('bpf')
     code, _, stderr = run_command([*buildopts.cc, '-x', 'c', '-',
@@ -800,13 +801,17 @@ def check_libbpf(makefile: Makefile):
             error(f'Unexpected error: {stderr}')
         info(f'Compiler returned non-zero returncode with message:\n{stderr}', end='')
         error('Can not compile a minimum unit of libbpf, you may install it or disable eBPF support')
+
     info(TXT_GREEN('yes'))
+    makefile.inject('LIBBPF_FLAG', ' '.join(link_flags))
 
 @new_task
 def check_bpf_arch(makefile: Makefile):
     pcheck('eBPF architecture')
     if not buildopts.ebpf:
         info(TXT_BLUE('skipped'))
+        makefile.inject('EBPF_ON', '0')
+        makefile.inject('EBPF', False)
         return
     arch = platform.machine()
     le = True # little endian
@@ -837,8 +842,22 @@ def check_bpf_arch(makefile: Makefile):
         info(TXT_CYAN(arch))
         warn(f'Specified architecture {arch} is not supported by eBPF')
         buildopts.ebpf = False
+        makefile.inject('EBPF_ON', '0')
+        makefile.inject('EBPF', False)
+        return
 
     info(TXT_GREEN(f"{buildopts.bpf_arch}, {'little' if le else 'big'} endian"))
+    makefile.inject('BPF_ARCH', buildopts.bpf_arch)
+    if buildopts.bpf_cc[0].startswith('bpf'):
+        if not le:
+            buildopts.bpf_cc[-1] = '-mbig-endian'
+    else:
+        buildopts.bpf_cc[-1] = 'bpf' + 'el' if le else 'eb'
+    makefile.inject('BPF_CC', ' '.join(buildopts.bpf_cc))
+    makefile.inject('BPFTOOL', buildopts.bpftool)
+
+    makefile.inject('EBPF_ON', '1')
+    makefile.inject('EBPF', True)
 
 taskmgr.run_tasks()
 # vars not injected: EXTRA_CFLAGS EXTRA_LDFLAGS DEBUG_LEVEL PREFIX BINDIR ZSH_FPATH MANDIR DOCDIR DESTDIR SYS_INC_DIR SYS_LIB_DIR IS_STATIC
