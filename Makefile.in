@@ -231,13 +231,34 @@ uninstall:
 {{EBPF_IF}}
 ##### EBPF PART #####
 
-VMLINUX_HEADER := $(INC_DIR)/vmlinux.h
+EBPF_DIR := ebpf
+EBPF_INC_DIR := $(INC_DIR)/$(EBPF_DIR)
+
+EBPF_SRCS := $(shell find $(EBPF_DIR) -name '*.c' | LC_ALL=C sort)
+EBPF_OBJS := $(patsubst $(EBPF_DIR)/%.c,$(BUILD_DIR)/%.o,$(EBPF_SRCS))
+EBPF_SKELS := $(patsubst $(EBPF_DIR)/%.bpf.c,$(EBPF_INC_DIR)/%.skel.h,$(EBPF_SRCS))
+
+VMLINUX_HEADER := $(EBPF_INC_DIR)/vmlinux.h
 VMLINUX_FILE := /sys/kernel/btf/vmlinux
-$(VMLINUX_HEADER): | $(MARK)
-	$Q$(call ECHO,BPFTOOL,dump $(VMLINUX_FILE))
+$(VMLINUX_HEADER): | $(EBPF_INC_DIR) $(MARK)
+	$Q$(call ECHO,BPFTOOL,$(VMLINUX_FILE))
 	$Q$(BPFTOOL) btf dump file $(VMLINUX_FILE) format c > $@
 
+$(BUILD_DIR)/%.bpf.o: $(EBPF_DIR)/%.bpf.c | $(VMLINUX_HEADER) $(BUILD_DIR) $(MARK)
+	$Q$(call ECHO,BPF_CC,$<)
+	$Q$(BPF_CC) $(BPF_FLAGS) $< -c -o $@
+
+$(EBPF_INC_DIR)/%.skel.h: $(BUILD_DIR)/%.bpf.o | $(EBPF_INC_DIR) $(MARK)
+	$Q$(call ECHO,BPFTOOL,$<)
+	$Q$(BPFTOOL) gen skeleton $< > $@
+
+$(EBPF_INC_DIR):
+	$Q$(call ECHO_NOPROG,MKDIR,$@)
+	$Qmkdir -p $@
+
 {{EBPF_ENDIF}}
+# CAPTURE_SRC := $(SRC_DIR)/capture.c
+# CAPTURE_OBJ := $(BUILD_DIR)/capture.o
 
 ##### C OBJECTS #####
 
@@ -254,16 +275,20 @@ $(CONFIG_HEADER): Makefile | $(MARK)
 ceccomp: $(BUILD_DIR)/ceccomp
 	$Q$(call ECHO_NOPROG,$(GREEN)BUILT,$@$(RESET))
 
-$(BUILD_DIR)/ceccomp: $(OBJS) $(CECCOMP_MAIN) | $(MARK)
+$(BUILD_DIR)/ceccomp: $(OBJS) $(CECCOMP_MAIN) | $(BUILD_DIR) $(MARK)
 	$Q$(call ECHO,LD,$@)
 	$Q$(CC) $^ -o $@ $(LDFLAGS)
 
 test: $(BUILD_DIR)/test
 	$Q$(call ECHO_NOPROG,$(GREEN)BUILT,$@$(RESET))
 
-$(BUILD_DIR)/test: $(TEST_OBJS) | $(MARK)
+$(BUILD_DIR)/test: $(TEST_OBJS) | $(BUILD_DIR) $(MARK)
 	$Q$(call ECHO,LD,$@)
 	$Q$(CC) $^ -o $@ $(LDFLAGS)
+
+# $(CAPTURE_OBJ): $(CAPTURE_SRC) $(CONFIG_HEADER) {{EBPF_IF}}$(EBPF_SKELS){{EBPF_ENDIF}} | $(BUILD_DIR) $(MARK)
+# 	$Q$(call ECHO,CC,$@)
+# 	$Q$(CC) -I$(INC_DIR) $(CFLAGS) $< -c -o $@
 
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.c $(CONFIG_HEADER) Makefile | $(BUILD_DIR) $(MARK)
 	$Q$(call ECHO,CC,$@)
@@ -289,8 +314,8 @@ clean:
 	$Q$(call ECHO_NOPROG,RM,$(CONFIG_HEADER))
 	$Qrm -f $(CONFIG_HEADER)
 	{{EBPF_IF}}
-	$Q$(call ECHO_NOPROG,RM,$(VMLINUX_HEADER))
-	$Qrm -f $(VMLINUX_HEADER)
+	$Q$(call ECHO_NOPROG,RM,$(EBPF_INC_DIR))
+	$Qrm -rf $(EBPF_INC_DIR)
 	{{EBPF_ENDIF}}
 
 endif
