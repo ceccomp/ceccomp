@@ -6,6 +6,6 @@ execve    -> [31mERRNO(1)[0m
 execveat  -> [32mALLOW[0m
 mmap      -> [32mALLOW[0m
 mprotect  -> [32mALLOW[0m
-sendfile  -> [31mKILL[0m
-ptrace    -> [32mALLOW[0m
+sendfile  -> [31mKILL_PROCESS[0m
+ptrace    -> [31mKILL[0m
 fork      -> [32mALLOW[0m

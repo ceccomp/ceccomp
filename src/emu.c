@@ -52,7 +52,8 @@ static uint32_t *vars[] = {
 
 #define DO_OPERATE(operator) (*left operator (*right))
 
-static void
+// true if interrupted ($A / $X && $X == 0)
+static bool
 assign_line (assign_line_t *line)
 {
   token_type left_type = line->left_var.type;
@@ -86,7 +87,7 @@ assign_line (assign_line_t *line)
       if (*right != 0)
         DO_OPERATE (/=);
       else
-        *left = 0;
+        return true;
       break;
     case LSH_TO:
       *right = *right & 0x1f;
@@ -114,6 +115,7 @@ assign_line (assign_line_t *line)
     default:
       assert (!"Unknown alu operation");
     }
+  return false;
 }
 
 #define DO_COMPARE(comparator) (bool)(A_reg comparator right)
@@ -303,7 +305,8 @@ emulator (vector_t *text_v, vector_t *code_ptr_v, bool quiet)
       switch (statement->type)
         {
         case ASSIGN_LINE:
-          assign_line (&statement->assign_line);
+          if (assign_line (&statement->assign_line))
+            goto out;
           break;
         case JUMP_LINE:
           jmp = jump_line (&statement->jump_line);
@@ -323,7 +326,7 @@ emulator (vector_t *text_v, vector_t *code_ptr_v, bool quiet)
 
 out:
   assert (statement);
-  assert (statement->type == RETURN_LINE);
+  assert (statement->type == RETURN_LINE || statement->type == ASSIGN_LINE);
   return statement;
 }
 
@@ -364,18 +367,35 @@ emulate_v (vector_t *text_v, vector_t *code_ptr_v, emu_arg_t *emu_arg,
 {
   init_attr (emu_arg);
 
-  statement_t *ret = emulator (text_v, code_ptr_v, emu_arg->quiet);
-  uint32_t line_left = text_v->count - 1 - ret->text_nr;
+  statement_t *last = emulator (text_v, code_ptr_v, emu_arg->quiet);
+  bool fpe = last->type == ASSIGN_LINE;
+  uint32_t line_left = text_v->count - 1 - last->text_nr;
 
   if (!emu_arg->quiet)
     {
-      emulate_printer (ret, false, emu_arg->quiet);
+#define FPE_ERR_STR "# $X == 0, returning 0 (KILL) on FPE"
+      if (UNLIKELY (fpe))
+        {
+          last->line_start = FPE_ERR_STR;
+          last->comment = 0;
+          last->line_len = LITERAL_STRLEN (FPE_ERR_STR);
+        }
+      emulate_printer (last, false, emu_arg->quiet);
+      if (UNLIKELY (fpe))
+        last->comment = -1;
+#undef FPE_ERR_STR
       if (line_left)
         print_as_comment (output_fp, "... %u line(s) skipped", line_left);
     }
   else
     {
-      extern_obj_printer (output_fp, &ret->return_line.real_obj);
+      if (fpe)
+        {
+          obj_t fpe_obj = { .type = KILL };
+          extern_obj_printer (output_fp, &fpe_obj);
+        }
+      else
+        extern_obj_printer (output_fp, &last->return_line.real_obj);
       fputc ('\n', output_fp);
     }
 }

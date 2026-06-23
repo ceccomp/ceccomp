@@ -8,6 +8,8 @@ Items marked with :star: is the major change why we release a new version.
 <!-- reversed. Then run scripts/complete-url.py to format raw ref to URL. -->
 
 ## 4.3 (INCOMING)
+* :star: Prints seccomp flags when tracing and applies stricter check on return value
+* :star: `$A / $X` (`$X == 0`) should return `KILL` instead of continuing
 ## 4.2.2
 * :star: Keep `CC` as string in `configure` :link: [#37]
 * :star: Fix flaky seize test with `eventfd` :link: [#38]

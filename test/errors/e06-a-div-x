@@ -9,5 +9,5 @@ return $A
 STDOUT
 $A = 0x1337
 $X = 0
-$A /= $X
-return $A # $A = 0, KILL
+$A /= $X # $X == 0, returning 0 (KILL) on FPE
+#... 1 line(s) skipped

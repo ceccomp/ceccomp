@@ -28,14 +28,17 @@ enum test_case
 };
 
 static const struct sock_filter filters[] = {
-  BPF_JUMP (BPF_JMP | BPF_JEQ | BPF_K, 0, 0, 6),
-  BPF_STMT (BPF_LD | BPF_W | BPF_ABS, (offsetof (struct seccomp_data, nr))),
-  BPF_JUMP (BPF_JMP | BPF_JEQ | BPF_K, SYS_execve, 2, 0),
-  BPF_JUMP (BPF_JMP | BPF_JEQ | BPF_K, SYS_sendfile, 2, 0),
+  BPF_JUMP (BPF_JMP | BPF_JEQ | BPF_K, 0, 0, 7),
+  BPF_STMT (BPF_LD | BPF_W | BPF_ABS, offsetof (struct seccomp_data, nr)),
+  BPF_JUMP (BPF_JMP | BPF_JEQ | BPF_K, SYS_execve, 3, 0),
+  BPF_JUMP (BPF_JMP | BPF_JEQ | BPF_K, SYS_sendfile, 3, 0),
+  BPF_JUMP (BPF_JMP | BPF_JEQ | BPF_K, SYS_ptrace, 4, 0),
   BPF_STMT (BPF_RET | BPF_K, SECCOMP_RET_ALLOW),
   BPF_STMT (BPF_RET | BPF_K, SECCOMP_RET_ERRNO | 1),
-  BPF_STMT (BPF_LD | BPF_W | BPF_K, SECCOMP_RET_KILL),
+  BPF_STMT (BPF_LD | BPF_W | BPF_K, SECCOMP_RET_KILL_PROCESS),
   BPF_STMT (BPF_RET | BPF_A, 0),
+  BPF_STMT (BPF_ALU | BPF_DIV | BPF_X, 0),
+  BPF_STMT (BPF_RET | BPF_K, SECCOMP_RET_ALLOW),
 };
 
 static void
