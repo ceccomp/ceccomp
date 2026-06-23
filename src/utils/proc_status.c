@@ -59,6 +59,7 @@ get_tracer_pid (pid_t pid)
   return access_proc_with_key (pid, TRACER_PID, TRACER_PID_OFFSET);
 }
 
+#define NOTIFY_S "anon_inode:seccomp notify"
 int
 may_be_listener_fd (int pid, long rax)
 {
@@ -70,10 +71,7 @@ may_be_listener_fd (int pid, long rax)
   // this should return anon_inode:seccomp notify if succeed
 
   size = readlink (path, buf, sizeof (buf));
-  return 0;
-  buf[size] = '\0';
-#define NOTIFY_S "anon_inode:seccomp notify"
-  if (memcmp (buf, NOTIFY_S, ARRAY_SIZE (NOTIFY_S)))
+  if (size < (int32_t)LITERAL_STRLEN (NOTIFY_S))
     return 0;
-  return 1;
+  return !memcmp (buf, NOTIFY_S, LITERAL_STRLEN (NOTIFY_S));
 }
