@@ -27,6 +27,7 @@ typedef enum
 static struct sock_filter
 jmp_insn (struct bpf_insn *ebpfp, check_path path, uint32_t large_k, int *ate)
 {
+  // 1st pass, clear instructions, do relocation later
   struct bpf_insn insn;
   switch (path)
     {
@@ -36,12 +37,10 @@ jmp_insn (struct bpf_insn *ebpfp, check_path path, uint32_t large_k, int *ate)
       if (op == BPF_EXIT)
         return CBPF_STMT (BPF_RET | BPF_A, 0);
       if (op == BPF_JA)
-        return CBPF_JMP (BPF_JMP | BPF_JA, insn.off, 0, 0);
+        return CBPF_JMP (BPF_JMP | BPF_JA, 1, 0, 0);
 
-      uint16_t jt, jf;
       int code = insn.code;
       uint32_t k = insn.imm;
-      jt = insn.off;
       // originally it's comparing BPF_K, modified during bpf_convert_filter
       // set it back to BPF_K
       if (large_k)
@@ -51,23 +50,21 @@ jmp_insn (struct bpf_insn *ebpfp, check_path path, uint32_t large_k, int *ate)
         }
       // peek next insn, if it's JA (current insn is JMP),
       // then it's casted from a JMP with both jt & jf
-      // ONLY IF jf < 256!
       // note that JSET is always in this branch
-      if (ebpfp[1].code == (BPF_JMP | BPF_JA) && (uint16_t)ebpfp[1].off < 256)
+      if (ebpfp[1].code == (BPF_JMP | BPF_JA))
         {
-          jf = ebpfp[1].off;
           ++*ate;
           // in this case, insn.code is exactly the same from cBPF
-          return CBPF_JMP (code, k, jt, jf);
+          return CBPF_JMP (code, k, 1, 1);
         }
       if (op == BPF_JEQ || op == BPF_JGT || op == BPF_JGE || op == BPF_JSET)
-        return CBPF_JMP (code, k, jt, 0);
+        return CBPF_JMP (code, k, 1, 0);
       if (op == BPF_JNE)
-        return CBPF_JMP ((code & ~BPF_JNE) | BPF_JEQ, k, 0, jt);
+        return CBPF_JMP ((code & ~BPF_JNE) | BPF_JEQ, k, 0, 1);
       if (op == BPF_JLE)
-        return CBPF_JMP ((code & ~BPF_JLE) | BPF_JGT, k, 0, jt);
+        return CBPF_JMP ((code & ~BPF_JLE) | BPF_JGT, k, 0, 1);
       if (op == BPF_JLT)
-        return CBPF_JMP ((code & ~BPF_JLT) | BPF_JGE, k, 0, jt);
+        return CBPF_JMP ((code & ~BPF_JLT) | BPF_JGE, k, 0, 1);
       assert (!"Unexpected eBPF JMP pattern");
     case CHECK_DIV_X:
       /* MOV X X
@@ -134,8 +131,8 @@ alu_insn (struct bpf_insn *ebpfp, int *ate)
     }
 
   // spotted JMP after deblind?
-  if (BPF_CLASS(insn.code) == BPF_JMP)
-      return jmp_insn(ebpfp, NOT_CHECK, 0, ate);
+  if (BPF_CLASS (insn.code) == BPF_JMP)
+    return jmp_insn (ebpfp, NOT_CHECK, 0, ate);
   if (BPF_OP (insn.code) == BPF_MOV)
     {
       if (BPF_CLASS (insn.code) == BPF_ALU64
@@ -175,8 +172,15 @@ long
 ebpf2cbpf (struct bpf_insn *ebpfs, uint32_t ebpf_len,
            struct sock_filter *cbpf_buf)
 {
+  // skip prologue
+  assert (BPF_CLASS (ebpfs[0].code) == BPF_ALU
+          && BPF_OP (ebpfs[0].code) == BPF_XOR);
+  assert (BPF_CLASS (ebpfs[1].code) == BPF_ALU
+          && BPF_OP (ebpfs[1].code) == BPF_XOR);
+  assert (BPF_CLASS (ebpfs[2].code) == BPF_ALU64
+          && BPF_OP (ebpfs[2].code) == BPF_MOV);
   int code, k, ate;
-  for (uint32_t i = 0; i < ebpf_len; i++)
+  for (uint32_t i = 3; i < ebpf_len; i++)
     {
       struct bpf_insn insn = ebpfs[i];
       switch (BPF_CLASS (insn.code))
