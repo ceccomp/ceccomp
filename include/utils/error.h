@@ -34,7 +34,8 @@
 #define M_PROCESS_FORK _ ("Process %d spawned a new pid %d")
 #define M_PROCESS_EXIT _ ("Process %d exited")
 #define M_PID_BPF_SECCOMP _ ("Process %d invoked seccomp (%s, %s, &prog)")
-#define M_PID_BPF_PRCTL _ ("Process %d invoked prctl (PR_SET_SECCOMP, %s, &prog)")
+#define M_PID_BPF_PRCTL                                                       \
+  _ ("Process %d invoked prctl (PR_SET_SECCOMP, %s, &prog)")
 #define SECCOMP_SET_MODE_STRICT_S ("SECCOMP_SET_MODE_STRICT")
 #define SECCOMP_SET_MODE_FILTER_S ("SECCOMP_SET_MODE_FILTER")
 #define M_PID_BPF_LOAD_FAIL _ ("Process %d failed to load seccomp filter: %s")
@@ -158,5 +159,13 @@
 #define M_NO_VALID_CODE _ ("The input does not contain any valid statement")
 
 #define M_INVALID_OPERATION _ ("Invalid or unknown operation")
+
+// capture
+#define M_UNEXPECTED_EBPF_INSN                                                \
+  _ ("Unexpected bpf_insn (#%u) in kernel migrated eBPF (assertion failed "   \
+     "at %s#L%d: %s), please open an issue and upload your eBPF case")
+#define M_SAVE_EBPF_SUCCEEDED                                                 \
+  _ ("Your eBPF case has been saved in %s (binary file)")
+#define M_SAVE_EBPF_FAILED _ ("Failed to save your eBPF case due to %s")
 
 #endif
