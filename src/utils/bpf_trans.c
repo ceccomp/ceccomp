@@ -1,3 +1,6 @@
+#include "config.h"
+#if EBPF_SUPPORT == 1
+
 #include "main.h"
 #include "utils/error.h"
 #include "utils/logger.h"
@@ -482,3 +485,4 @@ ebpf2cbpf (struct bpf_insn *restrict ebpfs, const uint32_t ebpf_len,
   flags = NULL;
   return wp - cbpf_buf;
 }
+#endif
