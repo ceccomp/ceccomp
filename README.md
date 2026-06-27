@@ -24,6 +24,7 @@ A tool to analyze seccomp filters like `seccomp-tools`, written in C
 
     ceccomp is available in official extra repo now:
     [![Arch](https://repology.org/badge/version-for-repo/arch/ceccomp.svg?header=Arch%20Linux%20extra)](https://repology.org/project/ceccomp/versions)
+    [![Manjaro Stable](https://repology.org/badge/version-for-repo/manjaro_stable/ceccomp.svg?header=Manjaro%20Stable)](https://repology.org/project/ceccomp/versions)
 
 - Debian, Ubuntu or Kali users:
 
@@ -32,6 +33,7 @@ A tool to analyze seccomp filters like `seccomp-tools`, written in C
     [![Debian testing](https://repology.org/badge/version-for-repo/debian_14/ceccomp.svg?header=Debian%20testing)](https://repology.org/project/ceccomp/versions)
     [![Debian unstable](https://repology.org/badge/version-for-repo/debian_unstable/ceccomp.svg?header=Debian%20unstable)](https://repology.org/project/ceccomp/versions)
     [![Ubuntu 26.04](https://repology.org/badge/version-for-repo/ubuntu_26_04/ceccomp.svg?header=Ubuntu%2026.04)](https://repology.org/project/ceccomp/versions)
+    [![Ubuntu 26.10](https://repology.org/badge/version-for-repo/ubuntu_26_10/ceccomp.svg?header=Ubuntu%2026.10)](https://repology.org/project/ceccomp/versions)
     [![Kali Linux](https://repology.org/badge/version-for-repo/kali_rolling/ceccomp.svg?header=Kali%20Linux)](https://repology.org/project/ceccomp/versions)
 
 - NixOS users:
@@ -78,6 +80,7 @@ To run the test, you need 2 extra packages: `pkgconf` (required by `pkg-config`)
 
 ## Credits
 
+- [libseccomp](https://github.com/seccomp/libseccomp): The library to support syscall lookups
 - [seccomp-tools](https://github.com/david942j/seccomp-tools): The tool in Ruby inspires us to write ceccomp
 - [Bootswatch](https://bootswatch.com/slate/): Provides awesome css for html doc under MIT
 - [Linux kernel](https://github.com/torvalds/linux): Port some bpf checks
