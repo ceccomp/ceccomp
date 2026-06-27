@@ -1,0 +1,2 @@
+# Treat all .h files as C files
+*.h linguist-language=C
