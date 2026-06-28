@@ -1,3 +1,4 @@
+#define _GNU_SOURCE
 #include "disasm.h"
 #include "decoder/decoder.h"
 #include "decoder/formatter.h"
@@ -11,6 +12,7 @@
 #include "utils/vector.h"
 #include <assert.h>
 #include <errno.h>
+#include <linux/bpf.h>
 #include <linux/bpf_common.h>
 #include <stdbool.h>
 #include <stddef.h>
@@ -71,6 +73,54 @@ read_filters (filter *filters, FILE *from)
   if (leftover)
     warn (M_INPUT_HAS_LEFTOVER, leftover);
   return (ptr - (uint8_t *)filters) >> 3;
+}
+
+#define BLK_SIZE 0x2000
+// Returned bpf_insn pointer requested with mmap, release it later!
+static struct bpf_insn *
+read_insns (FILE *from, uint32_t *count)
+{
+  void *base;
+  uint32_t offset = 0, map_size = BLK_SIZE, todo = BLK_SIZE;
+  int fd = fileno (from);
+  assert (fd != -1);
+
+  base = mmap (NULL, map_size, PROT_READ | PROT_WRITE, MAP_ANON | MAP_PRIVATE,
+               -1, 0);
+  if (base == MAP_FAILED)
+    return NULL;
+
+  while (true)
+    {
+      long rc = read (fd, base + offset, todo);
+      if (UNLIKELY (rc == -1))
+        error (M_READ_FAIL, strerror (errno));
+      if (rc == 0)
+        break;
+      offset += rc;
+      todo -= rc;
+
+      if (todo == 0)
+        {
+          // read BLK_SIZE? enlarge buffer if some more bytes to read
+          void *old_base = base;
+          base = mremap (base, map_size, map_size + BLK_SIZE, MREMAP_MAYMOVE);
+          if (UNLIKELY (base == MAP_FAILED))
+            {
+              munmap (old_base, map_size);
+              return NULL;
+            }
+          todo = BLK_SIZE;
+          map_size += BLK_SIZE;
+        }
+    }
+
+  uint32_t leftover = offset % sizeof (struct bpf_insn);
+  if (leftover)
+    warn (M_INPUT_HAS_LEFTOVER, leftover);
+
+  *count = offset / sizeof (struct bpf_insn);
+  return base;
 }
 
 void
