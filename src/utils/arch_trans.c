@@ -6,35 +6,15 @@
 #include <string.h>
 
 static const uint32_t arch_pairs[] = {
-  [ARCH_X86] = SCMP_ARCH_X86,
+// [ARCH_X86] = SCMP_ARCH_X86
+#define X(int_arch, scmp_arch) [int_arch] = scmp_arch,
+#define FALLBACK_X(int_arch) [int_arch] = -1,
+#include "x-macro/arch_table.h"
+#undef X
+#undef FALLBACK_X
   [ARCH_I686] = SCMP_ARCH_X86,
-  [ARCH_X86_64] = SCMP_ARCH_X86_64,
-  [ARCH_X32] = SCMP_ARCH_X32,
-  [ARCH_AARCH64] = SCMP_ARCH_AARCH64,
-  [ARCH_ARMV8L] = SCMP_ARCH_ARM,
   [ARCH_ARMV7L] = SCMP_ARCH_ARM,
-  [ARCH_ARM] = SCMP_ARCH_ARM,
-#if SCMP_VER_MAJOR >= 2 && SCMP_VER_MINOR >= 6
-  [ARCH_LOONGARCH64] = SCMP_ARCH_LOONGARCH64,
-  [ARCH_M68K] = SCMP_ARCH_M68K,
-#else
-  [ARCH_LOONGARCH64] = -1,
-  [ARCH_M68K] = -1,
-#endif
-  [ARCH_MIPSEL64N32] = SCMP_ARCH_MIPSEL64N32,
-  [ARCH_MIPSEL64] = SCMP_ARCH_MIPSEL64,
-  [ARCH_MIPSEL] = SCMP_ARCH_MIPSEL,
-  [ARCH_MIPS64N32] = SCMP_ARCH_MIPS64N32,
-  [ARCH_MIPS64] = SCMP_ARCH_MIPS64,
-  [ARCH_MIPS] = SCMP_ARCH_MIPS,
-  [ARCH_PARISC64] = SCMP_ARCH_PARISC64,
-  [ARCH_PARISC] = SCMP_ARCH_PARISC,
-  [ARCH_PPC64LE] = SCMP_ARCH_PPC64LE,
-  [ARCH_PPC64] = SCMP_ARCH_PPC64,
-  [ARCH_PPC] = SCMP_ARCH_PPC,
-  [ARCH_S390X] = SCMP_ARCH_S390X,
-  [ARCH_S390] = SCMP_ARCH_S390,
-  [ARCH_RISCV64] = SCMP_ARCH_RISCV64,
+  [ARCH_ARMV8L] = SCMP_ARCH_ARM,
 };
 
 uint32_t
@@ -52,30 +32,13 @@ scmp_arch_to_internal_arch (uint32_t scmp_arch)
 {
   switch (scmp_arch)
     {
+      // case SCMP_ARCH_X86: return ARCH_X86
       // clang-format off
-    case SCMP_ARCH_X86: return ARCH_X86;
-    case SCMP_ARCH_X86_64: return ARCH_X86_64;
-    case SCMP_ARCH_X32: return ARCH_X32;
-    case SCMP_ARCH_ARM: return ARCH_ARM;
-    case SCMP_ARCH_AARCH64: return ARCH_AARCH64;
-#if SCMP_VER_MAJOR >= 2 && SCMP_VER_MINOR >= 6
-    case SCMP_ARCH_LOONGARCH64: return ARCH_LOONGARCH64;
-    case SCMP_ARCH_M68K: return ARCH_M68K;
-#endif
-    case SCMP_ARCH_MIPSEL64N32: return ARCH_MIPSEL64N32;
-    case SCMP_ARCH_MIPSEL64: return ARCH_MIPSEL64;
-    case SCMP_ARCH_MIPSEL: return ARCH_MIPSEL;
-    case SCMP_ARCH_MIPS64N32: return ARCH_MIPS64N32;
-    case SCMP_ARCH_MIPS64: return ARCH_MIPS64;
-    case SCMP_ARCH_MIPS: return ARCH_MIPS;
-    case SCMP_ARCH_PARISC64: return ARCH_PARISC64;
-    case SCMP_ARCH_PARISC: return ARCH_PARISC;
-    case SCMP_ARCH_PPC64LE: return ARCH_PPC64LE;
-    case SCMP_ARCH_PPC64: return ARCH_PPC64;
-    case SCMP_ARCH_PPC: return ARCH_PPC;
-    case SCMP_ARCH_S390X: return ARCH_S390X;
-    case SCMP_ARCH_S390: return ARCH_S390;
-    case SCMP_ARCH_RISCV64: return ARCH_RISCV64;
+#define X(int_arch, _scmp_arch) case _scmp_arch: return int_arch;
+#define FALLBACK_X(int_arch)
+#include "x-macro/arch_table.h"
+#undef X
+#undef FALLBACK_X
       // clang-format on
     }
 
