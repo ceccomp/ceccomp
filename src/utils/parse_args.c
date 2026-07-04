@@ -97,7 +97,7 @@ parse_print_mode (const char *arg)
   else if (!strcmp (arg, "c-macro"))
     return C_MACRO;
   else
-    error ("%s: %s", M_INVALID_FMT_MODE, arg);
+    error ("%s: %s", M_INVALID_ASM_FMT, arg);
 }
 
 static int

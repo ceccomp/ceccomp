@@ -82,7 +82,7 @@
 
 // parse_args
 #define M_INVALID_COLOR_MODE _ ("Invalid color mode")
-#define M_INVALID_FMT_MODE _ ("Invalid format mode")
+#define M_INVALID_ASM_FMT _ ("Invalid asm format")
 #define M_INVALID_NUMBER _ ("Invalid number")
 #define M_UNABLE_OPEN_FILE _ ("Unable to open file %s: %s")
 
