@@ -22,7 +22,7 @@ uint32_t
 internal_arch_to_scmp_arch (uint32_t internal_arch)
 {
   // ARCH_X86 = 0, so (arch >= ARCH_X86) is always true;
-  if (internal_arch <= ARCH_SHEB)
+  if (internal_arch <= ARCH_SH)
     return arch_pairs[internal_arch];
 
   return -1;
@@ -94,8 +94,8 @@ str_to_internal_arch (const char *str, bool strict)
       MAYBE_MATCH_ARCH (ARCH_S390X, ext);
       MAYBE_MATCH_ARCH (ARCH_S390, ext);
       MAYBE_MATCH_ARCH (ARCH_SH4, ext);
-      MAYBE_MATCH_ARCH (ARCH_SH, ext);
       MAYBE_MATCH_ARCH (ARCH_SHEB, ext);
+      MAYBE_MATCH_ARCH (ARCH_SH, ext);
       break;
     case 'r':
       MAYBE_MATCH_ARCH (ARCH_RISCV64, ext);
