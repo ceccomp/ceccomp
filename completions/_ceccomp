@@ -6,7 +6,7 @@ local state
 local archs=(
     'x86_64' 'i386' 'x32' 'aarch64' 'arm' 'loongarch64' 'm68k' 'mips' 'mipsel'
     'mips64' 'mipsel64' 'mips64n32' 'mipsel64n32' 'parisc' 'parisc64' 'ppc64' 'ppc64le'
-    'ppc' 's390x' 's390' 'riscv64'
+    'ppc' 's390x' 's390' 'riscv64' 'sh' 'sheb'
 )
 arch_compstr=(
     '(-a --arch)'{-a,--arch}"[Target BPF architecture]:ARCH:($archs)"
@@ -42,7 +42,7 @@ if (( CURRENT == 2 )) {
             _arguments \
                 $arch_compstr \
                 $color_compstr \
-                '(-f --fmt)'{-f,--fmt}'[Output format of BPF]:FMT:(raw hexline hexfmt)' \
+                '(-f --fmt)'{-f,--fmt}'[Output format of BPF]:FMT:(raw hexline hexfmt c-macro)' \
                 '2:BPF:_files' \
                 '*: :'
             ;;
