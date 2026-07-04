@@ -17,6 +17,7 @@ const string_t token_pairs[] = {
   [ARCH_PARISC64] = DEFTK ("parisc64"), [ARCH_PARISC] = DEFTK ("parisc"),
   [ARCH_PPC64LE] = DEFTK ("ppc64le"), [ARCH_PPC64] = DEFTK ("ppc64"), [ARCH_PPC] = DEFTK ("ppc"),
   [ARCH_S390X] = DEFTK ("s390x"), [ARCH_S390] = DEFTK ("s390"), [ARCH_RISCV64] = DEFTK ("riscv64"),
+  [ARCH_SH4] = DEFTK ("sh4"), [ARCH_SH] = DEFTK ("shel"), [ARCH_SHEB] = DEFTK ("sh"),
 
   [KILL_PROC] = DEFTK ("KILL_PROCESS"), [KILL] = DEFTK ("KILL"), [ALLOW] = DEFTK ("ALLOW"),
   [NOTIFY] = DEFTK ("NOTIFY"), [LOG] = DEFTK ("LOG"), [TRACE] = DEFTK ("TRACE"),

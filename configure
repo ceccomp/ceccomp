@@ -431,6 +431,7 @@ TIER_1_ARCH = [ # tested
 ]
 TIER_2_ARCH = [ # untested, but listed in libseccomp
     'x32', 'parisc', 'parisc64', 'mips', 'm68k', 's390', 'ppc64', 'arm',
+    'sh', 'sh4', 'shel',
 ]
 @new_task
 def check_architecture(_: Makefile):

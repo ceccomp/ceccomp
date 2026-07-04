@@ -216,7 +216,7 @@ compare_obj (obj_t *obj, comparator_t *cmptype)
     }
   // read
 
-  if (!match_from_to (ARCH_X86, ARCH_RISCV64))
+  if (!match_from_to (ARCH_X86, ARCH_SHEB))
     error_at (parse.next, M_UNEXPECT_TOKEN);
 
   if (!match (DOT))
