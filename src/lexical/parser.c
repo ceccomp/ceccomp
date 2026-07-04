@@ -187,7 +187,7 @@ resolve_name_arch (uint32_t arch_token, token_t *sys_token)
 }
 
 static void
-compare_obj (obj_t *obj)
+compare_obj (obj_t *obj, comparator_t *cmptype)
 {
   obj->literal.start = parse.next.token_start;
   obj->literal.len = parse.next.token_len;
@@ -211,6 +211,7 @@ compare_obj (obj_t *obj)
       obj->data = resolve_name_arch (local_arch, &parse.current);
       if (obj->data == (uint32_t)-1)
         error_at (parse.current, M_EXPECT_SYSCALL);
+      *cmptype = CMP_SYSCALL;
       return;
     }
   // read
@@ -224,6 +225,7 @@ compare_obj (obj_t *obj)
       if (UNLIKELY (obj->data == (uint32_t)-1))
         // libseccomp does not support input arch??
         error_at (parse.current, M_EXPECT_ARCH);
+      *cmptype = CMP_ARCH;
       return;
     }
   // i386
@@ -238,6 +240,7 @@ compare_obj (obj_t *obj)
   obj->data = resolve_name_arch (scmp_arch, &parse.next);
   if (obj->data == (uint32_t)-1)
     error_at (parse.next, M_EXPECT_SYSCALL);
+  *cmptype = CMP_ARCH_SYSCALL;
 
   obj->literal.len += parse.next.token_len + 1;
   // +1 is for dot
@@ -261,7 +264,7 @@ condition (jump_line_t *jump_line)
     error_at (parse.next, M_EXPECT_COMPARTOR);
   jump_line->comparator = parse.current.type;
 
-  compare_obj (&jump_line->cmpobj);
+  compare_obj (&jump_line->cmpobj, &jump_line->cmptype);
 
   if (!match (RIGHT_PAREN))
     error_at (parse.next, M_EXPECT_PAREN);

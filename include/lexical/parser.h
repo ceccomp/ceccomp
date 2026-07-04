@@ -33,6 +33,13 @@ typedef struct
   // but EQUAL is skipped
 } assign_line_t;
 
+typedef enum __attribute__((packed)) {
+    CMP_NUMBER = 0,
+    CMP_ARCH = 1,
+    CMP_SYSCALL = 2,
+    CMP_ARCH_SYSCALL = 3,
+} comparator_t;
+
 typedef struct
 {
   // token_t if;
@@ -43,6 +50,8 @@ typedef struct
   // does condition exists
   // if true, jt and jf both uint16_t
   // else jt is uint32_t, jf is ignored
+
+  comparator_t cmptype;
 
   // var A;
   // jump always compare A with something else, so skip it

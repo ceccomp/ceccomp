@@ -109,7 +109,7 @@ assign_line (assign_line_t *assign_line, stat_ctx_t *ctx)
 static void
 try_resolve_arch (obj_t *cmpobj)
 {
-  const string_t *arch_str = scmp_arch_to_str (cmpobj->data);
+  const string_t *arch_str = scmp_arch_to_internal_str (cmpobj->data);
   if (arch_str == NULL)
     return;
   cmpobj->type = IDENTIFIER;
@@ -129,7 +129,7 @@ try_resolve_sysnr (obj_t *cmpobj)
   cmpobj->type = IDENTIFIER;
   const string_t *arch_str = NULL;
   if (cur_arch != default_arch)
-    arch_str = scmp_arch_to_str (cur_arch);
+    arch_str = scmp_arch_to_internal_str (cur_arch);
   cmpobj->literal = persist_object (sys_name, arch_str);
   free (sys_name);
 }

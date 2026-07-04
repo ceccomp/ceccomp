@@ -1,5 +1,6 @@
 #include "utils/arch_trans.h"
 #include "lexical/token.h"
+#include <assert.h>
 #include <seccomp.h>
 #include <stdint.h>
 #include <string.h>
@@ -146,10 +147,27 @@ str_to_scmp_arch (const char *str, bool strict)
 }
 
 const string_t *
-scmp_arch_to_str (uint32_t scmp_arch)
+scmp_arch_to_internal_str (uint32_t scmp_arch)
 {
   int32_t idx = scmp_arch_to_internal_arch (scmp_arch);
   if (idx == -1)
     return NULL;
   return &token_pairs[idx];
+}
+
+const char *
+scmp_arch_to_scmp_str (uint32_t scmp_arch)
+{
+  switch (scmp_arch)
+    {
+      // case SCMP_ARCH_X86: return "SCMP_ARCH_X86";
+      // clang-format off
+#define X(int_arch, _scmp_arch) case _scmp_arch: return #_scmp_arch;
+#define FALLBACK_X(int_arch)
+#include "x-macro/arch_table.h"
+#undef X
+#undef FALLBACK_X
+      // clang-format on
+    }
+  assert (!"Unexpected unknown scmp_arch");
 }

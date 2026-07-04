@@ -4,15 +4,18 @@
 #include "lexical/token.h"
 #include "main.h"
 #include "resolver/resolver.h"
+#include "utils/arch_trans.h"
 #include "utils/error.h"
 #include "utils/logger.h"
 #include "utils/parse_args.h"
 #include "utils/read_source.h"
 #include "utils/reverse_endian.h"
+#include "utils/valid_insns.h"
 #include "utils/vector.h"
 #include <assert.h>
 #include <linux/bpf_common.h>
 #include <linux/filter.h>
+#include <linux/seccomp.h>
 #include <seccomp.h>
 #include <stdbool.h>
 #include <stddef.h>
@@ -252,7 +255,7 @@ asm_statement (statement_t *statement)
   assert (0);
 }
 
-typedef void (*fmt_handler) (uint8_t f[8], char *template);
+typedef void (*fmt_handler) (filter *f, void *arg);
 
 static void
 hexify (uint8_t ch, char buf[2])
@@ -265,28 +268,125 @@ hexify (uint8_t ch, char buf[2])
 #define HEXFMT_TEMPLATE "\"\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\",\n"
 #define HEXFMT_TEMPLATE_LEN LITERAL_STRLEN (HEXFMT_TEMPLATE)
 static void
-hexfmt_handle (uint8_t f[8], char *template)
+hexfmt_handle (filter *ft, void *template)
 {
+  uint8_t *f = (uint8_t *)ft;
   for (unsigned i = 0; i < 8; i++)
-    hexify (f[i], template + 3 + 4 * i);
+    hexify (f[i], (char *)template + 3 + 4 * i);
   fwrite (template, 1, HEXFMT_TEMPLATE_LEN, stdout);
 }
 
 #define HEXLINE_TEMPLATE "\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00"
 #define HEXLINE_TEMPLATE_LEN LITERAL_STRLEN (HEXLINE_TEMPLATE)
 static void
-hexline_handle (uint8_t f[8], char *template)
+hexline_handle (filter *ft, void *template)
 {
+  uint8_t *f = (uint8_t *)ft;
   for (unsigned i = 0; i < 8; i++)
-    hexify (f[i], template + 2 + 4 * i);
+    hexify (f[i], (char *)template + 2 + 4 * i);
   fwrite (template, 1, HEXLINE_TEMPLATE_LEN, stdout);
 }
 
 static void
-raw_handle (uint8_t f[8], char *template)
+raw_handle (filter *f, void *template)
 {
   (void)template;
-  fwrite (f, 1, 8, stdout);
+  fwrite (f, 1, sizeof (*f), stdout);
+}
+
+static void
+c_macro_handle (filter *f, void *arg)
+{
+  statement_t *stmt = (statement_t *)arg;
+  const char *code_str = get_insn_name (f->code);
+  if (BPF_CLASS (f->code) == BPF_JMP)
+    {
+      comparator_t cmptype = stmt->jump_line.cmptype;
+      if (cmptype == CMP_NUMBER || cmptype == CMP_ARCH_SYSCALL)
+        // we explicitly ignore CMP_ARCH_SYSCALL as it can not be converted
+        // into something like SYS_read or SCMP_ARCH_X86_64
+        fprintf (stdout, "BPF_JUMP(%s, %#x, %hhu, %hhu),\n", code_str, f->k,
+                 f->jt, f->jf);
+      else if (cmptype == CMP_SYSCALL)
+        fprintf (stdout, "BPF_JUMP(%s, SYS_%.*s, %hhu, %hhu),\n", code_str,
+                 stmt->jump_line.cmpobj.literal.len,
+                 stmt->jump_line.cmpobj.literal.start, f->jt, f->jf);
+      else if (cmptype == CMP_ARCH)
+        fprintf (stdout, "BPF_JUMP(%s, %s, %hhu, %hhu),\n", code_str,
+                 scmp_arch_to_scmp_str (f->k), f->jt, f->jf);
+      else
+        assert (!"Unexpected cmptype");
+      return;
+    }
+
+  // BPF_STMT
+  if (f->code == (BPF_LD | BPF_W | BPF_ABS))
+    {
+      const char *member;
+      // offsetof (struct seccomp_data, arch) is excluded
+      char *extra_off = f->k & 4 && f->k != 4 ? " + 4" : "";
+      switch (f->k >> 2)
+        {
+          // clang-format off
+              case 0: member = "nr"; break;
+              case 1: member = "arch"; break;
+              case 2:
+              case 3: member = "instruction_pointer"; break;
+              case 4:
+              case 5: member = "args[0]"; break;
+              case 6:
+              case 7: member = "args[1]"; break;
+              case 8:
+              case 9: member = "args[2]"; break;
+              case 10:
+              case 11: member = "args[3]"; break;
+              case 12:
+              case 13: member = "args[4]"; break;
+              case 14:
+              case 15: member = "args[5]"; break;
+              default: assert(!"Unexpected filter->k");
+          // clang-format on
+        }
+      fprintf (stdout, "BPF_STMT(%s, offsetof(struct seccomp_data, %s)%s),\n",
+               code_str, member, extra_off);
+      return;
+    }
+  else if (f->code == (BPF_RET | BPF_K))
+    {
+      const char *macro = NULL;
+      switch (f->k)
+        {
+          // clang-format off
+#define DATALESS_CASE(value) case value: macro = #value; break
+          // clang-format on
+          DATALESS_CASE (SECCOMP_RET_KILL);
+          DATALESS_CASE (SECCOMP_RET_KILL_PROCESS);
+          DATALESS_CASE (SECCOMP_RET_ALLOW);
+          DATALESS_CASE (SECCOMP_RET_LOG);
+          DATALESS_CASE (SECCOMP_RET_USER_NOTIF);
+        }
+      if (macro)
+        {
+          fprintf (stdout, "BPF_STMT(%s, %s),\n", code_str, macro);
+          return;
+        }
+      switch (f->k & SECCOMP_RET_ACTION)
+        {
+          // clang-format off
+#define DATAFUL_CASE(value) case value: macro = #value; break
+          // clang-format on
+          DATAFUL_CASE (SECCOMP_RET_TRACE);
+          DATAFUL_CASE (SECCOMP_RET_TRAP);
+          DATAFUL_CASE (SECCOMP_RET_ERRNO);
+        }
+      if (macro)
+        {
+          fprintf (stdout, "BPF_STMT(%s, %s | %#x),\n", code_str, macro,
+                   f->k & SECCOMP_RET_DATA);
+          return;
+        }
+    }
+  fprintf (stdout, "BPF_STMT(%s, %#x),\n", code_str, f->k);
 }
 
 static fmt_handler
@@ -303,6 +403,9 @@ set_print_fmt (print_mode_t print_mode, char *template)
     case RAW:
       *template = '\0'; // for debugging, don't hurt performance
       return raw_handle;
+    case C_MACRO:
+      *template = '\0';
+      return c_macro_handle;
     default:
       assert (!"Unknown fmt printer");
     }
@@ -328,14 +431,14 @@ assemble (FILE *fp, uint32_t scmp_arch, print_mode_t print_mode)
 
   char fmt_template[64];
   fmt_handler handle = set_print_fmt (print_mode, fmt_template);
-  bool reverse = need_reverse_endian (scmp_arch);
+  bool reverse = need_reverse_endian (scmp_arch) && print_mode != C_MACRO;
   for (uint32_t i = 1; i < code_ptr_v.count; i++)
     {
       statement_t **ptr = get_vector (&code_ptr_v, i);
       filter f = asm_statement (*ptr);
       if (reverse)
         reverse_endian (&f);
-      handle ((uint8_t *)&f, fmt_template);
+      handle (&f, print_mode != C_MACRO ? (void *)fmt_template : (void *)*ptr);
     }
   if (print_mode == HEXLINE)
     putc ('\n', stdout);

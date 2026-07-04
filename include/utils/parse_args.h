@@ -23,6 +23,7 @@ typedef enum
   HEXLINE,
   HEXFMT,
   RAW,
+  C_MACRO,
 } print_mode_t;
 
 typedef enum
