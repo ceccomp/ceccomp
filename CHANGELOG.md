@@ -12,6 +12,7 @@ Items marked with :star: is the major change why we release a new version.
 * :star: Add support for *sh* since libseccomp 2.6
 * :star: Prints seccomp flags when tracing and applies stricter check on return value
 * :star: `$A / $X` (`$X == 0`) should return `KILL` instead of continuing
+* :star: Use `seccomp_arch_native` instead of `uname -m` to improve robustness
 
 [#39]: https://github.com/dbgbgtf1/Ceccomp/issues/39
 ## 4.2.2

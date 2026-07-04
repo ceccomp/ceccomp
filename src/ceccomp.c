@@ -14,6 +14,7 @@
 #include <assert.h>
 #include <libintl.h>
 #include <locale.h>
+#include <seccomp.h>
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -60,7 +61,7 @@ init_args (ceccomp_arg_t *args)
   set_color (args->when, stderr);
 
   uname (&uts);
-  uint32_t scmp_arch = str_to_scmp_arch (uts.machine, true);
+  uint32_t scmp_arch = seccomp_arch_native ();
   if (UNLIKELY (scmp_arch == (uint32_t)-1))
     warn (M_UNSUPPORTED_ARCH, uts.machine);
   args->asm_arg->scmp_arch = scmp_arch;
