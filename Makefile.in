@@ -67,7 +67,7 @@ CC := {{CC}}
 {{EBPF_IF}}
 BPF_CC := {{BPF_CC}}
 BPFTOOL := {{BPFTOOL}}
-BPF_FLAGS := -O2 -g -D__TARGET_ARCH_{{BPF_ARCH}}
+BPF_FLAGS := -O2 -g -I$(INC_DIR) -D__TARGET_ARCH_{{BPF_ARCH}}
 {{EBPF_ENDIF}}
 
 LOCALE_DIR := {{LOCALEDIR}}
@@ -257,8 +257,8 @@ $(EBPF_INC_DIR):
 	$Qmkdir -p $@
 
 {{EBPF_ENDIF}}
-# CAPTURE_SRC := $(SRC_DIR)/capture.c
-# CAPTURE_OBJ := $(BUILD_DIR)/capture.o
+CAPTURE_SRC := $(SRC_DIR)/capture.c
+CAPTURE_OBJ := $(BUILD_DIR)/capture.o
 
 ##### C OBJECTS #####
 
@@ -286,9 +286,9 @@ $(BUILD_DIR)/test: $(TEST_OBJS) | $(BUILD_DIR) $(MARK)
 	$Q$(call ECHO,LD,$@)
 	$Q$(CC) $^ -o $@ $(LDFLAGS)
 
-# $(CAPTURE_OBJ): $(CAPTURE_SRC) $(CONFIG_HEADER) {{EBPF_IF}}$(EBPF_SKELS){{EBPF_ENDIF}} | $(BUILD_DIR) $(MARK)
-# 	$Q$(call ECHO,CC,$@)
-# 	$Q$(CC) -I$(INC_DIR) $(CFLAGS) $< -c -o $@
+$(CAPTURE_OBJ): $(CAPTURE_SRC) $(CONFIG_HEADER) {{EBPF_IF}}$(EBPF_SKELS){{EBPF_ENDIF}} | $(BUILD_DIR) $(MARK)
+	$Q$(call ECHO,CC,$@)
+	$Q$(CC) -I$(INC_DIR) $(CFLAGS) $< -c -o $@
 
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.c $(CONFIG_HEADER) Makefile | $(BUILD_DIR) $(MARK)
 	$Q$(call ECHO,CC,$@)
