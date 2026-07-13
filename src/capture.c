@@ -44,7 +44,7 @@ on_events (void *ctx, void *data, unsigned long size)
   info ("capture bpf load in %d process", event->pid);
   fprog prog = { .len = event->arg.len, .filter = event->arg.filters };
 
-  print_prog (c->scmp_arch, &prog, c->fp, true);
+  print_prog (c->scmp_arch, &prog, c->fp, true, false);
   return 0;
 }
 

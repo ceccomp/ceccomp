@@ -67,7 +67,7 @@ CC := {{CC}}
 {{EBPF_IF}}
 BPF_CC := {{BPF_CC}}
 BPFTOOL := {{BPFTOOL}}
-BPF_FLAGS := -O2 -g -I$(INC_DIR) -D__TARGET_ARCH_{{BPF_ARCH}}
+BPF_FLAGS := -O2 -g -I$(INC_DIR) -D__TARGET_ARCH_{{BPF_ARCH}} -Wno-missing-declarations
 {{EBPF_ENDIF}}
 
 LOCALE_DIR := {{LOCALEDIR}}
@@ -238,11 +238,14 @@ EBPF_SRCS := $(shell find $(EBPF_DIR) -name '*.c' | LC_ALL=C sort)
 EBPF_OBJS := $(patsubst $(EBPF_DIR)/%.c,$(BUILD_DIR)/%.o,$(EBPF_SRCS))
 EBPF_SKELS := $(patsubst $(EBPF_DIR)/%.bpf.c,$(EBPF_INC_DIR)/%.skel.h,$(EBPF_SRCS))
 
+.SECONDARY: $(EBPF_OBJS)
+
 VMLINUX_HEADER := $(EBPF_INC_DIR)/vmlinux.h
 VMLINUX_FILE := /sys/kernel/btf/vmlinux
 $(VMLINUX_HEADER): | $(EBPF_INC_DIR) $(MARK)
 	$Q$(call ECHO,BPFTOOL,$(VMLINUX_FILE))
-	$Q$(BPFTOOL) btf dump file $(VMLINUX_FILE) format c > $@
+	$Q$(BPFTOOL) btf dump file $(VMLINUX_FILE) format c > $@ \
+		2> >(grep -vF 'skipping /sys/kernel/btf/vmlinux' >&2)
 
 $(BUILD_DIR)/%.bpf.o: $(EBPF_DIR)/%.bpf.c | $(VMLINUX_HEADER) $(BUILD_DIR) $(MARK)
 	$Q$(call ECHO,BPF_CC,$<)
