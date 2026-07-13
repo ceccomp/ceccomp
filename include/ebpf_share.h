@@ -1,7 +1,9 @@
 #ifndef EBPF_SHARE_H
 #define EBPF_SHARE_H
 
+#ifndef _NO_VMLINUX_
 #include "ebpf/vmlinux.h"
+#endif
 #include <linux/bpf_common.h>
 
 typedef struct

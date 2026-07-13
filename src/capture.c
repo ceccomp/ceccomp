@@ -1,4 +1,5 @@
 // clang-format off
+#define _NO_VMLINUX_
 #include "disasm.h"
 #include "capture.h"
 #include "ebpf/capture.skel.h"
