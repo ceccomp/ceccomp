@@ -8,6 +8,7 @@
 #include <linux/bpf.h>
 #include <linux/bpf_common.h>
 #include <linux/filter.h>
+#include <stdbool.h>
 #include <stdint.h>
 
 /* ebpf2cbpf: translate from migrated eBPF seccomp filters back to cBPF form.
@@ -20,6 +21,8 @@
  * ebpf_len: The amount of migrated filters.
  * cbpf_buf: The buffer to put recovered cBPF filters. Should be at least as
  *           large as ebpfs.
+ * trustful: Whether the eBPF bytes are extracted directly from kernel, not
+ *           from user input.
  *
  * Returns -1 if unexpected instruction details spotted, warnings are printed
  * in the funtion. Returns the amount of recovered cBPF filters if successfully
@@ -27,7 +30,7 @@
  */
 extern long ebpf2cbpf (struct bpf_insn *restrict ebpfs,
                        const uint32_t ebpf_len,
-                       struct sock_filter *restrict cbpf_buf);
+                       struct sock_filter *restrict cbpf_buf, bool trustful);
 #endif
 
 #endif

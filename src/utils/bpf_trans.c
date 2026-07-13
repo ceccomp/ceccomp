@@ -1,4 +1,5 @@
 #include "config.h"
+#include <stdio.h>
 #if EBPF_SUPPORT == 1
 
 #include "main.h"
@@ -309,30 +310,54 @@ countbits (uint32_t from, uint32_t to)
 
 long
 ebpf2cbpf (struct bpf_insn *restrict ebpfs, const uint32_t ebpf_len,
-           struct sock_filter *restrict cbpf_buf)
+           struct sock_filter *restrict cbpf_buf, bool trustful)
 {
   volatile uint32_t i = 0;
-  /* 1ST PASS: fold eBPF insns to cBPF insns */
   if (setjmp (restore))
     {
-      // unexpected kernel migrated eBPF?
+      int lineno = err_line_no;
+      int no = i + 1;
+      if (trustful)
+        {
+          // unexpected kernel migrated eBPF?
 #ifndef __FILE_NAME__
 #define __FILE_NAME__ __FILE__
 #endif
-      char filename[] = "/tmp/ceccomp-XXXXXX";
-      int fd = mkstemp (filename);
-      long rc = -1;
+          char filename[] = "/tmp/ceccomp-XXXXXX";
+          int fd = mkstemp (filename);
+          long rc = -1;
 
-      warn (M_UNEXPECTED_EBPF_INSN, i, __FILE_NAME__, err_line_no, err_str);
-      if (fd != -1)
-        {
-          rc = write (fd, ebpfs, sizeof (struct bpf_insn) * ebpf_len);
-          if (rc != -1)
-            info (M_SAVE_EBPF_SUCCEEDED, filename);
-          close (fd);
+          warn (M_UNEXPECTED_EBPF_INSN, no, __FILE_NAME__, lineno, err_str);
+          if (fd != -1)
+            {
+              rc = write (fd, ebpfs, sizeof (struct bpf_insn) * ebpf_len);
+              if (rc != -1)
+                info (M_SAVE_EBPF_SUCCEEDED, filename);
+              close (fd);
+            }
+          if (rc == -1)
+            warn (M_SAVE_EBPF_FAILED, strerror (errno));
         }
-      if (rc == -1)
-        warn (M_SAVE_EBPF_FAILED, strerror (errno));
+      else
+        {
+          // detected errors in user-input eBPF
+#define E_G "CODE:0x0000 DST_REG:0x00 SRC_REG:0x00 OFF:0x0000 IMM:0x00000000"
+#define FMT "CODE:0x%04x DST_REG:0x%02x SRC_REG:0x%02x OFF:0x%04hx IMM:0x%08x"
+#define E_G_LEN LITERAL_STRLEN (E_G)
+          char buf[E_G_LEN * 2 + 2];
+          struct bpf_insn insn = ebpfs[i];
+          snprintf (buf, E_G_LEN + 1, FMT, insn.code, insn.dst_reg,
+                    insn.src_reg, insn.off, insn.imm);
+          buf[E_G_LEN] = '\n';
+          buf[E_G_LEN * 2 + 1] = '\0';
+          memset (buf + E_G_LEN + 1, '~', E_G_LEN);
+
+          warn (M_EBPF_INPUT_ERROR, no, __FILE_NAME__, lineno, err_str, buf);
+          error ("%s", M_DISASM_TERMINATED);
+#undef E_G
+#undef FMT
+#undef E_G_LEN
+        }
 
       free (bitmap);
       bitmap = NULL;
@@ -341,7 +366,15 @@ ebpf2cbpf (struct bpf_insn *restrict ebpfs, const uint32_t ebpf_len,
       return -1;
     }
 
-    // skip prologue
+  /* PRE-PASS: check jump destinations from untrusted source */
+  if (!trustful)
+    for (i = 0; i < ebpf_len; i++)
+      if (BPF_CLASS (ebpfs[i].code) == BPF_JMP
+          || BPF_CLASS (ebpfs[i].code) == BPF_JMP32)
+        ASSERT_JMP (ebpfs[i].off >= 0 && i + 1 + ebpfs[i].off < ebpf_len);
+
+  /* 1ST PASS: fold eBPF insns to cBPF insns */
+  // skip prologue
 #define SKIP 3
   ASSERT_JMP (BPF_CLASS (ebpfs[0].code) == BPF_ALU
               && BPF_OP (ebpfs[0].code) == BPF_XOR);

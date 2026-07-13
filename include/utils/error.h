@@ -167,5 +167,7 @@
 #define M_SAVE_EBPF_SUCCEEDED                                                 \
   _ ("Your eBPF case has been saved in %s (binary file)")
 #define M_SAVE_EBPF_FAILED _ ("Failed to save your eBPF case due to %s")
+#define M_EBPF_INPUT_ERROR                                                    \
+  _ ("#%u: Input eBPF insn does not meet assertion at %s#L%d: %s\n%s")
 
 #endif
