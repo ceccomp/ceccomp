@@ -44,7 +44,7 @@ def pid_state(pid: int) -> str | None:
 def filter_execve_k(text: str) -> str:
     lines = text.splitlines()
     for i, line in enumerate(lines):
-        if 'execve' in line or 'sendfile' in line:
+        if 'execve' in line or 'sendfile' in line or 'ptrace' in line:
             lines[i] = line[:23] + ' MAY VARY ' + line[33:]
     return '\n'.join(lines)
 
