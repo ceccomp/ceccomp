@@ -17,6 +17,7 @@ py-temp/build/
 py-temp/ceccomp.egg-info/
 py-temp/wheelhouse
 py-temp/ceccomp/ceccomp
+include/ebpf
 test_prog
 text
 gdb_scripts
