@@ -1,15 +1,12 @@
 #include "asm.h"
+#include "capture.h"
 #include "config.h"
 #include "disasm.h"
 #include "emu.h"
 #include "help.h"
-#include "main.h"
 #include "probe.h"
 #include "trace.h"
-#include "utils/arch_trans.h"
 #include "utils/color.h"
-#include "utils/error.h"
-#include "utils/logger.h"
 #include "utils/parse_args.h"
 #include <assert.h>
 #include <libintl.h>
@@ -27,13 +24,15 @@ static disasm_arg_t disasm_arg;
 static emu_arg_t emu_arg;
 static probe_arg_t probe_arg;
 static trace_arg_t trace_arg;
+static capture_arg_t capture_arg;
 
 static ceccomp_arg_t args = { .cmd = HELP_ABNORMAL,
                               .asm_arg = &asm_arg,
                               .disasm_arg = &disasm_arg,
                               .emu_arg = &emu_arg,
                               .probe_arg = &probe_arg,
-                              .trace_arg = &trace_arg };
+                              .trace_arg = &trace_arg,
+                              .capture_arg = &capture_arg };
 
 static const struct argp_option options[] = {
   { "quiet", 'q', NULL, 0, NULL, 0 },
@@ -83,6 +82,9 @@ init_args (ceccomp_arg_t *args)
   args->trace_arg->prog_idx = 0;
   args->trace_arg->quiet = false;
   args->trace_arg->seize = false;
+
+  args->capture_arg->pid = false;
+  args->capture_arg->scmp_arch = scmp_arch;
 }
 
 __attribute__ ((noreturn)) static void
@@ -95,6 +97,7 @@ help (int exit_code)
   printf ("%s\n", EMU_HINT);
   printf ("%s\n", PROBE_HINT);
   printf ("%s\n", TRACE_HINT);
+  printf ("%s\n", CAPTURE_HINT);
   printf ("%s\n", HELP_HINT);
   printf ("%s\n", VERSION_HINT);
 
@@ -147,6 +150,9 @@ main (int argc, char *argv[])
     {
     case ASM_MODE:
       assemble (asm_arg.text_file, asm_arg.scmp_arch, asm_arg.mode);
+      break;
+    case CAPTURE_MODE:
+      capture (capture_arg.scmp_arch);
       break;
     case DISASM_MODE:
       disasm (disasm_arg.raw_file, disasm_arg.scmp_arch);

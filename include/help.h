@@ -18,11 +18,16 @@
   "ceccomp trace   [ -c WHEN ] [ -o FILE ] [ -q ] PROGRAM [ program-args ]\n" \
   "                [ -c WHEN ] [ -s ] [ -q ] -p PID"
 
+#define CAPTURE_HINT "ceccomp capture [ -p PID ]"
+
 #define HELP_HINT "ceccomp help"
 #define VERSION_HINT "ceccomp version"
 
 #define M_SUBCMD_HINT                                                         \
   _ ("asm          -- Assemble bpf text to raw bytes\n"                       \
+     "capture      -- Install ebpf in kernel, capture all bpf filter when "   \
+     "they are being installed. Or "                                          \
+     "capture all installed bpf filter in specific pid process\n"             \
      "disasm       -- Disassemble raw bytes to bpf text\n"                    \
      "emu          -- Emulate bpf program with given syscall and bpf text\n"  \
      "help         -- Display ceccomp help information\n"                     \

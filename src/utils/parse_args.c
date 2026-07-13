@@ -58,6 +58,8 @@ parse_subcommand (const char *arg)
     return ASM_MODE;
   else if (!strcmp (arg, "disasm"))
     return DISASM_MODE;
+  else if (!strcmp (arg, "capture"))
+    return CAPTURE_MODE;
   else if (!strcmp (arg, "emu"))
     return EMU_MODE;
   else if (!strcmp (arg, "trace") || !strcmp (arg, "dump"))
@@ -135,6 +137,20 @@ parse_disasm (disasm_arg_t *args, int key, const char *arg,
       return 0;
     }
 
+  return 0;
+}
+
+static int
+parse_capture (capture_arg_t *args, int key, const char *arg)
+{
+  switch (key)
+    {
+    case ARGP_KEY_ARG:
+      return 0;
+    case 'p':
+      args->pid = fail_fast_strtoull (arg, M_INVALID_NUMBER);
+      return 0;
+    }
   return 0;
 }
 
@@ -252,6 +268,8 @@ parse_opt (int key, char *arg, struct argp_state *state)
 
   if (args->cmd == ASM_MODE)
     return parse_asm (args->asm_arg, key, arg, state);
+  else if (args->cmd == CAPTURE_MODE)
+    return parse_capture (args->capture_arg, key, arg);
   else if (args->cmd == DISASM_MODE)
     return parse_disasm (args->disasm_arg, key, arg, state);
   else if (args->cmd == EMU_MODE)

@@ -9,6 +9,7 @@
 typedef enum
 {
   ASM_MODE,
+  CAPTURE_MODE,
   DISASM_MODE,
   EMU_MODE,
   TRACE_MODE,
@@ -82,6 +83,12 @@ typedef struct
 
 typedef struct
 {
+  pid_t pid;
+  uint32_t scmp_arch;
+} capture_arg_t;
+
+typedef struct
+{
   subcommand_t cmd;
   color_mode_t when;
 
@@ -90,6 +97,7 @@ typedef struct
   emu_arg_t *emu_arg;
   probe_arg_t *probe_arg;
   trace_arg_t *trace_arg;
+  capture_arg_t *capture_arg;
 } ceccomp_arg_t;
 
 extern error_t parse_opt (int key, char *arg, struct argp_state *state);
