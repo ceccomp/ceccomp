@@ -44,6 +44,7 @@ typedef struct
 typedef struct
 {
   uint32_t scmp_arch;
+  bool ebpf;
   FILE *raw_file;
 } disasm_arg_t;
 

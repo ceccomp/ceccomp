@@ -37,6 +37,7 @@ static ceccomp_arg_t args = { .cmd = HELP_ABNORMAL,
 static const struct argp_option options[] = {
   { "quiet", 'q', NULL, 0, NULL, 0 },
   { "color", 'c', "COLOR", 0, NULL, 0 },
+  { "ebpf", 'e', NULL, 0, NULL, 0 },
   { "output", 'o', "OUTPUT", 0, NULL, 0 },
   { "arch", 'a', "ARCH", 0, NULL, 0 },
   { "pid", 'p', "PID", 0, NULL, 0 },
@@ -63,6 +64,7 @@ init_args (ceccomp_arg_t *args)
   args->asm_arg->text_file = stdin;
 
   args->disasm_arg->scmp_arch = scmp_arch;
+  args->disasm_arg->ebpf = false;
   args->disasm_arg->raw_file = stdin;
 
   args->emu_arg->scmp_arch = scmp_arch;
@@ -155,7 +157,7 @@ main (int argc, char *argv[])
       capture (capture_arg.scmp_arch);
       break;
     case DISASM_MODE:
-      disasm (disasm_arg.raw_file, disasm_arg.scmp_arch);
+      disasm (disasm_arg.raw_file, disasm_arg.scmp_arch, disasm_arg.ebpf);
       break;
     case EMU_MODE:
       if (emu_arg.sys_name == NULL)

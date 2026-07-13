@@ -1,10 +1,12 @@
+#include <linux/prctl.h>
 #define _GNU_SOURCE
-#include "disasm.h"
 #include "decoder/decoder.h"
 #include "decoder/formatter.h"
+#include "disasm.h"
 #include "lexical/parser.h"
 #include "main.h"
 #include "resolver/render.h"
+#include "utils/bpf_trans.h"
 #include "utils/error.h"
 #include "utils/logger.h"
 #include "utils/reverse_endian.h"
@@ -27,11 +29,11 @@ filter *g_filters;
 static uint32_t g_sz;
 
 bool
-init_global_filters (void)
+init_global_filters (uint32_t insn_count)
 {
   if (g_filters)
     return true;
-  g_sz = (sizeof (filter) * (BPF_MAXINSNS + 1) + 0xfff) & ~0xfff;
+  g_sz = (sizeof (filter) * (insn_count + 1) + 0xfff) & ~0xfff;
   void *map = mmap (NULL, g_sz, PROT_READ | PROT_WRITE, MAP_ANON | MAP_PRIVATE,
                     -1, 0);
   if (map == MAP_FAILED)
@@ -78,7 +80,7 @@ read_filters (filter *filters, FILE *from)
 #define BLK_SIZE 0x2000
 // Returned bpf_insn pointer requested with mmap, release it later!
 static struct bpf_insn *
-read_insns (FILE *from, uint32_t *count)
+read_insns (FILE *from, uint32_t *count, uint32_t *map_sizep)
 {
   void *base;
   uint32_t offset = 0, map_size = BLK_SIZE, todo = BLK_SIZE;
@@ -118,15 +120,20 @@ read_insns (FILE *from, uint32_t *count)
   uint32_t leftover = offset % sizeof (struct bpf_insn);
   if (leftover)
     warn (M_INPUT_HAS_LEFTOVER, leftover);
+#ifdef PR_SET_VMA
+  prctl (PR_SET_VMA, PR_SET_VMA_ANON_NAME, base, map_size, "user eBPF insns");
+#endif
 
   *count = offset / sizeof (struct bpf_insn);
+  *map_sizep = map_size;
   return base;
 }
 
 void
-print_prog (uint32_t scmp_arch, fprog *prog, FILE *output_fp, bool trustful)
+print_prog (uint32_t scmp_arch, fprog *prog, FILE *output_fp, bool trustful,
+            bool from_ebpf)
 {
-  if (need_reverse_endian (scmp_arch))
+  if (need_reverse_endian (scmp_arch) && !from_ebpf)
     for (uint32_t i = 0; i < prog->len; i++)
       reverse_endian (&prog->filter[i]);
 
@@ -159,17 +166,37 @@ print_prog (uint32_t scmp_arch, fprog *prog, FILE *output_fp, bool trustful)
 }
 
 void
-disasm (FILE *fp, uint32_t scmp_arch)
+disasm (FILE *fp, uint32_t scmp_arch, bool ebpf)
 {
   fprog prog;
-  assert (init_global_filters ());
+  if (ebpf)
+    {
+      uint32_t count, map_size;
+      struct bpf_insn *insns = read_insns (fp, &count, &map_size);
+      assert (insns);
+
+      if (need_reverse_endian (scmp_arch))
+        for (uint32_t i = 0; i < count; i++)
+          reverse_ebpf_endian (insns + i);
+
+      assert (init_global_filters (count));
+      long filter_len = ebpf2cbpf (insns, count, g_filters, false);
+      assert (filter_len >= 0);
+      prog.len = filter_len;
+
+      munmap (insns, map_size);
+    }
+  else
+    {
+      assert (init_global_filters (BPF_MAXINSNS));
+      prog.len = read_filters (g_filters, fp);
+    }
   prog.filter = g_filters;
-  prog.len = read_filters (g_filters, fp);
   if (prog.len == 0)
     {
       warn ("%s", M_NO_FILTER);
       return;
     }
 
-  print_prog (scmp_arch, &prog, stdout, false);
+  print_prog (scmp_arch, &prog, stdout, false, ebpf);
 }

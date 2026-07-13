@@ -135,6 +135,8 @@ parse_disasm (disasm_arg_t *args, int key, const char *arg,
     case 'a':
       args->scmp_arch = fail_fast_resolve_arch (arg);
       return 0;
+    case 'e':
+      args->ebpf = true;
     }
 
   return 0;

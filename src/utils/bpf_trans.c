@@ -341,8 +341,8 @@ ebpf2cbpf (struct bpf_insn *restrict ebpfs, const uint32_t ebpf_len,
       else
         {
           // detected errors in user-input eBPF
-#define E_G "CODE:0x0000 DST_REG:0x00 SRC_REG:0x00 OFF:0x0000 IMM:0x00000000"
-#define FMT "CODE:0x%04x DST_REG:0x%02x SRC_REG:0x%02x OFF:0x%04hx IMM:0x%08x"
+#define E_G "CODE:0x00 DST_REG:0x0 SRC_REG:0x0 OFF:0x0000 IMM:0x00000000"
+#define FMT "CODE:0x%02x DST_REG:0x%x SRC_REG:0x%x OFF:0x%04hx IMM:0x%08x"
 #define E_G_LEN LITERAL_STRLEN (E_G)
           char buf[E_G_LEN * 2 + 2];
           struct bpf_insn insn = ebpfs[i];
@@ -369,8 +369,9 @@ ebpf2cbpf (struct bpf_insn *restrict ebpfs, const uint32_t ebpf_len,
   /* PRE-PASS: check jump destinations from untrusted source */
   if (!trustful)
     for (i = 0; i < ebpf_len; i++)
-      if (BPF_CLASS (ebpfs[i].code) == BPF_JMP
-          || BPF_CLASS (ebpfs[i].code) == BPF_JMP32)
+      if ((BPF_CLASS (ebpfs[i].code) == BPF_JMP
+           || BPF_CLASS (ebpfs[i].code) == BPF_JMP32)
+          && BPF_OP (ebpfs[i].code) != BPF_EXIT)
         ASSERT_JMP (ebpfs[i].off >= 0 && i + 1 + ebpfs[i].off < ebpf_len);
 
   /* 1ST PASS: fold eBPF insns to cBPF insns */

@@ -4,6 +4,7 @@
 #include "main.h"
 #include <byteswap.h>
 #include <linux/audit.h>
+#include <linux/bpf.h>
 #include <stdbool.h>
 #include <stdint.h>
 
@@ -22,6 +23,13 @@ reverse_endian (filter *f)
 {
   f->code = bswap_16 (f->code);
   f->k = bswap_32 (f->k);
+}
+
+static inline void
+reverse_ebpf_endian (struct bpf_insn *insn)
+{
+  insn->off = bswap_16 (insn->off);
+  insn->imm = bswap_32 (insn->imm);
 }
 
 #endif
