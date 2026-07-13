@@ -1,10 +1,6 @@
 #ifndef BPF_TRANS_H
 #define BPF_TRANS_H
 
-#include "config.h"
-
-#if EBPF_SUPPORT == 1
-
 #include <linux/bpf.h>
 #include <linux/bpf_common.h>
 #include <linux/filter.h>
@@ -31,6 +27,4 @@
 extern long ebpf2cbpf (struct bpf_insn *restrict ebpfs,
                        const uint32_t ebpf_len,
                        struct sock_filter *restrict cbpf_buf, bool trustful);
-#endif
-
 #endif
