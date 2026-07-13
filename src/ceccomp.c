@@ -22,8 +22,6 @@
 #include <string.h>
 #include <sys/utsname.h>
 
-static struct utsname uts;
-
 static asm_arg_t asm_arg;
 static disasm_arg_t disasm_arg;
 static emu_arg_t emu_arg;
@@ -60,10 +58,7 @@ init_args (ceccomp_arg_t *args)
     args->when = AUTO;
   set_color (args->when, stderr);
 
-  uname (&uts);
   uint32_t scmp_arch = seccomp_arch_native ();
-  if (UNLIKELY (scmp_arch == (uint32_t)-1))
-    warn (M_UNSUPPORTED_ARCH, uts.machine);
   args->asm_arg->scmp_arch = scmp_arch;
   args->asm_arg->mode = HEXLINE;
   args->asm_arg->text_file = stdin;
