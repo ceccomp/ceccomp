@@ -58,16 +58,16 @@ init_args (ceccomp_arg_t *args)
     args->when = AUTO;
   set_color (args->when, stderr);
 
-  uint32_t scmp_arch = seccomp_arch_native ();
-  args->asm_arg->scmp_arch = scmp_arch;
+  uint32_t local_arch = seccomp_arch_native ();
+  args->asm_arg->scmp_arch = local_arch;
   args->asm_arg->mode = HEXLINE;
   args->asm_arg->text_file = stdin;
 
-  args->disasm_arg->scmp_arch = scmp_arch;
+  args->disasm_arg->scmp_arch = local_arch;
   args->disasm_arg->ebpf = false;
   args->disasm_arg->raw_file = stdin;
 
-  args->emu_arg->scmp_arch = scmp_arch;
+  args->emu_arg->scmp_arch = local_arch;
   args->emu_arg->text_file = stdin;
   for (uint32_t i = 0; i <= 5; i++)
     args->emu_arg->args[i] = 0;
@@ -85,8 +85,8 @@ init_args (ceccomp_arg_t *args)
   args->trace_arg->quiet = false;
   args->trace_arg->seize = false;
 
-  args->capture_arg->pid = false;
-  args->capture_arg->scmp_arch = scmp_arch;
+  args->capture_arg->pid = 0;
+  args->capture_arg->scmp_arch = local_arch;
 }
 
 __attribute__ ((noreturn)) static void

@@ -1,10 +1,13 @@
 #ifndef EBPF_SHARE_H
 #define EBPF_SHARE_H
 
+#include "ebpf/vmlinux.h"
+#include <linux/bpf_common.h>
+
 typedef struct
 {
   unsigned short len;
-  struct sock_filter filters[4096];
+  struct sock_filter filters[BPF_MAXINSNS];
 } scmp_arg;
 
 typedef struct

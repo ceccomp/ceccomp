@@ -1,9 +1,10 @@
 // clang-format off
 #include "ebpf/vmlinux.h"
-#include "bpf/bpf_helpers.h"
-#include "bpf/bpf_tracing.h"
-#include "bpf/bpf_core_read.h"
+#include <bpf/bpf_helpers.h>
+#include <bpf/bpf_tracing.h>
+#include <bpf/bpf_core_read.h>
 #include "ebpf_share.h"
+#include <linux/bpf_common.h>
 // clang-format on
 
 struct
@@ -40,8 +41,8 @@ BPF_PROG (seccomp_check_filter_entry, struct sock_filter *filter,
   if (tmp == NULL)
     return 0;
 
-  // this shouldn't happen. Just ignore this anyway
-  if (flen > 4096)
+  // This shouldn't happen. Just ignore this anyway
+  if (flen > BPF_MAXINSNS)
     return 0;
 
   err = bpf_map_update_elem (&unverified_filters, &pid, tmp, BPF_ANY);
