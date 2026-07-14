@@ -96,6 +96,16 @@ BPF_PROG (seccomp_ret, uint32_t op, uint32_t flags, void *uargs, long ret)
     }
 
   // op must be SECCOMP_SET_MODE_FILTER
+  struct task_struct *task = bpf_get_current_task_btf ();
+  unsigned long thread_flags = BPF_CORE_READ (task, thread_info.flags);
+#ifdef __TARGET_ARCH_arm64
+  event->scmp_arch = (flags & (1 << 22)) ? EBPF_ARCH_ARM : EBPF_ARCH_AARCH64;
+#elif defined(__TARGET_ARCH_x86)
+  event->scmp_arch = (flags & (1 << 17)) ? EBPF_ARCH_X86 : EBPF_ARCH_X64;
+#else
+  event->ebpf_arch = EBPF_ARCH_OTHERS;
+#endif
+
   event->op = SECCOMP_SET_MODE_FILTER;
   scmp_arg *arg = bpf_map_lookup_elem (&unverified_filters, &pid);
   if (arg == NULL)

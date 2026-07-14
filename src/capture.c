@@ -3,9 +3,12 @@
 #include "disasm.h"
 #include "capture.h"
 #include "ebpf/capture.skel.h"
+#include "ebpf/vmlinux.h"
 #include "ebpf_share.h"
+#include "lexical/token.h"
 #include "main.h"
 #include "utils/logger.h"
+#include <assert.h>
 #include <bpf/libbpf.h>
 #include <linux/filter.h>
 #include <linux/seccomp.h>
@@ -30,6 +33,26 @@ on_sig (int sig)
   exiting = 1;
 }
 
+static uint32_t
+trans_ebpf_arch (ebpf_arch arch, uint32_t scmp_arch)
+{
+  switch (arch)
+    {
+    case EBPF_ARCH_X86:
+      return ARCH_X86;
+    case EBPF_ARCH_X64:
+      return ARCH_X86_64;
+    case EBPF_ARCH_ARM:
+      return ARCH_ARM;
+    case EBPF_ARCH_AARCH64:
+      return ARCH_AARCH64;
+    case EBPF_ARCH_OTHERS:
+      return scmp_arch;
+    default:
+      return scmp_arch;
+    }
+}
+
 static int
 on_events (void *ctx, void *data, unsigned long size)
 {
@@ -45,6 +68,7 @@ on_events (void *ctx, void *data, unsigned long size)
   info ("capture bpf load in %d process", event->pid);
   fprog prog = { .len = event->arg.len, .filter = event->arg.filters };
 
+  c->scmp_arch = trans_ebpf_arch (event->ebpf_arch, c->scmp_arch);
   print_prog (c->scmp_arch, &prog, c->fp, true, false);
   return 0;
 }
