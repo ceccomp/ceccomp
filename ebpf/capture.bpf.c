@@ -20,7 +20,7 @@ struct
   __uint (type, BPF_MAP_TYPE_HASH);
   __uint (max_entries, 8);
   __type (key, pid_t);
-  __type (value, scmp_arg);
+  __type (value, ebpf_prog);
 } unverified_filters SEC (".maps");
 
 struct
@@ -28,7 +28,7 @@ struct
   __uint (type, BPF_MAP_TYPE_ARRAY);
   __uint (max_entries, 1);
   __type (key, pid_t);
-  __type (value, scmp_arg);
+  __type (value, ebpf_prog);
 } tmp_buf SEC (".maps");
 
 SEC ("fentry/seccomp_check_filter")
@@ -39,7 +39,7 @@ BPF_PROG (seccomp_check_filter_entry, struct sock_filter *filter,
   uint32_t pid = bpf_get_current_pid_tgid ();
   uint32_t zero = 0;
   int err = 0;
-  scmp_arg *tmp;
+  ebpf_prog *tmp;
   EBPF_EXPECT (NULL, NULL, NULL, (tmp = bpf_map_lookup_elem (&tmp_buf, &zero)),
                pid);
 
@@ -52,16 +52,16 @@ BPF_PROG (seccomp_check_filter_entry, struct sock_filter *filter,
           >= 0,
       pid);
 
-  scmp_arg *unverified;
+  ebpf_prog *unverified;
   EBPF_EXPECT (NULL, &unverified_filters, &pid,
-               (bpf_map_delete_elem (&unverified_filters, &pid)), pid);
+               (unverified = bpf_map_lookup_elem (&unverified_filters, &pid)),
+               pid);
 
-  unverified->len = flen;
-  ;
+  unverified->flen = flen;
   EBPF_EXPECT (NULL, &unverified_filters, &pid,
                err = bpf_core_read (
                    unverified->filters,
-                   unverified->len * sizeof (struct sock_filter), filter),
+                   unverified->flen * sizeof (struct sock_filter), filter),
                pid);
   return 0;
 }
@@ -79,7 +79,6 @@ strict_mode (long ret, scmp_event *event)
       bpf_ringbuf_discard (event, 0);
       return 0;
     }
-  event->op = SECCOMP_SET_MODE_STRICT;
   bpf_ringbuf_submit (event, 0);
   return 0;
 }
@@ -93,7 +92,6 @@ filter_mode (long ret, pid_t pid, scmp_event *event)
       bpf_map_delete_elem (&unverified_filters, &pid);
       return 0;
     }
-  event->op = SECCOMP_SET_MODE_FILTER;
 
   struct task_struct *task = bpf_get_current_task_btf ();
   unsigned long thread_flags = BPF_CORE_READ (task, thread_info.flags);
@@ -107,14 +105,14 @@ filter_mode (long ret, pid_t pid, scmp_event *event)
   event->ebpf_arch = EBPF_ARCH_OTHERS;
 #endif
 
-  scmp_arg *arg;
+  ebpf_prog *prog;
   EBPF_EXPECT (event, 0, 0,
-               (arg = bpf_map_lookup_elem (&unverified_filters, &pid)), pid);
+               (prog = bpf_map_lookup_elem (&unverified_filters, &pid)), pid);
 
   int err;
   EBPF_EXPECT (
       event, &unverified_filters, &pid,
-      (err = bpf_core_read (&event->arg, sizeof (scmp_arg), arg) >= 0), pid);
+      (err = bpf_core_read (&event->prog, sizeof (ebpf_prog), prog) >= 0), pid);
 
   bpf_ringbuf_submit (event, 0);
   bpf_map_delete_elem (&unverified_filters, &pid);
@@ -126,6 +124,9 @@ SEC ("fexit/do_seccomp")
 int
 BPF_PROG (seccomp_ret, uint32_t op, uint32_t flags, void *uargs, long ret)
 {
+  (void)flags;
+  (void)uargs;
+
   uint32_t pid = bpf_get_current_pid_tgid ();
   if (op == SECCOMP_GET_ACTION_AVAIL || op == SECCOMP_GET_NOTIF_SIZES)
     return 0;
@@ -136,7 +137,8 @@ BPF_PROG (seccomp_ret, uint32_t op, uint32_t flags, void *uargs, long ret)
       (event = bpf_ringbuf_reserve (&scmp_events, sizeof (scmp_event), 0)),
       pid);
   event->pid = pid;
-
+  event->op = op;
+  
   if (op == SECCOMP_SET_MODE_STRICT)
     return strict_mode (ret, event);
 

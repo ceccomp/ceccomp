@@ -3,24 +3,27 @@
 
 #ifndef _NO_VMLINUX_
 #include "ebpf/vmlinux.h"
+#else
+#include <linux/bpf.h>
 #endif
 #include <linux/bpf_common.h>
 
 typedef struct
 {
-  unsigned short len;
+  bool completed;
+  unsigned short flen;
   struct sock_filter filters[BPF_MAXINSNS];
-} scmp_arg;
+} ebpf_prog;
 
 typedef struct
 {
   uint32_t ebpf_arch;
   uint32_t op;
   pid_t pid;
-  scmp_arg arg;
+  ebpf_prog prog;
 } scmp_event;
 
-typedef enum 
+typedef enum
 {
   EBPF_ARCH_X64,
   EBPF_ARCH_X86,
@@ -28,5 +31,13 @@ typedef enum
   EBPF_ARCH_AARCH64,
   EBPF_ARCH_OTHERS,
 } ebpf_arch;
+
+#define CHUNK_SIZE 4096
+#define CHUNK_INSN_SIZE (CHUNK_SIZE / sizeof (struct bpf_insn))
+
+typedef struct
+{
+  pid_t target_tid;
+} pid_config;
 
 #endif
