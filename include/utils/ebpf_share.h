@@ -18,6 +18,7 @@ typedef struct
 {
   bool completed;
   bool missing;
+  uint32_t flen_total;
   ebpf_prog prog;
 } pid_event;
 

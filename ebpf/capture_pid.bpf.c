@@ -25,7 +25,7 @@ typedef struct
   bool missing;
   bool completed;
   struct bpf_prog *prog;
-  uint32_t insn_len;
+  uint32_t flen;
 } dump_ctx;
 
 static long
@@ -34,7 +34,7 @@ dump_chunk (uint32_t chunk_index, void *data)
   dump_ctx *ctx = data;
   uint32_t chunk_start_offset = chunk_index * CHUNK_INSN_SIZE;
 
-  uint32_t insn_count = ctx->insn_len - chunk_start_offset;
+  uint32_t insn_count = ctx->flen - chunk_start_offset;
   if (insn_count > CHUNK_INSN_SIZE)
     insn_count = CHUNK_INSN_SIZE;
 
@@ -43,7 +43,8 @@ dump_chunk (uint32_t chunk_index, void *data)
   if (event == NULL)
     return 1;
 
-  event->prog.flen = ctx->insn_len;
+  event->prog.flen = insn_count;
+  event->flen_total = ctx->flen;
   event->completed = ctx->completed;
   event->missing = ctx->missing;
 
@@ -89,9 +90,9 @@ BPF_PROG (capture_pid, uint32_t op, uint32_t flags, void *uargs)
         {
           dump_ctx ctx = { .completed = false,
                            .prog = prog,
-                           .insn_len = BPF_CORE_READ (prog, len) };
+                           .flen = BPF_CORE_READ (prog, len) };
           uint32_t loop_times
-              = (ctx.insn_len + CHUNK_INSN_SIZE - 1) / CHUNK_INSN_SIZE;
+              = (ctx.flen + CHUNK_INSN_SIZE - 1) / CHUNK_INSN_SIZE;
           bpf_loop (loop_times, dump_chunk, &ctx, 0);
         }
 
