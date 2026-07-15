@@ -4,7 +4,7 @@
 #include <bpf/bpf_tracing.h>
 #include <bpf/bpf_core_read.h>
 #include <linux/bpf_common.h>
-#include "ebpf_share.h"
+#include "utils/ebpf_share.h"
 #include "utils/ebpf_logger.h"
 #include "utils/error.h"
 // clang-format on

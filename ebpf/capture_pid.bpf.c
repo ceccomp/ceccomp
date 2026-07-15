@@ -3,7 +3,7 @@
 #include <bpf/bpf_helpers.h>
 #include <bpf/bpf_tracing.h>
 #include <bpf/bpf_core_read.h>
-#include "ebpf_share.h"
+#include "utils/ebpf_share.h"
 // clang-format on
 
 struct
