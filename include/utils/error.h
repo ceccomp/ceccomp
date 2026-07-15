@@ -170,4 +170,11 @@
 #define M_EBPF_INPUT_ERROR                                                    \
   _ ("#%u: Input eBPF insn does not meet assertion at %s#L%d: %s\n%s")
 
+// ebpf
+#define BPF_MAP_LOOKUP_FAILED "bpf_map_lookup_elem failed in process %d"
+#define FILTER_LEN_EXCEED "filter len > BPF_MAXINSNS in process %d"
+#define BPF_MAP_UPDATE_FAILED "bpf_map_update_elem failed in process %d"
+#define BPF_CORE_READ_FAILED "bpf_core_read failed in process %d"
+#define BPF_RINGBUF_RESERVE_FAILED "bpf_ringbuf_reserve failed in process %d"
+
 #endif

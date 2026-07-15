@@ -5,6 +5,7 @@
 #include <bpf/bpf_core_read.h>
 #include "ebpf_share.h"
 #include "utils/ebpf_logger.h"
+#include "utils/error.h"
 // clang-format on
 
 struct
@@ -39,21 +40,21 @@ BPF_PROG (seccomp_check_filter_entry, struct sock_filter *filter,
   int err = 0;
   scmp_arg *tmp = bpf_map_lookup_elem (&tmp_buf, &zero);
   if (tmp == NULL)
-    ebpf_log_return ("bpf_map_lookup_elem failed in process %d", pid);
+    ebpf_log_return (BPF_MAP_LOOKUP_FAILED, pid);
 
   // This shouldn't happen. Just ignore this anyway
   if (flen > BPF_MAXINSNS)
-    ebpf_log_return ("filter len > BPF_MAXINSNS in process %d", pid);
+    ebpf_log_return (FILTER_LEN_EXCEED, pid);
 
   err = bpf_map_update_elem (&unverified_filters, &pid, tmp, BPF_ANY);
   if (err < 0)
-    ebpf_log_return ("bpf_map_update_elem failed in process %d", pid);
+    ebpf_log_return (BPF_MAP_UPDATE_FAILED, pid);
 
   scmp_arg *unverified = bpf_map_lookup_elem (&unverified_filters, &pid);
   if (unverified == NULL)
     {
       bpf_map_delete_elem (&unverified_filters, &pid);
-      ebpf_log_return ("bpf_map_lookup_elem failed in process %d", pid);
+      ebpf_log_return (BPF_MAP_LOOKUP_FAILED, pid);
     }
 
   unverified->len = flen;
@@ -62,7 +63,7 @@ BPF_PROG (seccomp_check_filter_entry, struct sock_filter *filter,
   if (err < 0)
     {
       bpf_map_delete_elem (&unverified_filters, &pid);
-      ebpf_log_return ("bpf_core_read failed in process %d", pid);
+      ebpf_log_return (BPF_CORE_READ_FAILED, pid);
     }
   return 0;
 }
@@ -112,7 +113,7 @@ filter_mode (long ret, pid_t pid, scmp_event *event)
   if (arg == NULL)
     {
       bpf_ringbuf_discard (event, 0);
-      ebpf_log_return ("bpf_map_lookup_elem failed in process %d", pid);
+      ebpf_log_return (BPF_MAP_LOOKUP_FAILED, pid);
     }
 
   int err = bpf_core_read (&event->arg, sizeof (scmp_arg), arg);
@@ -120,7 +121,7 @@ filter_mode (long ret, pid_t pid, scmp_event *event)
     {
       bpf_ringbuf_discard (event, 0);
       bpf_map_delete_elem (&unverified_filters, &pid);
-      ebpf_log_return ("bpf_core_read failed in process %d", pid);
+      ebpf_log_return (BPF_CORE_READ_FAILED, pid);
     }
 
   bpf_ringbuf_submit (event, 0);
@@ -140,7 +141,7 @@ BPF_PROG (seccomp_ret, uint32_t op, uint32_t flags, void *uargs, long ret)
   scmp_event *event
       = bpf_ringbuf_reserve (&scmp_events, sizeof (scmp_event), 0);
   if (event == NULL)
-    ebpf_log_return ("bpf_ringbuf_reserve failed in process %d", pid);
+    ebpf_log_return (BPF_RINGBUF_RESERVE_FAILED, pid);
   event->pid = pid;
 
   if (op == SECCOMP_SET_MODE_STRICT)
