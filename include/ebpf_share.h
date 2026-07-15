@@ -10,10 +10,16 @@
 
 typedef struct
 {
-  bool completed;
   unsigned short flen;
   struct sock_filter filters[BPF_MAXINSNS];
 } ebpf_prog;
+
+typedef struct
+{
+  bool completed;
+  bool missing;
+  ebpf_prog prog;
+} pid_event;
 
 typedef struct
 {
@@ -21,7 +27,7 @@ typedef struct
   uint32_t op;
   pid_t pid;
   ebpf_prog prog;
-} scmp_event;
+} global_event;
 
 typedef enum
 {
@@ -37,7 +43,8 @@ typedef enum
 
 typedef struct
 {
-  pid_t target_tid;
+  pid_t target_pid;
+  pid_t trigger_pid;
 } pid_config;
 
 #endif

@@ -72,7 +72,7 @@ BPF_PROG (seccomp_check_filter_entry, struct sock_filter *filter,
 #define SECCOMP_GET_NOTIF_SIZES 3
 
 static inline int
-strict_mode (long ret, scmp_event *event)
+strict_mode (long ret, global_event *event)
 {
   if (ret != 0)
     {
@@ -84,7 +84,7 @@ strict_mode (long ret, scmp_event *event)
 }
 
 static inline int
-filter_mode (long ret, pid_t pid, scmp_event *event)
+filter_mode (long ret, pid_t pid, global_event *event)
 {
   if (ret != 0)
     {
@@ -131,10 +131,10 @@ BPF_PROG (seccomp_ret, uint32_t op, uint32_t flags, void *uargs, long ret)
   if (op == SECCOMP_GET_ACTION_AVAIL || op == SECCOMP_GET_NOTIF_SIZES)
     return 0;
 
-  scmp_event *event;
+  global_event *event;
   EBPF_EXPECT (
       NULL, NULL, NULL,
-      (event = bpf_ringbuf_reserve (&scmp_events, sizeof (scmp_event), 0)),
+      (event = bpf_ringbuf_reserve (&scmp_events, sizeof (global_event), 0)),
       pid);
   event->pid = pid;
   event->op = op;
