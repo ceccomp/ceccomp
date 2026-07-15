@@ -3,7 +3,6 @@
 #include "disasm.h"
 #include "capture.h"
 #include "ebpf/capture.skel.h"
-#include "ebpf/vmlinux.h"
 #include "ebpf_share.h"
 #include "lexical/token.h"
 #include "main.h"
@@ -74,7 +73,7 @@ on_events (void *ctx, void *data, unsigned long size)
 }
 
 void
-capture (uint32_t scmp_arch)
+capture (pid_t pid, uint32_t scmp_arch)
 {
   struct capture_bpf *skel;
   struct ring_buffer *rb;

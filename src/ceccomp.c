@@ -154,7 +154,7 @@ main (int argc, char *argv[])
       assemble (asm_arg.text_file, asm_arg.scmp_arch, asm_arg.mode);
       break;
     case CAPTURE_MODE:
-      capture (capture_arg.scmp_arch);
+      capture (capture_arg.pid, capture_arg.scmp_arch);
       break;
     case DISASM_MODE:
       disasm (disasm_arg.raw_file, disasm_arg.scmp_arch, disasm_arg.ebpf);
