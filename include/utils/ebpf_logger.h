@@ -1,15 +1,22 @@
 #ifndef EBPF_LOGGER_H
 #define EBPF_LOGGER_H
 
-#define EBPF_EXPECT(event, map, obj, cond, ...)                               \
-  if (!(cond))                                                                \
+#define EBPF_IF(cond)                                                         \
+  if ((tmp_cond = (cond)))                                                    \
+    bpf_printk ("Unexpected " #cond);                                         \
+  if (tmp_cond)
+
+#define EBPF_IF_PID(cond, pid)                                                \
+  if ((tmp_cond = (cond)))                                                    \
+    bpf_printk ("Unexpected " #cond " in process %d", pid);                   \
+  if (tmp_cond)
+
+#define EBPF_LOG_IF_PID(cond, pid)                                            \
+  do                                                                          \
     {                                                                         \
-      _Generic ((event),                                                      \
-          global_event *: bpf_ringbuf_discard (event, 0),                       \
-          default: 0);                                                        \
-      _Generic ((obj), pid_t *: bpf_map_delete_elem (map, obj), default: 0);  \
-      bpf_printk ("Unexpected !" #cond " in process %d", __VA_ARGS__);        \
-      return 0;                                                               \
-    }
+      if (cond)                                                               \
+        bpf_printk ("Unexpected " #cond " in process %d", pid);               \
+    }                                                                         \
+  while (0)
 
 #endif

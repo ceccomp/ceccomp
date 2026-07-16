@@ -19,6 +19,7 @@ typedef enum
   CHUNK_DONE,
   PROG_DONE,
   PROG_ABORTED,
+  TASK_ABORTED,
   ALL_DONE,
   TRUNCATED,
 } pid_event_status;

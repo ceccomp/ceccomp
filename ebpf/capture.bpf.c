@@ -6,7 +6,6 @@
 #include <linux/bpf_common.h>
 #include "utils/ebpf_share.h"
 #include "utils/ebpf_logger.h"
-#include "utils/error.h"
 // clang-format on
 
 struct
@@ -38,31 +37,34 @@ BPF_PROG (seccomp_check_filter_entry, struct sock_filter *filter,
 {
   uint32_t pid = bpf_get_current_pid_tgid ();
   uint32_t zero = 0;
-  int err = 0;
   ebpf_prog *tmp;
-  EBPF_EXPECT (NULL, NULL, NULL, (tmp = bpf_map_lookup_elem (&tmp_buf, &zero)),
-               pid);
+  bool tmp_cond;
+
+  EBPF_IF_PID (!(tmp = bpf_map_lookup_elem (&tmp_buf, &zero)), pid) return 0;
 
   // This shouldn't happen. Just ignore this anyway
-  EBPF_EXPECT (NULL, NULL, NULL, flen <= BPF_MAXINSNS, pid);
+  EBPF_IF_PID (flen > BPF_MAXINSNS, pid) return 0;
 
-  EBPF_EXPECT (
-      NULL, NULL, NULL,
-      (err = bpf_map_update_elem (&unverified_filters, &pid, tmp, BPF_ANY))
-          >= 0,
-      pid);
+  EBPF_IF_PID (
+      bpf_map_update_elem (&unverified_filters, &pid, tmp, BPF_ANY) < 0, pid)
+  return 0;
 
   ebpf_prog *unverified;
-  EBPF_EXPECT (NULL, &unverified_filters, &pid,
-               (unverified = bpf_map_lookup_elem (&unverified_filters, &pid)),
-               pid);
+  EBPF_IF_PID (!(unverified = bpf_map_lookup_elem (&unverified_filters, &pid)),
+               pid)
+  {
+    EBPF_LOG_IF_PID (bpf_map_delete_elem (&unverified_filters, &pid) < 0, pid);
+    return 0;
+  }
 
   unverified->flen = flen;
-  EBPF_EXPECT (NULL, &unverified_filters, &pid,
-               err = bpf_core_read (
-                   unverified->filters,
-                   unverified->flen * sizeof (struct sock_filter), filter),
-               pid);
+  EBPF_IF_PID (bpf_core_read (unverified->filters,
+                              unverified->flen * sizeof (struct sock_filter),
+                              filter)
+                   < 0,
+               pid)
+  EBPF_LOG_IF_PID (bpf_map_delete_elem (&unverified_filters, &pid) < 0, pid);
+
   return 0;
 }
 
@@ -89,12 +91,22 @@ filter_mode (long ret, pid_t pid, global_event *event)
   if (ret != 0)
     {
       bpf_ringbuf_discard (event, 0);
-      bpf_map_delete_elem (&unverified_filters, &pid);
+      EBPF_LOG_IF_PID (bpf_map_delete_elem (&unverified_filters, &pid) < 0,
+                       pid);
       return 0;
     }
 
   struct task_struct *task = bpf_get_current_task_btf ();
-  unsigned long thread_flags = BPF_CORE_READ (task, thread_info.flags);
+  bool tmp_cond;
+  unsigned long thread_flags;
+  EBPF_IF_PID (
+      BPF_CORE_READ_INTO (&thread_flags, task, thread_info.flags) < 0, pid)
+  {
+    bpf_ringbuf_discard (event, 0);
+    EBPF_LOG_IF_PID (bpf_map_delete_elem (&unverified_filters, &pid) < 0, pid);
+    return 0;
+  }
+
 #ifdef __TARGET_ARCH_arm64
   event->ebpf_arch
       = (thread_flags & (1 << 22)) ? EBPF_ARCH_ARM : EBPF_ARCH_AARCH64;
@@ -106,16 +118,22 @@ filter_mode (long ret, pid_t pid, global_event *event)
 #endif
 
   ebpf_prog *prog;
-  EBPF_EXPECT (event, 0, 0,
-               (prog = bpf_map_lookup_elem (&unverified_filters, &pid)), pid);
+  EBPF_IF_PID (!(prog = bpf_map_lookup_elem (&unverified_filters, &pid)), pid)
+  {
+    bpf_ringbuf_discard (event, 0);
+    EBPF_LOG_IF_PID (bpf_map_delete_elem (&unverified_filters, &pid) < 0, pid);
+    return 0;
+  }
 
-  int err;
-  EBPF_EXPECT (
-      event, &unverified_filters, &pid,
-      (err = bpf_core_read (&event->prog, sizeof (ebpf_prog), prog) >= 0), pid);
+  EBPF_IF_PID (bpf_core_read (&event->prog, sizeof (ebpf_prog), prog) < 0, pid)
+  {
+    bpf_ringbuf_discard (event, 0);
+    EBPF_LOG_IF_PID (bpf_map_delete_elem (&unverified_filters, &pid) < 0, pid);
+    return 0;
+  }
 
   bpf_ringbuf_submit (event, 0);
-  bpf_map_delete_elem (&unverified_filters, &pid);
+  EBPF_LOG_IF_PID (bpf_map_delete_elem (&unverified_filters, &pid) < 0, pid);
   return 0;
 }
 
@@ -132,13 +150,15 @@ BPF_PROG (seccomp_ret, uint32_t op, uint32_t flags, void *uargs, long ret)
     return 0;
 
   global_event *event;
-  EBPF_EXPECT (
-      NULL, NULL, NULL,
-      (event = bpf_ringbuf_reserve (&scmp_events, sizeof (global_event), 0)),
-      pid);
+  bool tmp_cond;
+  EBPF_IF_PID (
+      !(event = bpf_ringbuf_reserve (&scmp_events, sizeof (global_event), 0)),
+      pid)
+  return 0;
+
   event->pid = pid;
   event->op = op;
-  
+
   if (op == SECCOMP_SET_MODE_STRICT)
     return strict_mode (ret, event);
 
