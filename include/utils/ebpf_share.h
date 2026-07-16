@@ -14,10 +14,18 @@ typedef struct
   struct sock_filter filters[BPF_MAXINSNS];
 } ebpf_prog;
 
+typedef enum
+{
+  CHUNK_DONE,
+  PROG_DONE,
+  PROG_ABORTED,
+  ALL_DONE,
+  TRUNCATED,
+} pid_event_status;
+
 typedef struct
 {
-  bool completed;
-  bool missing;
+  pid_event_status status;
   uint32_t flen_total;
   ebpf_prog prog;
 } pid_event;

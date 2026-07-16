@@ -52,27 +52,45 @@ on_pid_events (void *ctx, void *data, unsigned long size)
   (void)size;
   pid_event *event = data;
   pid_event_ctx *c = ctx;
-  static uint32_t insn_offset;
-  if (event->completed)
-    {
-      c->event.completed = true;
-      if (event->missing == true)
-        info ("%s", "too much seccomp filter in task->seccomp->filter->prev, "
-                    "failed dump them all");
-      // do some disasm here
-      c->ebpf_insns = NULL;
-      return 0;
-    }
-  if (c->ebpf_insns == NULL)
-  {
-    insn_offset = 0;
-    c->ebpf_insns = malloc (event->flen_total * sizeof (struct bpf_insn));
-  }
+  static uint32_t insn_offset = 0;
 
-  memcpy (c->ebpf_insns + insn_offset, event->prog.filters,
-          event->prog.flen * sizeof (struct bpf_insn));
-  c->flen = event->flen_total;
-  insn_offset += event->prog.flen;
+  switch (event->status)
+    {
+    case CHUNK_DONE:
+    case PROG_DONE:
+      if (c->ebpf_insns == NULL)
+        c->ebpf_insns = malloc (event->flen_total * sizeof (struct bpf_insn));
+      memcpy (c->ebpf_insns + insn_offset, event->prog.filters,
+              event->prog.flen * sizeof (struct bpf_insn));
+      insn_offset += event->prog.flen;
+      if (event->status == CHUNK_DONE)
+        break;
+
+      c->flen = event->flen_total;
+      // do some disasm here
+    case PROG_ABORTED:
+      if (event->status == PROG_ABORTED)
+        warn ("%s",
+              "one seccomp filter dump is aborted by ebpf program for unknown "
+              "reasons");
+      // reset everything
+      insn_offset = 0;
+      free (c->ebpf_insns);
+      c->ebpf_insns = NULL;
+      break;
+    case ALL_DONE:
+      c->event.status = ALL_DONE;
+      break;
+    case TRUNCATED:
+      c->event.status = TRUNCATED;
+      info ("%s", "too much seccomp filter in task->seccomp->filter->prev, "
+                  "failed dump them all");
+      break;
+    default:
+      assert (!"impossible status received from ebpf");
+      break;
+    }
+
   return 0;
 }
 
@@ -87,15 +105,15 @@ capture_pid (pid_t pid)
   pid_config config = { .target_pid = pid, .trigger_pid = getpid () };
 
   skel = capture_pid_bpf__open_and_load ();
-  bpf_map_update_elem (bpf_map__fd (skel->maps.seccomp_ebpf_config_map), &zero,
-                       &config, BPF_ANY);
-  rb = ring_buffer__new (bpf_map__fd (skel->maps.seccomp_ebpf_events),
-                         on_pid_events, &ctx, NULL);
+  bpf_map_update_elem (bpf_map__fd (skel->maps.scmp_config), &zero, &config,
+                       BPF_ANY);
+  rb = ring_buffer__new (bpf_map__fd (skel->maps.scmp_events), on_pid_events,
+                         &ctx, NULL);
   capture_pid_bpf__attach (skel);
 
   uint32_t action = SECCOMP_RET_ALLOW;
   syscall (SYS_seccomp, SECCOMP_GET_ACTION_AVAIL, 0, &action);
-  while (!ctx.event.completed && !exiting)
+  while (ctx.event.status != ALL_DONE && ctx.event.status != TRUNCATED)
     {
       err = ring_buffer__poll (rb, -1);
       if (err < 0)
