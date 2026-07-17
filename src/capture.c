@@ -13,6 +13,7 @@
 #include <linux/bpf.h>
 #include <linux/filter.h>
 #include <linux/seccomp.h>
+#include <seccomp.h>
 #include <signal.h>
 #include <stdbool.h>
 #include <stdint.h>
@@ -141,15 +142,14 @@ trans_ebpf_arch (ebpf_arch arch, uint32_t scmp_arch)
   switch (arch)
     {
     case EBPF_ARCH_X86:
-      return ARCH_X86;
+      return SCMP_ARCH_X86;
     case EBPF_ARCH_X64:
-      return ARCH_X86_64;
+      return SCMP_ARCH_X86_64;
     case EBPF_ARCH_ARM:
-      return ARCH_ARM;
+      return SCMP_ARCH_ARM;
     case EBPF_ARCH_AARCH64:
-      return ARCH_AARCH64;
+      return SCMP_ARCH_AARCH64;
     case EBPF_ARCH_OTHERS:
-      return scmp_arch;
     default:
       return scmp_arch;
     }
@@ -187,6 +187,7 @@ capture (pid_t pid, uint32_t scmp_arch)
       return;
     }
 
+  // capture globally
   struct capture_bpf *skel;
   struct ring_buffer *rb;
   global_event_ctx ctx = { .fp = stdout, .scmp_arch = scmp_arch };
@@ -196,7 +197,7 @@ capture (pid_t pid, uint32_t scmp_arch)
   return;
 
   IF_WARN (!(rb = ring_buffer__new (bpf_map__fd (skel->maps.scmp_events),
-                                    on_events, &ctx, NULL)));
+                                    on_events, &ctx, NULL)))
   goto destroy_bpf;
 
   IF_WARN (capture_bpf__attach (skel))
