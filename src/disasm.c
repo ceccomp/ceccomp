@@ -94,7 +94,7 @@ read_insns (FILE *from, uint32_t *count, uint32_t *map_sizep)
 
   while (true)
     {
-      long rc = read (fd, base + offset, todo);
+      long rc = read (fd, (uint8_t *)base + offset, todo);
       if (UNLIKELY (rc == -1))
         error (M_READ_FAIL, strerror (errno));
       if (rc == 0)

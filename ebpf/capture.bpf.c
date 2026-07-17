@@ -1,12 +1,10 @@
-// clang-format off
 #include "ebpf/vmlinux.h"
+#include "utils/ebpf_logger.h"
+#include "utils/ebpf_share.h"
+#include <bpf/bpf_core_read.h>
 #include <bpf/bpf_helpers.h>
 #include <bpf/bpf_tracing.h>
-#include <bpf/bpf_core_read.h>
 #include <linux/bpf_common.h>
-#include "utils/ebpf_share.h"
-#include "utils/ebpf_logger.h"
-// clang-format on
 
 struct
 {
@@ -99,8 +97,8 @@ filter_mode (long ret, pid_t pid, global_event *event)
   struct task_struct *task = bpf_get_current_task_btf ();
   bool tmp_cond;
   unsigned long thread_flags;
-  EBPF_IF_PID (
-      BPF_CORE_READ_INTO (&thread_flags, task, thread_info.flags) < 0, pid)
+  EBPF_IF_PID (BPF_CORE_READ_INTO (&thread_flags, task, thread_info.flags) < 0,
+               pid)
   {
     bpf_ringbuf_discard (event, 0);
     EBPF_LOG_IF_PID (bpf_map_delete_elem (&unverified_filters, &pid) < 0, pid);

@@ -1,13 +1,9 @@
-// clang-format off
 #include "ebpf/vmlinux.h"
+#include "utils/ebpf_logger.h"
+#include "utils/ebpf_share.h"
+#include <bpf/bpf_core_read.h>
 #include <bpf/bpf_helpers.h>
 #include <bpf/bpf_tracing.h>
-#include <bpf/bpf_core_read.h>
-#include <libintl.h>
-#include <locale.h>
-#include "utils/ebpf_share.h"
-#include "utils/ebpf_logger.h"
-// clang-format on
 
 struct
 {
@@ -113,7 +109,7 @@ BPF_PROG (capture_pid, uint32_t op, uint32_t flags, void *uargs)
       uint32_t loop_times = (ctx.flen + CHUNK_INSN_SIZE - 1) / CHUNK_INSN_SIZE;
       EBPF_IF (bpf_loop (loop_times, dump_chunk, &ctx, 0) < 0) goto next;
 
-next:
+    next:
       EBPF_IF (BPF_CORE_READ_INTO (&next, filter, prev) < 0)
       {
         failed = true;

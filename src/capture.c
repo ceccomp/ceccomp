@@ -1,28 +1,26 @@
-// clang-format off
-#include <linux/bpf.h>
 #define _NO_VMLINUX_
-#include <stdbool.h>
-#include <stdlib.h>
-#include <string.h>
-#include "disasm.h"
 #include "capture.h"
+#include "disasm.h"
 #include "ebpf/capture.skel.h"
 #include "ebpf/capture_pid.skel.h"
-#include "utils/ebpf_share.h"
 #include "lexical/token.h"
 #include "main.h"
+#include "utils/ebpf_share.h"
 #include "utils/logger.h"
 #include <assert.h>
 #include <bpf/bpf.h>
 #include <bpf/libbpf.h>
+#include <linux/bpf.h>
 #include <linux/filter.h>
 #include <linux/seccomp.h>
 #include <signal.h>
+#include <stdbool.h>
 #include <stdint.h>
+#include <stdlib.h>
+#include <string.h>
 #include <sys/syscall.h>
 #include <sys/types.h>
 #include <unistd.h>
-// clang-format on
 
 typedef struct
 {
@@ -67,6 +65,7 @@ on_pid_events (void *ctx, void *data, unsigned long size)
         break;
 
       c->flen = event->flen_total;
+      // fall through
       // do some disasm here
     case PROG_ABORTED:
       if (event->status == PROG_ABORTED)
@@ -79,7 +78,7 @@ on_pid_events (void *ctx, void *data, unsigned long size)
       c->ebpf_insns = NULL;
       break;
     case TRUNCATED:
-    case TASK_ABORTED:;
+    case TASK_ABORTED:
     case ALL_DONE:
       c->event.status = event->status;
       if (event->status == TRUNCATED)

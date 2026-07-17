@@ -20,7 +20,7 @@ static const union insn_name_t
 #include "x-macro/valid_codes.h"
 #undef X
   };
-  char str[0];
+  char str[];
 } insn_names = { {
 // "BPF_LD | BPF_W | BPF_ABS",
 #define X(idx, val) #val,
