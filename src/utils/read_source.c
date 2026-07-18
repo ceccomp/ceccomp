@@ -4,8 +4,8 @@
 #include "utils/logger.h"
 #include <assert.h>
 #include <errno.h>
-#include <linux/prctl.h>
 #include <linux/bpf_common.h>
+#include <linux/prctl.h>
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>

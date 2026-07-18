@@ -4,8 +4,8 @@
 #include "lexical/token.h"
 #include "main.h"
 #include <seccomp.h>
-#include <stdint.h>
 #include <stdbool.h>
+#include <stdint.h>
 
 extern uint32_t internal_arch_to_scmp_arch (uint32_t internal_arch);
 

@@ -33,11 +33,12 @@ typedef struct
   // but EQUAL is skipped
 } assign_line_t;
 
-typedef enum __attribute__((packed)) {
-    CMP_NUMBER = 0,
-    CMP_ARCH = 1,
-    CMP_SYSCALL = 2,
-    CMP_ARCH_SYSCALL = 3,
+typedef enum __attribute__ ((packed))
+{
+  CMP_NUMBER = 0,
+  CMP_ARCH = 1,
+  CMP_SYSCALL = 2,
+  CMP_ARCH_SYSCALL = 3,
 } comparator_t;
 
 typedef struct
