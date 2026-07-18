@@ -3,8 +3,8 @@
 #include "disasm.h"
 #include "ebpf/capture.skel.h"
 #include "ebpf/capture_pid.skel.h"
-#include "lexical/token.h"
 #include "main.h"
+#include "utils/bpf_trans.h"
 #include "utils/ebpf_share.h"
 #include "utils/logger.h"
 #include <assert.h>
@@ -33,6 +33,7 @@ typedef struct
 {
   pid_event event;
   uint32_t flen;
+  uint32_t scmp_arch;
   struct bpf_insn *ebpf_insns;
 } pid_event_ctx;
 
@@ -43,6 +44,36 @@ on_sig (int sig)
 {
   (void)sig;
   exiting = 1;
+}
+
+static uint32_t
+trans_ebpf_arch (ebpf_arch arch, uint32_t scmp_arch)
+{
+  switch (arch)
+    {
+    case EBPF_ARCH_X86:
+      return SCMP_ARCH_X86;
+    case EBPF_ARCH_X64:
+      return SCMP_ARCH_X86_64;
+    case EBPF_ARCH_ARM:
+      return SCMP_ARCH_ARM;
+    case EBPF_ARCH_AARCH64:
+      return SCMP_ARCH_AARCH64;
+    case EBPF_ARCH_OTHERS:
+    default:
+      return scmp_arch;
+    }
+}
+
+static void
+do_ebpf_disasm (pid_event_ctx *c, uint32_t default_scmp_arch)
+{
+  filter *cbpf_buf = malloc (c->flen * sizeof (filter));
+  uint32_t cbpf_len = ebpf2cbpf (c->ebpf_insns, c->flen, cbpf_buf, true);
+  fprog prog = { .len = cbpf_len, .filter = cbpf_buf };
+  uint32_t scmp_arch = trans_ebpf_arch (c->event.ebpf_arch, default_scmp_arch);
+
+  print_prog (scmp_arch, &prog, stdout, true, true);
 }
 
 static int
@@ -65,7 +96,9 @@ on_pid_events (void *ctx, void *data, unsigned long size)
       if (event->status == CHUNK_DONE)
         break;
 
+      c->event.ebpf_arch = event->ebpf_arch;
       c->flen = event->flen_total;
+      do_ebpf_disasm (c, c->scmp_arch);
       // fall through
       // do some disasm here
     case PROG_ABORTED:
@@ -97,11 +130,11 @@ on_pid_events (void *ctx, void *data, unsigned long size)
 }
 
 static void
-capture_pid (pid_t pid)
+capture_pid (pid_t pid, uint32_t scmp_arch)
 {
   struct capture_pid_bpf *skel;
   struct ring_buffer *rb;
-  pid_event_ctx ctx = { .ebpf_insns = NULL };
+  pid_event_ctx ctx = { .ebpf_insns = NULL, .scmp_arch = scmp_arch };
   bool tmp_cond;
   uint32_t zero = 0;
   pid_config config = { .target_pid = pid, .trigger_pid = getpid () };
@@ -136,25 +169,6 @@ destroy_bpf:
   capture_pid_bpf__destroy (skel);
 }
 
-static uint32_t
-trans_ebpf_arch (ebpf_arch arch, uint32_t scmp_arch)
-{
-  switch (arch)
-    {
-    case EBPF_ARCH_X86:
-      return SCMP_ARCH_X86;
-    case EBPF_ARCH_X64:
-      return SCMP_ARCH_X86_64;
-    case EBPF_ARCH_ARM:
-      return SCMP_ARCH_ARM;
-    case EBPF_ARCH_AARCH64:
-      return SCMP_ARCH_AARCH64;
-    case EBPF_ARCH_OTHERS:
-    default:
-      return scmp_arch;
-    }
-}
-
 static int
 on_events (void *ctx, void *data, unsigned long size)
 {
@@ -183,7 +197,7 @@ capture (pid_t pid, uint32_t scmp_arch)
 
   if (pid != 0)
     {
-      capture_pid (pid);
+      capture_pid (pid, scmp_arch);
       return;
     }
 

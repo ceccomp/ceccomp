@@ -95,22 +95,26 @@ filter_mode (long ret, pid_t pid, global_event *event)
     }
 
   struct task_struct *task = bpf_get_current_task_btf ();
+
   bool tmp_cond;
-  unsigned long thread_flags;
-  EBPF_IF_PID (BPF_CORE_READ_INTO (&thread_flags, task, thread_info.flags) < 0,
-               pid)
+#ifdef __TARGET_ARCH_arm64
+  unsigned long tflags;
+  EBPF_IF_PID (BPF_CORE_READ_INTO (&tflags, task, thread_info.flags) < 0, pid)
   {
     bpf_ringbuf_discard (event, 0);
     EBPF_LOG_IF_PID (bpf_map_delete_elem (&unverified_filters, &pid) < 0, pid);
     return 0;
   }
-
-#ifdef __TARGET_ARCH_arm64
-  event->ebpf_arch
-      = (thread_flags & (1 << 22)) ? EBPF_ARCH_ARM : EBPF_ARCH_AARCH64;
+  event->ebpf_arch = (tflags & (1 << 22)) ? EBPF_ARCH_ARM : EBPF_ARCH_AARCH64;
 #elif defined(__TARGET_ARCH_x86)
-  event->ebpf_arch
-      = (thread_flags & (1 << 17)) ? EBPF_ARCH_X86 : EBPF_ARCH_X64;
+  uint32_t status;
+  EBPF_IF_PID (BPF_CORE_READ_INTO (&status, task, thread_info.status) < 0, pid)
+  {
+    bpf_ringbuf_discard (event, 0);
+    EBPF_LOG_IF_PID (bpf_map_delete_elem (&unverified_filters, &pid) < 0, pid);
+    return 0;
+  }
+  event->ebpf_arch = (status & 2) ? EBPF_ARCH_X86 : EBPF_ARCH_X64;
 #else
   event->ebpf_arch = EBPF_ARCH_OTHERS;
 #endif

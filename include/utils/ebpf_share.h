@@ -27,6 +27,7 @@ typedef enum
 typedef struct
 {
   pid_event_status status;
+  uint32_t ebpf_arch;
   uint32_t flen_total;
   ebpf_prog prog;
 } pid_event;

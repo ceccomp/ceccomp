@@ -24,6 +24,7 @@ typedef struct
   pid_event_status status;
   struct bpf_prog *prog;
   uint32_t flen;
+  ebpf_arch arch;
   bool failed;
 } dump_ctx;
 
@@ -33,13 +34,13 @@ dump_chunk (uint32_t chunk_index, void *data)
   dump_ctx *ctx = data;
   uint32_t chunk_start_offset = chunk_index * CHUNK_INSN_SIZE;
 
-  uint32_t insn_count = ctx->flen - chunk_start_offset;
-  if (insn_count <= CHUNK_INSN_SIZE)
+  uint32_t remaining_insns = ctx->flen - chunk_start_offset;
+  if (remaining_insns <= CHUNK_INSN_SIZE)
     ctx->status = PROG_DONE;
   else
     {
-      insn_count = CHUNK_INSN_SIZE;
       ctx->status = CHUNK_DONE;
+      remaining_insns = CHUNK_INSN_SIZE;
     }
 
   pid_event *event;
@@ -47,15 +48,16 @@ dump_chunk (uint32_t chunk_index, void *data)
   EBPF_IF (!(event = bpf_ringbuf_reserve (&scmp_events, sizeof (*event), 0)))
   return 1;
 
+  event->ebpf_arch = ctx->arch;
   event->status = ctx->status;
-  event->prog.flen = insn_count;
+  event->prog.flen = remaining_insns;
   event->flen_total = ctx->flen;
 
   const void *insnsi = (const void *)ctx->prog
                        + bpf_core_field_offset (struct bpf_prog, insnsi)
                        + chunk_start_offset * sizeof (struct bpf_insn);
   EBPF_IF (bpf_core_read (event->prog.filters,
-                          insn_count * sizeof (struct bpf_insn), insnsi)
+                          remaining_insns * sizeof (struct bpf_insn), insnsi)
            < 0)
   {
     event->status = PROG_ABORTED;
@@ -91,6 +93,23 @@ BPF_PROG (capture_pid, uint32_t op, uint32_t flags, void *uargs)
   EBPF_IF (BPF_CORE_READ_INTO (&filter, task, seccomp.filter) < 0)
   failed = true;
 
+  ebpf_arch arch;
+#ifdef __TARGET_ARCH_arm64
+  unsigned long tflags;
+  EBPF_IF_PID (BPF_CORE_READ_INTO (&tflags, task, thread_info.flags) < 0)
+  return 0;
+
+  arch = (tflags & (1 << 22)) ? EBPF_ARCH_ARM : EBPF_ARCH_AARCH64;
+#elif defined(__TARGET_ARCH_x86)
+  uint32_t status;
+  EBPF_IF (BPF_CORE_READ_INTO (&status, task, thread_info.status) < 0)
+  return 0;
+
+  arch = (status & 2) ? EBPF_ARCH_X86 : EBPF_ARCH_X64;
+#else
+  arch = EBPF_ARCH_OTHERS;
+#endif
+
   for (uint32_t prog_index = 0; !failed && filter != NULL && prog_index < 32;
        prog_index++)
     {
@@ -105,7 +124,8 @@ BPF_PROG (capture_pid, uint32_t op, uint32_t flags, void *uargs)
 
       EBPF_IF (BPF_CORE_READ_INTO (&flen, prog, len) < 0) goto next;
 
-      dump_ctx ctx = { .prog = prog, .flen = flen, .failed = false };
+      dump_ctx ctx
+          = { .prog = prog, .flen = flen, .failed = false, .arch = arch };
       uint32_t loop_times = (ctx.flen + CHUNK_INSN_SIZE - 1) / CHUNK_INSN_SIZE;
       EBPF_IF (bpf_loop (loop_times, dump_chunk, &ctx, 0) < 0) goto next;
 
