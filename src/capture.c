@@ -6,6 +6,7 @@
 #include "main.h"
 #include "utils/bpf_trans.h"
 #include "utils/ebpf_share.h"
+#include "utils/error.h"
 #include "utils/logger.h"
 #include <assert.h>
 #include <bpf/bpf.h>
@@ -69,11 +70,14 @@ static void
 do_ebpf_disasm (pid_event_ctx *c, uint32_t default_scmp_arch)
 {
   filter *cbpf_buf = malloc (c->flen * sizeof (filter));
-  uint32_t cbpf_len = ebpf2cbpf (c->ebpf_insns, c->flen, cbpf_buf, true);
+  int32_t cbpf_len = ebpf2cbpf (c->ebpf_insns, c->flen, cbpf_buf, true);
+  if (cbpf_len == -1)
+    error ("%s", M_FAIL_TRANSFER_EBPF);
   fprog prog = { .len = cbpf_len, .filter = cbpf_buf };
   uint32_t scmp_arch = trans_ebpf_arch (c->event.ebpf_arch, default_scmp_arch);
 
   print_prog (scmp_arch, &prog, stdout, true, true);
+  free (cbpf_buf);
 }
 
 static int
@@ -103,9 +107,7 @@ on_pid_events (void *ctx, void *data, unsigned long size)
       // do some disasm here
     case PROG_ABORTED:
       if (event->status == PROG_ABORTED)
-        warn ("%s",
-              "one seccomp filter dump is aborted by ebpf program for unknown "
-              "reasons");
+        warn ("%s", M_UNKNOWN_PROG_ABORTED);
       // reset everything
       insn_offset = 0;
       free (c->ebpf_insns);
@@ -116,10 +118,9 @@ on_pid_events (void *ctx, void *data, unsigned long size)
     case ALL_DONE:
       c->event.status = event->status;
       if (event->status == TRUNCATED)
-        warn ("%s", "too much seccomp filter in task->seccomp->filter->prev, "
-                    "failed dump them all");
+        warn ("%s", M_PROG_TRUNCATED);
       else if (event->status == TASK_ABORTED)
-        warn ("%s", "dump failed due to unknown reasons");
+        warn ("%s", M_UNKNOWN_TASK_ABORTED);
       break;
     default:
       assert (!"Unexpected status received from ebpf");

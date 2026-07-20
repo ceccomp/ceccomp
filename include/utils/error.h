@@ -169,6 +169,15 @@
 #define M_SAVE_EBPF_FAILED _ ("Failed to save your eBPF case due to %s")
 #define M_EBPF_INPUT_ERROR                                                    \
   _ ("#%u: Input eBPF insn does not meet assertion at %s#L%d: %s\n%s")
+#define M_FAIL_TRANSFER_EBPF _ ("Failed to transfer ebpf to cbpf")
+#define M_UNKNOWN_PROG_ABORTED                                                \
+  _ ("A seccomp filter dump is aborted by ebpf programs due to unknown "      \
+     "reason")
+#define M_UNKNOWN_TASK_ABORTED                                                \
+  _ ("Dump failed due to unknown reasons, task aborted")
+#define M_PROG_TRUNCATED                                                      \
+  _ ("Too much seccomp filter in task->seccomp->filter->prev, "               \
+     "failed dump them all")
 
 // ebpf
 #define BPF_MAP_LOOKUP_FAILED "bpf_map_lookup_elem failed in process %d"
