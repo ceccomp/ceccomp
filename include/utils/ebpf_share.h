@@ -8,6 +8,12 @@
 #endif
 #include <linux/bpf_common.h>
 
+#ifdef __TARGET_ARCH_arm64
+#define TIF_32BIT 22
+#elif defined(__TARGET_ARCH_x86)
+#define TS_COMPAT 2
+#endif
+
 typedef struct
 {
   unsigned short flen;
