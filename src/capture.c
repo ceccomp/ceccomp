@@ -136,23 +136,39 @@ capture_pid (pid_t pid, uint32_t scmp_arch)
   struct capture_pid_bpf *skel;
   struct ring_buffer *rb;
   pid_event_ctx ctx = { .ebpf_insns = NULL, .scmp_arch = scmp_arch };
-  bool tmp_cond;
+  int32_t err = 0;
   uint32_t zero = 0;
   pid_config config = { .target_pid = pid, .trigger_pid = getpid () };
 
-  IF_WARN (!(skel = capture_pid_bpf__open_and_load ()))
-  return;
+  skel = capture_pid_bpf__open_and_load ();
+  if (!skel)
+    {
+      warn (M_FAILED_OPEN_LOAD, strerror (errno));
+      return;
+    }
 
-  IF_WARN (bpf_map_update_elem (bpf_map__fd (skel->maps.scmp_config), &zero,
-                                &config, BPF_ANY))
-  goto destroy_bpf;
+  err = bpf_map_update_elem (bpf_map__fd (skel->maps.scmp_config), &zero,
+                             &config, BPF_ANY);
+  if (err == -1)
+    {
+      warn (M_FAILED_UPDATE_MAP, strerror (errno));
+      goto destroy_bpf;
+    }
 
-  IF_WARN (!(rb = ring_buffer__new (bpf_map__fd (skel->maps.scmp_events),
-                                    on_pid_events, &ctx, NULL)))
-  goto destroy_bpf;
+  rb = ring_buffer__new (bpf_map__fd (skel->maps.scmp_events), on_pid_events,
+                         &ctx, NULL);
+  if (!rb)
+    {
+      warn (M_FAILED_CREATE_RINGBUF, strerror (errno));
+      goto destroy_bpf;
+    }
 
-  IF_WARN (capture_pid_bpf__attach (skel))
-  goto free_ring_buf;
+  err = capture_pid_bpf__attach (skel);
+  if (err < 0)
+    {
+      warn (M_FAILED_ATTACH, strerror (-err));
+      goto free_ring_buf;
+    }
 
   uint32_t action = SECCOMP_RET_ALLOW;
   syscall (SYS_seccomp, SECCOMP_GET_ACTION_AVAIL, 0, &action);
@@ -178,11 +194,11 @@ on_events (void *ctx, void *data, unsigned long size)
   global_event_ctx *c = ctx;
   if (event->op == SECCOMP_SET_MODE_STRICT)
     {
-      info ("%d process enable strict mode", event->pid);
+      warn (M_FOUND_STRICT_MODE, event->pid);
       return 0;
     }
   // event->op == SECCOMP_SET_MODE_FILTER
-  info ("capture bpf load in %d process", event->pid);
+  info (M_CAPTURE_EBPF_IN_PROCESS, event->pid);
   fprog prog = { .len = event->prog.flen, .filter = event->prog.filters };
 
   c->scmp_arch = trans_ebpf_arch (event->ebpf_arch, c->scmp_arch);
@@ -206,17 +222,29 @@ capture (pid_t pid, uint32_t scmp_arch)
   struct capture_bpf *skel;
   struct ring_buffer *rb;
   global_event_ctx ctx = { .fp = stdout, .scmp_arch = scmp_arch };
-  bool tmp_cond;
+  int32_t err;
 
-  IF_WARN (!(skel = capture_bpf__open_and_load ()))
-  return;
+  skel = capture_bpf__open_and_load ();
+  if (!skel)
+    {
+      warn (M_FAILED_OPEN_LOAD, strerror (errno));
+      return;
+    }
 
-  IF_WARN (!(rb = ring_buffer__new (bpf_map__fd (skel->maps.scmp_events),
-                                    on_events, &ctx, NULL)))
-  goto destroy_bpf;
+  rb = ring_buffer__new (bpf_map__fd (skel->maps.scmp_events), on_events, &ctx,
+                         NULL);
+  if (!rb)
+    {
+      warn (M_FAILED_CREATE_RINGBUF, strerror (errno));
+      goto destroy_bpf;
+    }
 
-  IF_WARN (capture_bpf__attach (skel))
-  goto free_ring_buf;
+  err = capture_bpf__attach (skel);
+  if (err < 0)
+    {
+      warn (M_FAILED_ATTACH, strerror (-err));
+      goto free_ring_buf;
+    }
 
   while (!exiting)
     {

@@ -178,6 +178,11 @@
 #define M_PROG_TRUNCATED                                                      \
   _ ("Too much seccomp filter in task->seccomp->filter->prev, "               \
      "failed dump them all")
+#define M_FAILED_OPEN_LOAD _ ("Failed to open/load ebpf: %s")
+#define M_FAILED_UPDATE_MAP _ ("Failed to update ebpf map: %s")
+#define M_FAILED_CREATE_RINGBUF _ ("Failed to create ring buffer: %s")
+#define M_FAILED_ATTACH _ ("Failed to attach ebpf: %s")
+#define M_CAPTURE_EBPF_IN_PROCESS _ ("capture bpf load in %d process")
 
 // ebpf
 #define BPF_MAP_LOOKUP_FAILED "bpf_map_lookup_elem failed in process %d"

@@ -19,9 +19,4 @@ __attribute__ ((noinline)) __attribute__ ((noreturn)) void error_print (const ch
 #define warn(fmt, ...) warn_print (__func__, fmt, __VA_ARGS__)
 #define error(fmt, ...) error_print (__func__, fmt, __VA_ARGS__)
 
-#define IF_WARN(cond)                                                         \
-  if ((tmp_cond = (cond)))                                                    \
-    warn ("%s", "Unexpected " #cond);                                         \
-  if (tmp_cond)
-
 #endif
