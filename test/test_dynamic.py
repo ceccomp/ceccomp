@@ -48,6 +48,12 @@ def filter_execve_k(text: str) -> str:
             lines[i] = line[:23] + ' MAY VARY ' + line[33:]
     return '\n'.join(lines)
 
+def fill_pid(log: str, pid: int) -> str:
+    idx = log.find('------')
+    assert idx != -1
+    prefix = f'PID={pid} '
+    return log.replace('-' * len(prefix), prefix, count=1)
+
 # -a x86_64 option in COMMON_OPTS will be ignored in trace/probe
 
 ##### TEST CASES #####
@@ -79,13 +85,15 @@ def test_trace(errns: SimpleNamespace):
     piper, pipew = os.pipe()
     os.set_inheritable(pipew, True)
     argv = [CECCOMP, 'trace', *COMMON_OPTS, '-o', f'/proc/self/fd/{pipew}', TEST, '0']
-    _, _, stderr = run_process(argv, False, pipew)
+    _, stdout, stderr = run_process(argv, False, pipew)
     os.close(pipew)
     errns.stderr = stderr
 
+    pid = int(stdout.split('=')[1])
+
     expect_file = TEST_DIR / 'dyn_log' / 'trace.log'
     with expect_file.open() as f:
-        expect = f.read()
+        expect = fill_pid(f.read(), pid)
     with os.fdopen(piper) as f:
         assert filter_execve_k(f.read()) == filter_execve_k(expect)
     assert 'WARN' in stderr
@@ -132,7 +140,8 @@ def test_seize(errns: SimpleNamespace):
 
     expect_file = TEST_DIR / 'dyn_log' / 'trace.log'
     with expect_file.open() as f:
-        assert filter_execve_k(stdout) == filter_execve_k(f.read())
+        expect = filter_execve_k(fill_pid(f.read(), pid))
+        assert filter_execve_k(stdout) == expect
 
 @pytest.mark.xfail(XFAIL_DYNAMIC, reason=XFAIL_REASON)
 def test_trace_pid(errns: SimpleNamespace):
@@ -153,7 +162,8 @@ def test_trace_pid(errns: SimpleNamespace):
 
     expect_file = TEST_DIR / 'dyn_log' / 'trace.log'
     with expect_file.open() as f:
-        assert filter_execve_k(stdout) == filter_execve_k(f.read())
+        expect = filter_execve_k(fill_pid(f.read(), pid))
+        assert filter_execve_k(stdout) == expect
 
 @pytest.mark.xfail(XFAIL_DYNAMIC, reason=XFAIL_REASON)
 def test_seccomp_flags(errns: SimpleNamespace):
@@ -167,7 +177,7 @@ def test_seccomp_flags(errns: SimpleNamespace):
 
     expect_file = TEST_DIR / 'dyn_log' / 'trace.log'
     with expect_file.open() as f:
-        expect = f.read()
+        expect = fill_pid(f.read(), pid)
     with os.fdopen(piper) as f:
         assert filter_execve_k(f.read()) == filter_execve_k(expect)
     expect_file = TEST_DIR / 'dyn_log' / 'flag_stderr.log'

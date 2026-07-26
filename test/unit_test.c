@@ -55,18 +55,6 @@ load_filter (bool tofail)
     syscall (SYS_seccomp, SECCOMP_SET_MODE_FILTER, NULL, NULL);
 }
 
-static void
-test_flag ()
-{
-  printf ("pid=%d\n", getpid ());
-  prctl (PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0);
-  struct sock_fprog prog = { .len = ARRAY_SIZE (filters),
-                             .filter = (struct sock_filter *)filters };
-
-  syscall (SYS_seccomp, SECCOMP_SET_MODE_FILTER,
-           SECCOMP_FILTER_FLAG_LOG | SECCOMP_FILTER_FLAG_NEW_LISTENER, &prog);
-}
-
 int
 main (int argc, char **argv)
 {
@@ -78,6 +66,7 @@ main (int argc, char **argv)
   switch (choice)
     {
     case TEST_TRACE:
+      printf ("pid=%d\n", getpid ());
       load_filter (true);
       break;
     case TEST_SEIZE:
@@ -127,7 +116,14 @@ main (int argc, char **argv)
       assert (read (efd, &sem, 8) == 8);
       break;
     case TEST_FLAGS:
-      test_flag ();
+      printf ("pid=%d\n", getpid ());
+      prctl (PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0);
+      struct sock_fprog prog = { .len = ARRAY_SIZE (filters),
+                                 .filter = (struct sock_filter *)filters };
+
+      syscall (SYS_seccomp, SECCOMP_SET_MODE_FILTER,
+               SECCOMP_FILTER_FLAG_LOG | SECCOMP_FILTER_FLAG_NEW_LISTENER,
+               &prog);
       break;
     default:
       load_filter (true);
