@@ -21,8 +21,11 @@ def is_not_cap_sys_admin() -> str | None:
         return None
     return 'Lack of CAP_SYS_ADMIN capability'
 
-TEST = str(PROJ_DIR / 'build' / 'test')
-assert run_process(['make', '-C', str(PROJ_DIR), 'test'], False)[0] == 0
+TEST_BIN = PROJ_DIR / 'build' / 'test'
+TEST_SRC = PROJ_DIR / 'test' / 'unit_test.c'
+if not TEST_BIN.exists() or TEST_BIN.stat().st_mtime <= TEST_SRC.stat().st_mtime:
+    assert run_process(['make', '-C', str(PROJ_DIR), 'test'], False)[0] == 0
+TEST = str(TEST_BIN)
 
 def pid_state(pid: int) -> str | None:
     """
