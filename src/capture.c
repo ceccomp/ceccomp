@@ -76,7 +76,7 @@ do_ebpf_disasm (pid_event_ctx *c, uint32_t default_scmp_arch)
   fprog prog = { .len = cbpf_len, .filter = cbpf_buf };
   uint32_t scmp_arch = trans_ebpf_arch (c->event.ebpf_arch, default_scmp_arch);
 
-  print_prog (scmp_arch, &prog, stdout, true, true);
+  print_prog (scmp_arch, &prog, stdout, true, false);
   free (cbpf_buf);
 }
 

@@ -131,9 +131,9 @@ read_insns (FILE *from, uint32_t *count, uint32_t *map_sizep)
 
 void
 print_prog (uint32_t scmp_arch, fprog *prog, FILE *output_fp, bool trustful,
-            bool from_ebpf)
+            bool need_reverse)
 {
-  if (need_reverse_endian (scmp_arch) && !from_ebpf)
+  if (need_reverse)
     for (uint32_t i = 0; i < prog->len; i++)
       reverse_endian (&prog->filter[i]);
 
@@ -169,6 +169,7 @@ void
 disasm (FILE *fp, uint32_t scmp_arch, bool ebpf)
 {
   fprog prog;
+  bool reverse = false;
   if (ebpf)
     {
       uint32_t count, map_size;
@@ -188,6 +189,7 @@ disasm (FILE *fp, uint32_t scmp_arch, bool ebpf)
     }
   else
     {
+      reverse = need_reverse_endian (scmp_arch);
       assert (init_global_filters (BPF_MAXINSNS));
       prog.len = read_filters (g_filters, fp);
     }
@@ -198,5 +200,5 @@ disasm (FILE *fp, uint32_t scmp_arch, bool ebpf)
       return;
     }
 
-  print_prog (scmp_arch, &prog, stdout, false, ebpf);
+  print_prog (scmp_arch, &prog, stdout, false, reverse);
 }
