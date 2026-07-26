@@ -1,8 +1,7 @@
-#include <linux/prctl.h>
 #define _GNU_SOURCE
+#include "disasm.h"
 #include "decoder/decoder.h"
 #include "decoder/formatter.h"
-#include "disasm.h"
 #include "lexical/parser.h"
 #include "main.h"
 #include "resolver/render.h"
@@ -16,6 +15,7 @@
 #include <errno.h>
 #include <linux/bpf.h>
 #include <linux/bpf_common.h>
+#include <linux/prctl.h>
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
@@ -23,6 +23,7 @@
 #include <string.h>
 #include <sys/mman.h>
 #include <sys/prctl.h>
+#include <sys/types.h>
 #include <unistd.h>
 
 filter *g_filters;
@@ -130,8 +131,8 @@ read_insns (FILE *from, uint32_t *count, uint32_t *map_sizep)
 }
 
 void
-print_prog (uint32_t scmp_arch, fprog *prog, FILE *output_fp, bool trustful,
-            bool need_reverse)
+print_prog (uint32_t scmp_arch, fprog *prog, pid_t pid, FILE *output_fp,
+            bool trustful, bool need_reverse)
 {
   if (need_reverse)
     for (uint32_t i = 0; i < prog->len; i++)
@@ -148,7 +149,17 @@ print_prog (uint32_t scmp_arch, fprog *prog, FILE *output_fp, bool trustful,
   if (!decode_filters (prog, &v, trustful))
     render (&v, scmp_arch);
   print_as_comment (output_fp, "Label  CODE  JT   JF      K");
-  print_as_comment (output_fp, "---------------------------------");
+  static const char separator[] = "---------------------------------";
+  if (pid == 0)
+    print_as_comment (output_fp, separator);
+  else
+    {
+      char pid_text[8]; // linux max pid: 4,194,304
+      uint32_t text_len = snprintf (pid_text, sizeof (pid_text), "%d", pid);
+      print_as_comment (output_fp, "PID=%.*s %.*s", text_len, pid_text,
+                        (int)LITERAL_STRLEN (separator) - 5 - text_len,
+                        separator);
+    }
 
   filter *filters = prog->filter; // give compiler some hint
   for (uint32_t i = 1; i < v.count; i++)
@@ -159,7 +170,7 @@ print_prog (uint32_t scmp_arch, fprog *prog, FILE *output_fp, bool trustful,
       print_statement (output_fp, get_vector (&v, i));
     }
 
-  print_as_comment (output_fp, "---------------------------------");
+  print_as_comment (output_fp, separator);
 
   free_vector (&v);
   free_pile ();
@@ -200,5 +211,5 @@ disasm (FILE *fp, uint32_t scmp_arch, bool ebpf)
       return;
     }
 
-  print_prog (scmp_arch, &prog, stdout, false, reverse);
+  print_prog (scmp_arch, &prog, 0, stdout, false, reverse);
 }

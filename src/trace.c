@@ -159,7 +159,7 @@ mode_filter (syscall_info *info, int pid, fprog *prog, FILE *output_fp)
   prog->filter = g_filters;
 
   dump_filter (info, pid, prog);
-  print_prog (info->arch, prog, output_fp, true, false);
+  print_prog (info->arch, prog, pid, output_fp, true, false);
 }
 
 __attribute__ ((noreturn)) static void
@@ -483,7 +483,7 @@ pid_trace (int pid, bool seize, bool quiet)
 
       if (prog.len != (unsigned short)-1)
         {
-          print_prog (scmp_arch, &prog, stdout, true, false);
+          print_prog (scmp_arch, &prog, pid, stdout, true, false);
           prog_idx++;
           continue;
         }

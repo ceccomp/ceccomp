@@ -5,9 +5,10 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
+#include <sys/types.h>
 
-extern void print_prog (uint32_t scmp_arch, fprog *prog, FILE *output_fp,
-                        bool trustful, bool need_reverse);
+extern void print_prog (uint32_t scmp_arch, fprog *prog, pid_t pid,
+                        FILE *output_fp, bool trustful, bool need_reverse);
 
 extern void disasm (FILE *fp, uint32_t scmp_arch, bool ebpf);
 
