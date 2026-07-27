@@ -29,7 +29,6 @@
 #include "utils/error.h"
 #include "utils/logger.h"
 
-
 #if EBPF_SUPPORT == 1
 typedef struct
 {
@@ -59,15 +58,19 @@ trans_ebpf_arch (ebpf_arch arch, uint32_t scmp_arch)
 {
   switch (arch)
     {
-    case EBPF_ARCH_X86:
+#if defined(__x86_64__)
+    case PROC_ARCH_X86:
       return SCMP_ARCH_X86;
-    case EBPF_ARCH_X64:
+    case PROC_ARCH_X64:
       return SCMP_ARCH_X86_64;
-    case EBPF_ARCH_ARM:
+#elif defined(__aarch64__)
+    case PROC_ARCH_ARM:
       return SCMP_ARCH_ARM;
-    case EBPF_ARCH_AARCH64:
+    case PROC_ARCH_AARCH64:
       return SCMP_ARCH_AARCH64;
-    case EBPF_ARCH_OTHERS:
+#else
+    case PROC_ARCH_OTHERS:
+#endif
     default:
       return scmp_arch;
     }

@@ -95,7 +95,7 @@ filter_mode (long ret, pid_t pid, global_event *event)
     }
 
   bool tmp_cond;
-#ifdef __TARGET_ARCH_arm64
+#if defined(__aarch64__)
   struct task_struct *task = bpf_get_current_task_btf ();
   unsigned long tflags;
   EBPF_IF_PID (BPF_CORE_READ_INTO (&tflags, task, thread_info.flags) < 0, pid)
@@ -104,9 +104,8 @@ filter_mode (long ret, pid_t pid, global_event *event)
     EBPF_LOG_IF_PID (bpf_map_delete_elem (&unverified_filters, &pid) < 0, pid);
     return 0;
   }
-  event->ebpf_arch
-      = (tflags & (1 << TIF_32BIT)) ? EBPF_ARCH_ARM : EBPF_ARCH_AARCH64;
-#elif defined(__TARGET_ARCH_x86)
+  event->ebpf_arch = COMPAT_ARCH (tflags);
+#elif defined(__x86_64__)
   struct task_struct *task = bpf_get_current_task_btf ();
   uint32_t status;
   EBPF_IF_PID (BPF_CORE_READ_INTO (&status, task, thread_info.status) < 0, pid)
@@ -115,9 +114,9 @@ filter_mode (long ret, pid_t pid, global_event *event)
     EBPF_LOG_IF_PID (bpf_map_delete_elem (&unverified_filters, &pid) < 0, pid);
     return 0;
   }
-  event->ebpf_arch = (status & TS_COMPAT) ? EBPF_ARCH_X86 : EBPF_ARCH_X64;
+  event->ebpf_arch = COMPAT_ARCH (status);
 #else
-  event->ebpf_arch = EBPF_ARCH_OTHERS;
+  event->ebpf_arch = PROC_ARCH_OTHERS;
 #endif
 
   ebpf_prog *prog;

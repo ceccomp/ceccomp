@@ -94,20 +94,20 @@ BPF_PROG (capture_pid, uint32_t op, uint32_t flags, void *uargs)
   failed = true;
 
   ebpf_arch arch;
-#ifdef __TARGET_ARCH_arm64
+#if defined(__aarch64__)
   unsigned long tflags;
   EBPF_IF_PID (BPF_CORE_READ_INTO (&tflags, task, thread_info.flags) < 0)
   failed = true;
 
-  arch = (tflags & (1 << TIF_32BIT)) ? EBPF_ARCH_ARM : EBPF_ARCH_AARCH64;
-#elif defined(__TARGET_ARCH_x86)
+  arch = COMPAT_ARCH (tflags);
+#elif defined(__x86_64__)
   uint32_t status;
   EBPF_IF (BPF_CORE_READ_INTO (&status, task, thread_info.status) < 0)
   failed = true;
 
-  arch = (status & TS_COMPAT) ? EBPF_ARCH_X86 : EBPF_ARCH_X64;
+  arch = COMPAT_ARCH (status);
 #else
-  arch = EBPF_ARCH_OTHERS;
+  arch = PROC_ARCH_OTHERS;
 #endif
 
   for (uint32_t prog_index = 0; !failed && filter != NULL && prog_index < 32;

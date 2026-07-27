@@ -8,12 +8,6 @@
 #endif
 #include <linux/bpf_common.h>
 
-#ifdef __TARGET_ARCH_arm64
-#define TIF_32BIT 22
-#elif defined(__TARGET_ARCH_x86)
-#define TS_COMPAT 2
-#endif
-
 typedef struct
 {
   unsigned short flen;
@@ -48,12 +42,22 @@ typedef struct
 
 typedef enum
 {
-  EBPF_ARCH_X64,
-  EBPF_ARCH_X86,
-  EBPF_ARCH_ARM,
-  EBPF_ARCH_AARCH64,
-  EBPF_ARCH_OTHERS,
+  PROC_ARCH_X64,
+  PROC_ARCH_X86,
+  PROC_ARCH_ARM,
+  PROC_ARCH_AARCH64,
+  PROC_ARCH_OTHERS,
 } ebpf_arch;
+
+#if defined(__aarch64__)
+#define TIF_32BIT 22
+#define COMPAT_ARCH(tflags)                                                   \
+  (((tflags) & (1 << TIF_32BIT)) ? PROC_ARCH_ARM : PROC_ARCH_AARCH64)
+#elif defined(__x86_64__)
+#define TS_COMPAT 2
+#define COMPAT_ARCH(status)                                                   \
+  (((status) & TS_COMPAT) ? PROC_ARCH_X86 : PROC_ARCH_X64)
+#endif
 
 #define CHUNK_SIZE 4096
 #define CHUNK_INSN_SIZE (CHUNK_SIZE / sizeof (struct bpf_insn))
