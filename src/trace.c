@@ -197,7 +197,10 @@ info_parse (syscall_info *info, pid_t pid)
   uint32_t nr = info->entry.nr;
 
   if (nr == prctl_nr)
-    return info (M_PID_BPF_PRCTL, pid, MACRO_STR (SECCOMP_MODE_FILTER));
+    {
+      info (M_PID_BPF_PRCTL, pid, MACRO_STR (SECCOMP_MODE_FILTER));
+      return;
+    }
 
   bool not_first = false;
   char flag_buf[0x100];

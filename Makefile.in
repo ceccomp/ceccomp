@@ -291,7 +291,7 @@ $(BUILD_DIR)/test: $(TEST_OBJS) | $(BUILD_DIR) $(MARK)
 
 $(CAPTURE_OBJ): $(CAPTURE_SRC) $(CONFIG_HEADER) {{EBPF_IF}}$(EBPF_SKELS){{EBPF_ENDIF}} | $(BUILD_DIR) $(MARK)
 	$Q$(call ECHO,CC,$@)
-	$Q$(CC) -I$(INC_DIR) $(CFLAGS) $< -c -o $@
+	$Q$(CC) -I$(INC_DIR) $(CFLAGS) -Wno-overlength-strings $< -c -o $@
 
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.c $(CONFIG_HEADER) Makefile | $(BUILD_DIR) $(MARK)
 	$Q$(call ECHO,CC,$@)
