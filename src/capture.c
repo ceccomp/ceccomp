@@ -1,4 +1,6 @@
 #include "config.h"
+#include <stdint.h>
+#include <sys/types.h>
 
 #if EBPF_SUPPORT == 1
 #define _NO_VMLINUX_
@@ -18,11 +20,9 @@
 #include <seccomp.h>
 #include <signal.h>
 #include <stdbool.h>
-#include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/syscall.h>
-#include <sys/types.h>
 #include <unistd.h>
 #endif
 
