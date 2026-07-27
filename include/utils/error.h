@@ -36,8 +36,6 @@
 #define M_PID_BPF_SECCOMP _ ("Process %d invoked seccomp (%s, %s, &prog)")
 #define M_PID_BPF_PRCTL                                                       \
   _ ("Process %d invoked prctl (PR_SET_SECCOMP, %s, &prog)")
-#define SECCOMP_SET_MODE_STRICT_S ("SECCOMP_SET_MODE_STRICT")
-#define SECCOMP_SET_MODE_FILTER_S ("SECCOMP_SET_MODE_FILTER")
 #define M_PID_BPF_LOAD_FAIL _ ("Process %d failed to load seccomp filter: %s")
 #define M_BPF_FAIL_UNKNOWN _ ("Unknown reason")
 #define M_PROCFS_NOT_ACCESSIBLE _ ("Procfs not accessible, unable to perform")
@@ -183,12 +181,5 @@
 #define M_FAILED_CREATE_RINGBUF _ ("Failed to create ring buffer: %s")
 #define M_FAILED_ATTACH _ ("Failed to attach ebpf: %s")
 #define M_CAPTURE_EBPF_IN_PROCESS _ ("capture bpf load in %d process")
-
-// ebpf
-#define BPF_MAP_LOOKUP_FAILED "bpf_map_lookup_elem failed in process %d"
-#define FILTER_LEN_EXCEED "filter len > BPF_MAXINSNS in process %d"
-#define BPF_MAP_UPDATE_FAILED "bpf_map_update_elem failed in process %d"
-#define BPF_CORE_READ_FAILED "bpf_core_read failed in process %d"
-#define BPF_RINGBUF_RESERVE_FAILED "bpf_ringbuf_reserve failed in process %d"
 
 #endif
