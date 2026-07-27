@@ -181,5 +181,8 @@
 #define M_FAILED_CREATE_RINGBUF _ ("Failed to create ring buffer: %s")
 #define M_FAILED_ATTACH _ ("Failed to attach ebpf: %s")
 #define M_CAPTURE_EBPF_IN_PROCESS _ ("capture bpf load in %d process")
+#define M_CAPTURE_DISABLED                                                    \
+  _ ("Capture is disabled during configuration, probably due to absence of "  \
+     "libbpf. You may rebuild it with libbpf support.")
 
 #endif

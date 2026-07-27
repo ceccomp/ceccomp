@@ -1,3 +1,6 @@
+#include "config.h"
+
+#if EBPF_SUPPORT == 1
 #define _NO_VMLINUX_
 #include "capture.h"
 #include "disasm.h"
@@ -6,8 +9,6 @@
 #include "main.h"
 #include "utils/bpf_trans.h"
 #include "utils/ebpf_share.h"
-#include "utils/error.h"
-#include "utils/logger.h"
 #include <assert.h>
 #include <bpf/bpf.h>
 #include <bpf/libbpf.h>
@@ -23,7 +24,13 @@
 #include <sys/syscall.h>
 #include <sys/types.h>
 #include <unistd.h>
+#endif
 
+#include "utils/error.h"
+#include "utils/logger.h"
+
+
+#if EBPF_SUPPORT == 1
 typedef struct
 {
   FILE *fp;
@@ -257,3 +264,11 @@ free_ring_buf:
 destroy_bpf:
   capture_bpf__destroy (skel);
 }
+#else // EBPF_SUPPORT == 0
+void
+capture (pid_t pid, uint32_t scmp_arch)
+{
+  (void)pid, (void)scmp_arch;
+  error ("%s", M_CAPTURE_DISABLED);
+}
+#endif
