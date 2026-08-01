@@ -1,73 +1,57 @@
 #include "utils/logger.h"
+#include "main.h"
 #include "utils/color.h"
+#include <assert.h>
 #include <stdarg.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 
-#define LOG_CYAN(str) ((log_color_enable) ? (CYANCLR str CLR) : str)
-#define LOG_BLUE(str) ((log_color_enable) ? (BLUECLR str CLR) : str)
-#define LOG_YELLOW(str) ((log_color_enable) ? (YELLOWCLR str CLR) : str)
-#define LOG_RED(str) ((log_color_enable) ? (REDCLR str CLR) : str)
+#define PREFIX_STR(type_str) "[" type_str "]: "
+#define PREFIX_INIT(type, colorstr)                                           \
+  [LV_##type] = { PREFIX_STR (#type), colorstr PREFIX_STR (#type) CLR }
+static const struct print_prefix_t
+{
+  const char *raw;
+  const char *colorful;
+} print_prefixes[LV_ERROR + 1] = {
+  PREFIX_INIT (DEBUG, CYANCLR),
+  PREFIX_INIT (INFO, BLUECLR),
+  PREFIX_INIT (WARN, YELLOWCLR),
+  PREFIX_INIT (ERROR, REDCLR),
+};
 
-#define DEBUG_PREFIX LOG_CYAN ("[DEBUG]: ")
-#define INFO LOG_BLUE ("[INFO]: ")
-#define WARN LOG_YELLOW ("[WARN]: ")
-#define ERR LOG_RED ("[ERROR]: ")
+int
+ceccomp_vprint (bool from_external, print_level_t lv, const char *caller_func,
+                const char *fmt, va_list args)
+{
+  assert (lv <= LV_ERROR);
+  const struct print_prefix_t *prefix = print_prefixes + lv;
+  fprintf (stderr, "%s", log_color_enable ? prefix->colorful : prefix->raw);
 
 #ifdef DEBUG
-void
-debug_print (const char *caller_func, const char *fmt, ...)
-{
-  va_list args;
-  va_start (args, fmt);
-  fprintf (stderr, DEBUG_PREFIX);
-
-  fprintf (stderr, "in %s: ", caller_func);
-
-  vfprintf (stderr, fmt, args);
-  putc ('\n', stderr);
-  va_end (args);
-  fflush (stderr);
-}
-#endif
-
-void
-info_print (const char *caller_func, const char *fmt, ...)
-{
-  va_list args;
-  va_start (args, fmt);
-  fprintf (stderr, INFO);
-
-#ifdef DEBUG
-  fprintf (stderr, "in %s: ", caller_func);
+  if (LIKELY (!from_external))
+    fprintf (stderr, "in %s: ", caller_func);
 #else
   (void)caller_func;
 #endif
 
-  vfprintf (stderr, fmt, args);
-  putc ('\n', stderr);
-  va_end (args);
+  int rc = vfprintf (stderr, fmt, args);
+  if (LIKELY (!from_external))
+    putc ('\n', stderr);
   fflush (stderr);
+  return rc;
 }
 
 void
-warn_print (const char *caller_func, const char *fmt, ...)
+info_print (print_level_t lv, const char *caller_func, const char *fmt, ...)
 {
   va_list args;
   va_start (args, fmt);
-  fprintf (stderr, WARN);
 
-#ifdef DEBUG
-  fprintf (stderr, "in %s: ", caller_func);
-#else
-  (void)caller_func;
-#endif
+  ceccomp_vprint (false, lv, caller_func, fmt, args);
 
-  vfprintf (stderr, fmt, args);
-  putc ('\n', stderr);
   va_end (args);
-  fflush (stderr);
 }
 
 void
@@ -75,16 +59,9 @@ error_print (const char *caller_func, const char *fmt, ...)
 {
   va_list args;
   va_start (args, fmt);
-  fprintf (stderr, ERR);
 
-#ifdef DEBUG
-  fprintf (stderr, "in %s: ", caller_func);
-#else
-  (void)caller_func;
-#endif
+  ceccomp_vprint (false, LV_ERROR, caller_func, fmt, args);
 
-  vfprintf (stderr, fmt, args);
-  putc ('\n', stderr);
   va_end (args);
   exit (1);
 }

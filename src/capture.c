@@ -216,11 +216,35 @@ on_events (void *ctx, void *data, unsigned long size)
   return 0;
 }
 
+static int
+libbpf_msg_dispatcher (enum libbpf_print_level level, const char *fmt,
+                       va_list ap)
+{
+  switch (level)
+    {
+#define LIBBPF_RAW_TEXT "libbpf"
+    case LIBBPF_WARN:
+      return ceccomp_vprint (true, LV_WARN, LIBBPF_RAW_TEXT, fmt, ap);
+    case LIBBPF_INFO:
+      return ceccomp_vprint (true, LV_INFO, LIBBPF_RAW_TEXT, fmt, ap);
+    case LIBBPF_DEBUG:
+#ifdef DEBUG
+      return ceccomp_vprint (true, LV_DEBUG, LIBBPF_RAW_TEXT, fmt, ap);
+#else
+      return 0;
+#endif
+    default:
+      assert (!"Unexpected libbpf_print_level");
+    }
+}
+
 void
 capture (pid_t pid, uint32_t scmp_arch)
 {
   signal (SIGINT, on_sig);
   signal (SIGTERM, on_sig);
+
+  libbpf_set_print (libbpf_msg_dispatcher);
 
   if (pid != 0)
     {
