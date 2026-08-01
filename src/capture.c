@@ -18,7 +18,6 @@
 #include <linux/filter.h>
 #include <linux/seccomp.h>
 #include <seccomp.h>
-#include <signal.h>
 #include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
@@ -30,6 +29,27 @@
 #include "utils/logger.h"
 
 #if EBPF_SUPPORT == 1
+static int
+libbpf_msg_dispatcher (enum libbpf_print_level level, const char *fmt,
+                       va_list ap)
+{
+  switch (level)
+    {
+    case LIBBPF_WARN:
+      return ceccomp_vprint (true, LV_WARN, NULL, fmt, ap);
+    case LIBBPF_INFO:
+      return ceccomp_vprint (true, LV_INFO, NULL, fmt, ap);
+    case LIBBPF_DEBUG:
+#ifdef DEBUG
+      return ceccomp_vprint (true, LV_DEBUG, NULL, fmt, ap);
+#else
+      return 0;
+#endif
+    default:
+      assert (!"Unexpected libbpf_print_level");
+    }
+}
+
 typedef struct
 {
   FILE *fp;
@@ -43,15 +63,6 @@ typedef struct
   uint32_t scmp_arch;
   struct bpf_insn *ebpf_insns;
 } pid_event_ctx;
-
-static uint32_t exiting = 0;
-
-static void
-on_sig (int sig)
-{
-  (void)sig;
-  exiting = 1;
-}
 
 static uint32_t
 trans_ebpf_arch (ebpf_arch arch, uint32_t scmp_arch)
@@ -81,8 +92,8 @@ do_ebpf_disasm (pid_event_ctx *c, uint32_t default_scmp_arch)
 {
   filter *cbpf_buf = malloc (c->flen * sizeof (filter));
   int32_t cbpf_len = ebpf2cbpf (c->ebpf_insns, c->flen, cbpf_buf, true);
-  if (cbpf_len == -1)
-    error ("%s", M_FAIL_TRANSFER_EBPF);
+  if (UNLIKELY (cbpf_len == -1))
+    error ("%s", M_FAILED_EBPF_CONVERSION);
   fprog prog = { .len = cbpf_len, .filter = cbpf_buf };
   uint32_t scmp_arch = trans_ebpf_arch (c->event.ebpf_arch, default_scmp_arch);
 
@@ -117,7 +128,7 @@ on_pid_events (void *ctx, void *data, unsigned long size)
       // do some disasm here
     case PROG_ABORTED:
       if (event->status == PROG_ABORTED)
-        warn ("%s", M_UNKNOWN_PROG_ABORTED);
+        warn (M_UNKNOWN_PROG_ABORTED, M_CAPTURE_PID_HELP);
       // reset everything
       insn_offset = 0;
       free (c->ebpf_insns);
@@ -130,7 +141,7 @@ on_pid_events (void *ctx, void *data, unsigned long size)
       if (event->status == TRUNCATED)
         warn ("%s", M_PROG_TRUNCATED);
       else if (event->status == TASK_ABORTED)
-        warn ("%s", M_UNKNOWN_TASK_ABORTED);
+        warn (M_UNKNOWN_TASK_ABORTED, M_CAPTURE_PID_HELP);
       break;
     default:
       assert (!"Unexpected status received from ebpf");
@@ -152,47 +163,30 @@ capture_pid (pid_t pid, uint32_t scmp_arch)
 
   skel = capture_pid_bpf__open_and_load ();
   if (!skel)
-    {
-      warn (M_FAILED_OPEN_LOAD, strerror (errno));
-      return;
-    }
+    error (M_FAILED_OPEN_LOAD, __func__);
 
   err = bpf_map_update_elem (bpf_map__fd (skel->maps.scmp_config), &zero,
                              &config, BPF_ANY);
   if (err == -1)
-    {
-      warn (M_FAILED_UPDATE_MAP, strerror (errno));
-      goto destroy_bpf;
-    }
+    error ("%s", M_FAILED_UPDATE_MAP);
 
   rb = ring_buffer__new (bpf_map__fd (skel->maps.scmp_events), on_pid_events,
                          &ctx, NULL);
   if (!rb)
-    {
-      warn (M_FAILED_CREATE_RINGBUF, strerror (errno));
-      goto destroy_bpf;
-    }
+    error ("%s", M_FAILED_CREATE_RINGBUF);
 
   err = capture_pid_bpf__attach (skel);
   if (err < 0)
-    {
-      warn (M_FAILED_ATTACH, strerror (-err));
-      goto free_ring_buf;
-    }
+    error ("%s", M_FAILED_ATTACH);
 
   uint32_t action = SECCOMP_RET_ALLOW;
   syscall (SYS_seccomp, SECCOMP_GET_ACTION_AVAIL, 0, &action);
   while ((ctx.event.status != ALL_DONE && ctx.event.status != TRUNCATED
-          && ctx.event.status != TASK_ABORTED)
-         || !exiting)
-    {
-      if (ring_buffer__poll (rb, 1000) <= 0)
-        break;
-    }
+          && ctx.event.status != TASK_ABORTED))
+    if (ring_buffer__poll (rb, 1000) <= 0)
+      break;
 
-free_ring_buf:
   ring_buffer__free (rb);
-destroy_bpf:
   capture_pid_bpf__destroy (skel);
 }
 
@@ -208,7 +202,7 @@ on_events (void *ctx, void *data, unsigned long size)
       return 0;
     }
   // event->op == SECCOMP_SET_MODE_FILTER
-  info (M_CAPTURE_EBPF_IN_PROCESS, event->pid);
+  info (M_CAPTURE_EBPF_IN_TASK, event->pid);
   fprog prog = { .len = event->prog.flen, .filter = event->prog.filters };
 
   c->scmp_arch = trans_ebpf_arch (event->ebpf_arch, c->scmp_arch);
@@ -216,34 +210,9 @@ on_events (void *ctx, void *data, unsigned long size)
   return 0;
 }
 
-static int
-libbpf_msg_dispatcher (enum libbpf_print_level level, const char *fmt,
-                       va_list ap)
-{
-  switch (level)
-    {
-#define LIBBPF_RAW_TEXT "libbpf"
-    case LIBBPF_WARN:
-      return ceccomp_vprint (true, LV_WARN, LIBBPF_RAW_TEXT, fmt, ap);
-    case LIBBPF_INFO:
-      return ceccomp_vprint (true, LV_INFO, LIBBPF_RAW_TEXT, fmt, ap);
-    case LIBBPF_DEBUG:
-#ifdef DEBUG
-      return ceccomp_vprint (true, LV_DEBUG, LIBBPF_RAW_TEXT, fmt, ap);
-#else
-      return 0;
-#endif
-    default:
-      assert (!"Unexpected libbpf_print_level");
-    }
-}
-
 void
 capture (pid_t pid, uint32_t scmp_arch)
 {
-  signal (SIGINT, on_sig);
-  signal (SIGTERM, on_sig);
-
   libbpf_set_print (libbpf_msg_dispatcher);
 
   if (pid != 0)
@@ -260,35 +229,21 @@ capture (pid_t pid, uint32_t scmp_arch)
 
   skel = capture_bpf__open_and_load ();
   if (!skel)
-    {
-      warn (M_FAILED_OPEN_LOAD, strerror (errno));
-      return;
-    }
+    error (M_FAILED_OPEN_LOAD, __func__);
 
   rb = ring_buffer__new (bpf_map__fd (skel->maps.scmp_events), on_events, &ctx,
                          NULL);
   if (!rb)
-    {
-      warn (M_FAILED_CREATE_RINGBUF, strerror (errno));
-      goto destroy_bpf;
-    }
+    error ("%s", M_FAILED_CREATE_RINGBUF);
 
   err = capture_bpf__attach (skel);
   if (err < 0)
-    {
-      warn (M_FAILED_ATTACH, strerror (-err));
-      goto free_ring_buf;
-    }
+    error ("%s", M_FAILED_ATTACH);
 
-  while (!exiting)
-    {
-      if (ring_buffer__poll (rb, -1) < 0)
-        break;
-    }
+  while (ring_buffer__poll (rb, -1) >= 0)
+    ;
 
-free_ring_buf:
   ring_buffer__free (rb);
-destroy_bpf:
   capture_bpf__destroy (skel);
 }
 #else // EBPF_SUPPORT == 0

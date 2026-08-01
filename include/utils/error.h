@@ -167,20 +167,21 @@
 #define M_SAVE_EBPF_FAILED _ ("Failed to save your eBPF case due to %s")
 #define M_EBPF_INPUT_ERROR                                                    \
   _ ("#%u: Input eBPF insn does not meet assertion at %s#L%d: %s\n%s")
-#define M_FAIL_TRANSFER_EBPF _ ("Failed to transfer ebpf to cbpf")
+#define M_FAILED_EBPF_CONVERSION _ ("Failed to convert eBPF back to cBPF")
 #define M_UNKNOWN_PROG_ABORTED                                                \
-  _ ("A seccomp filter dump is aborted by ebpf programs due to unknown "      \
-     "reason")
+  _ ("eBPF program failed to locate seccomp filters, %s")
 #define M_UNKNOWN_TASK_ABORTED                                                \
-  _ ("Dump failed due to unknown reasons, task aborted")
+  _ ("eBPF program failed to retrieve seccomp filter in a task, %s")
+#define M_CAPTURE_PID_HELP                                                    \
+  _ ("please read output from /sys/kernel/debug/tracing/trace_pipe for "      \
+     "details.")
 #define M_PROG_TRUNCATED                                                      \
-  _ ("Too much seccomp filter in task->seccomp->filter->prev, "               \
-     "failed dump them all")
-#define M_FAILED_OPEN_LOAD _ ("Failed to open/load ebpf: %s")
-#define M_FAILED_UPDATE_MAP _ ("Failed to update ebpf map: %s")
-#define M_FAILED_CREATE_RINGBUF _ ("Failed to create ring buffer: %s")
-#define M_FAILED_ATTACH _ ("Failed to attach ebpf: %s")
-#define M_CAPTURE_EBPF_IN_PROCESS _ ("capture bpf load in %d process")
+  _ ("Too many seccomp filters (> 32) in a task! The rest are truncated.")
+#define M_FAILED_OPEN_LOAD _ ("Failed to open or load ebpf prog %s")
+#define M_FAILED_UPDATE_MAP _ ("Failed to update ebpf map")
+#define M_FAILED_CREATE_RINGBUF _ ("Failed to create ring buffer")
+#define M_FAILED_ATTACH _ ("Failed to attach ebpf")
+#define M_CAPTURE_EBPF_IN_TASK _ ("Capturing new seccomp filter in thread %d")
 #define M_CAPTURE_DISABLED                                                    \
   _ ("Capture is disabled during configuration, probably due to absence of "  \
      "libbpf. You may rebuild it with libbpf support.")
