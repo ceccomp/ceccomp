@@ -171,6 +171,7 @@ print_prog (uint32_t scmp_arch, fprog *prog, pid_t pid, FILE *output_fp,
     }
 
   print_as_comment (output_fp, separator);
+  fflush (output_fp);
 
   free_vector (&v);
   free_pile ();
