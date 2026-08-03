@@ -5,6 +5,9 @@
 #include <bpf/bpf_helpers.h>
 #include <bpf/bpf_tracing.h>
 
+extern struct task_struct *bpf_task_from_pid(s32 pid) __weak __ksym;
+extern void bpf_task_release(struct task_struct *p) __weak __ksym;
+
 struct
 {
   __uint (type, BPF_MAP_TYPE_RINGBUF);
@@ -53,12 +56,12 @@ dump_chunk (uint32_t chunk_index, void *data)
   event->prog.flen = remaining_insns;
   event->flen_total = ctx->flen;
 
+  uint32_t leftover = (remaining_insns * sizeof (struct bpf_insn)) & 0x3fff;
+
   const void *insnsi = (const void *)ctx->prog
                        + bpf_core_field_offset (struct bpf_prog, insnsi)
                        + chunk_start_offset * sizeof (struct bpf_insn);
-  EBPF_IF (bpf_core_read (event->prog.filters,
-                          remaining_insns * sizeof (struct bpf_insn), insnsi)
-           < 0)
+  EBPF_IF (bpf_core_read (event->prog.filters, leftover, insnsi) < 0)
   {
     event->status = PROG_ABORTED;
     bpf_ringbuf_submit (event, 0);
