@@ -15,7 +15,11 @@ static const uint32_t arch_pairs[] = {
   [ARCH_I686] = SCMP_ARCH_X86,
   [ARCH_ARMV7L] = SCMP_ARCH_ARM,
   [ARCH_ARMV8L] = SCMP_ARCH_ARM,
+#if SCMP_VER_MAJOR >= 2 && SCMP_VER_MINOR >= 6
   [ARCH_SH4] = SCMP_ARCH_SH,
+#else
+  [ARCH_SH4] = -1,
+#endif
 };
 
 uint32_t
