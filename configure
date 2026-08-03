@@ -822,8 +822,8 @@ def check_libbpf(makefile: Makefile):
     bpfcc_flags = []
     if 'bpf' in buildopts.bpf_cc[0]:
         # bpf-gcc
-        bpfcc_flags = ['-O2', '-std=gnu17', '-isystem', f'{sys.prefix}/include',
-                   '-isystem', f'{sys.prefix}/local/include']
+        bpfcc_flags = ['-O2', '-std=gnu17', '-isystem', f'{sys.prefix}/local/include',
+                   '-isystem', f'{sys.prefix}/include']
     global vmlinux_dir
     code, _, stderr = run_command([*buildopts.bpf_cc, '-x', 'c', '-',
                                    '-o', '/dev/null', '-c', f'-I{vmlinux_dir.name}',
@@ -854,8 +854,8 @@ def check_bpf_arch(makefile: Makefile):
     le = True # little endian
     extra_flags = []
     if 'bpf' in buildopts.bpf_cc[0]:
-        extra_flags.extend(['-isystem', f'{sys.prefix}/include',
-                            '-isystem', f'{sys.prefix}/local/include'])
+        extra_flags.extend(['-isystem', f'{sys.prefix}/local/include',
+                            '-isystem', f'{sys.prefix}/include'])
     if buildopts.target:
         arch = buildopts.target.split('-', 1)[0]
     if 'x86_64' in arch or re.match(r'i\d86', arch):
