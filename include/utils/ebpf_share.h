@@ -5,8 +5,12 @@
 #include "ebpf/vmlinux.h"
 #else
 #include <linux/bpf.h>
-#endif
 #include <linux/bpf_common.h>
+#endif
+
+#ifndef BPF_MAXINSNS
+#define BPF_MAXINSNS 4096
+#endif
 
 typedef struct
 {
