@@ -39,9 +39,6 @@ BPF_PROG (seccomp_check_filter_entry, struct sock_filter *filter,
 
   EBPF_IF_PID (!(tmp = bpf_map_lookup_elem (&tmp_buf, &zero)), pid) return 0;
 
-  // This shouldn't happen. Just ignore this anyway
-  EBPF_IF_PID (flen > BPF_MAXINSNS, pid) return 0;
-
   EBPF_IF_PID (
       bpf_map_update_elem (&unverified_filters, &pid, tmp, BPF_ANY) < 0, pid)
   return 0;
@@ -55,11 +52,14 @@ BPF_PROG (seccomp_check_filter_entry, struct sock_filter *filter,
   }
 
   unverified->flen = flen;
-  EBPF_IF_PID (bpf_core_read (unverified->filters,
-                              unverified->flen * sizeof (struct sock_filter),
-                              filter)
-                   < 0,
-               pid)
+
+  // This shouldn't happen. Just ignore this anyway
+  uint32_t read_size = (uint16_t)(flen * sizeof (struct sock_filter));
+  EBPF_IF_PID (read_size > BPF_MAXINSNS * sizeof (struct sock_filter), pid)
+  return 0;
+
+  EBPF_IF_PID (
+      bpf_core_read (unverified->filters, read_size & 0xffff, filter) < 0, pid)
   EBPF_LOG_IF_PID (bpf_map_delete_elem (&unverified_filters, &pid) < 0, pid);
 
   return 0;
