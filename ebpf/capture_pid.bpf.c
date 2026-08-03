@@ -56,12 +56,12 @@ dump_chunk (uint32_t chunk_index, void *data)
   event->prog.flen = remaining_insns;
   event->flen_total = ctx->flen;
 
-  uint32_t leftover = (remaining_insns * sizeof (struct bpf_insn)) & 0x3fff;
+  uint16_t leftover = remaining_insns * sizeof (struct bpf_insn);
 
   const void *insnsi = (const void *)ctx->prog
                        + bpf_core_field_offset (struct bpf_prog, insnsi)
                        + chunk_start_offset * sizeof (struct bpf_insn);
-  EBPF_IF (bpf_core_read (event->prog.filters, leftover, insnsi) < 0)
+  EBPF_IF (bpf_core_read (event->prog.filters, leftover & 0x3fff, insnsi) < 0)
   {
     event->status = PROG_ABORTED;
     bpf_ringbuf_submit (event, 0);
