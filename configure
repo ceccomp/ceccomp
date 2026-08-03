@@ -823,7 +823,7 @@ def check_libbpf(makefile: Makefile):
     if 'bpf' in buildopts.bpf_cc[0]:
         # bpf-gcc
         bpfcc_flags = ['-O2', '-std=gnu17', '-isystem', f'{sys.prefix}/local/include',
-                   '-isystem', f'{sys.prefix}/include']
+                       '-isystem', f'{sys.prefix}/include']
     global vmlinux_dir
     code, _, stderr = run_command([*buildopts.bpf_cc, '-x', 'c', '-',
                                    '-o', '/dev/null', '-c', f'-I{vmlinux_dir.name}',

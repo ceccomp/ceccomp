@@ -29,6 +29,10 @@
 #define LOAD_FAIL 7
 #define LOAD_ELSE 8
 
+#ifndef SECCOMP_FILTER_FLAG_WAIT_KILLABLE_RECV
+#define SECCOMP_FILTER_FLAG_WAIT_KILLABLE_RECV (1UL << 5)
+#endif
+
 #define SECCOMP_FLAG_LIST(X)                                                  \
   X (SECCOMP_FILTER_FLAG_TSYNC)                                               \
   X (SECCOMP_FILTER_FLAG_LOG)                                                 \
