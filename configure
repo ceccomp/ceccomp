@@ -7,6 +7,7 @@ import re
 import shutil
 import subprocess
 import sys
+import tempfile
 from collections.abc import Callable
 from dataclasses import dataclass
 
@@ -366,7 +367,7 @@ def pcheck(txt: str):
 
 def run_command(argv: list[str], stdin: str | None=None, push_sys_dir: bool=False) -> tuple[int, str, str]:
     """
-    Run command with given argv and input, return process returncode, stdout and stderr
+    Run command with given argv and input, return process return code, stdout and stderr
     Return -1, '', exception message if exception raised is known, or else return -2, '', message.
     """
     try:
@@ -515,7 +516,7 @@ def check_cc(makefile: Makefile):
             error(f'C compiler is not working: {stderr}')
         if code == -2:
             error(f'Unexpected error: {stderr}')
-        info(f'Compiler returned non-zero returncode with message:\n{stderr}', end='')
+        info(f'Compiler returned non-zero return code with message:\n{stderr}', end='')
         error(f'C compiler can not compile minimum C unit')
     # code == 0
     makefile.inject('CC', ' '.join(buildopts.cc))
@@ -542,7 +543,7 @@ def check_linux_headers(_: Makefile):
             error(f'C compiler is not working: {stderr}')
         if code == -2:
             error(f'Unexpected error: {stderr}')
-        info(f'Compiler returned non-zero returncode with message:\n{stderr}', end='')
+        info(f'Compiler returned non-zero return code with message:\n{stderr}', end='')
         error(f'Can not compile Linux-related unit, you may install linux-headers package')
     info(TXT_GREEN('yes'))
 
@@ -568,7 +569,7 @@ def check_libseccomp(makefile: Makefile):
             error(f'C compiler is not working: {stderr}')
         if code == -2:
             error(f'Unexpected error: {stderr}')
-        info(f'Compiler returned non-zero returncode with message:\n{stderr}', end='')
+        info(f'Compiler returned non-zero return code with message:\n{stderr}', end='')
         error(f'Can not compile libseccomp unit, you may install libseccomp package')
     info(TXT_GREEN('yes'))
     makefile.inject('LIBSECCOMP_FLAG', ' '.join(link_flags))
@@ -605,7 +606,7 @@ def check_argp(makefile: Makefile):
             if code == -2:
                 info(TXT_MAGENTA('no'))
                 error(f'Unexpected error: {stderr}')
-            info(f'Compiler returned non-zero returncode with message:\n{stderr}', end='')
+            info(f'Compiler returned non-zero return code with message:\n{stderr}', end='')
             error(f'Can not compile argp unit, you may install argp package')
         # code == 0 and link argp
         makefile.inject('LIBARGP_FLAG', ' '.join(argp_flags))
@@ -738,7 +739,7 @@ def check_omit_leaf_frame_pointer_flag(makefile: Makefile):
         makefile.inject('ARCH_PRESERVE_FP', '-mno-omit-leaf-frame-pointer')
 
 @new_task
-def check_ebpf_infra(makefile: Makefile):
+def check_ebpf_infra(_: Makefile):
     pcheck('eBPF support tools')
     if not buildopts.ebpf:
         info(TXT_BLUE('excluded'))
@@ -753,23 +754,31 @@ def check_ebpf_infra(makefile: Makefile):
         warn('Can not find compiler for BPF, you may install clang to enable eBPF support')
         buildopts.ebpf = False
         return
-    bpf_c_code = 'int main() {}'
-    code, _, stderr = run_command([*buildopts.bpf_cc, '-x', 'c', '-', '-c', '-o', '/dev/null'], bpf_c_code)
-    if code:
-        info(TXT_MAGENTA(f'broken {buildopts.bpf_cc[0]}'))
-        if code == -1:
-            error(f'BPF compiler is not working: {stderr}')
-        if code == -2:
-            error(f'Unexpected error: {stderr}')
-        info(f'Compiler returned non-zero returncode with message:\n{stderr}', end='')
-        error('Can not compile a minimum unit of bpf code, you may provide clang or disable eBPF support')
 
     try:
         with open('/sys/kernel/btf/vmlinux') as _:
             pass
     except Exception as e:
-        info(TXT_GRAY('unsupported kernel'))
+        info(TXT_MAGENTA('unsupported kernel'))
         warn(f'Failed to read /sys/kernel/btf/vmlinux due to {e}')
+        buildopts.ebpf = False
+        return
+
+    code, vmlinux_h, stderr = run_command([buildopts.bpftool, 'btf', 'dump', 'file',
+                                          '/sys/kernel/btf/vmlinux', 'format', 'c'])
+    if code:
+        info(TXT_MAGENTA(f'broken {buildopts.bpftool}'))
+        info(f'bpftool returned non-zero return code with message:\n{stderr}', end='')
+        error('Provided can not dump vmlinux to vmlinux.h, you may disable eBPF support')
+
+    global vmlinux_dir
+    try:
+        vmlinux_dir = tempfile.TemporaryDirectory()
+        with open(f'{vmlinux_dir.name}/vmlinux.h', 'w') as file:
+            file.write(vmlinux_h)
+    except Exception as e:
+        info(TXT_MAGENTA('/tmp not available'))
+        warn(f'Failed to dump vmlinux.h due to {e}')
         buildopts.ebpf = False
         return
 
@@ -781,6 +790,13 @@ libbpf = '''
 int main(void) {
     puts(libbpf_version_string());
     return 0;
+}
+'''
+libbpf_ebpf = '''
+#include "vmlinux.h"
+#include <bpf/bpf_helpers.h>
+unsigned test(void) {
+    return bpf_get_prandom_u32();
 }
 '''
 @new_task
@@ -800,7 +816,20 @@ def check_libbpf(makefile: Makefile):
             error(f'C compiler is not working: {stderr}')
         if code == -2:
             error(f'Unexpected error: {stderr}')
-        info(f'Compiler returned non-zero returncode with message:\n{stderr}', end='')
+        info(f'Compiler returned non-zero return code with message:\n{stderr}', end='')
+        error('Can not compile a minimum unit of libbpf, you may install it or disable eBPF support')
+
+    global vmlinux_dir
+    code, _, stderr = run_command([*buildopts.bpf_cc, '-x', 'c', '-',
+                                   '-o', '/dev/null', '-c', f'-I{vmlinux_dir.name}'],
+                                  libbpf_ebpf, push_sys_dir=True)
+    if code:
+        info(TXT_MAGENTA(f'broken {buildopts.bpf_cc[0]}'))
+        if code == -1:
+            error(f'BPF compiler is not working: {stderr}')
+        if code == -2:
+            error(f'Unexpected error: {stderr}')
+        info(f'BPF Compiler returned non-zero return code with message:\n{stderr}', end='')
         error('Can not compile a minimum unit of libbpf, you may install it or disable eBPF support')
 
     info(TXT_GREEN('yes'))
