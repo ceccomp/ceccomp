@@ -816,10 +816,13 @@ def check_bpf_arch(makefile: Makefile):
         return
     arch = platform.machine()
     le = True # little endian
+    extra_flag = ''
     if buildopts.target:
         arch = buildopts.target.split('-', 1)[0]
     if 'x86_64' in arch or re.match(r'i\d86', arch):
         buildopts.bpf_arch = 'x86'
+        if 'x86_64' in arch:
+            extra_flag = '-D__x86_64__'
     elif arch.startswith('loongarch'):
         buildopts.bpf_arch = 'loongarch'
     elif arch.startswith('riscv'):
@@ -827,6 +830,7 @@ def check_bpf_arch(makefile: Makefile):
     elif arch.startswith('aarch64'):
         buildopts.bpf_arch = 'arm64'
         le = 'be' not in arch
+        extra_flag = '-D__aarch64__'
     elif arch.startswith('arm'):
         buildopts.bpf_arch = 'arm'
         le = 'eb' not in arch
@@ -849,6 +853,7 @@ def check_bpf_arch(makefile: Makefile):
 
     info(TXT_GREEN(f"{buildopts.bpf_arch}, {'little' if le else 'big'} endian"))
     makefile.inject('BPF_ARCH', buildopts.bpf_arch)
+    makefile.inject('BPF_EXTRA_FLAG', f' {extra_flag}')
     if buildopts.bpf_cc[0].startswith('bpf'):
         if not le:
             buildopts.bpf_cc[-1] = '-mbig-endian'
