@@ -245,7 +245,9 @@ VMLINUX_FILE := /sys/kernel/btf/vmlinux
 $(VMLINUX_HEADER): | $(EBPF_INC_DIR) $(MARK)
 	$Q$(call ECHO,BPFTOOL,$(VMLINUX_FILE))
 	$Q$(BPFTOOL) btf dump file $(VMLINUX_FILE) format c > $@ \
-		2> >(grep -vF 'skipping /sys/kernel/btf/vmlinux' >&2)
+		2>$(BUILD_DIR)/bpftool.log; ret=$$?; \
+		grep -vF 'skipping /sys/kernel/btf/vmlinux' $(BUILD_DIR)/bpftool.log >&2; \
+		exit $$ret
 
 $(BUILD_DIR)/%.bpf.o: $(EBPF_DIR)/%.bpf.c | $(VMLINUX_HEADER) $(BUILD_DIR) $(MARK)
 	$Q$(call ECHO,BPF_CC,$<)
