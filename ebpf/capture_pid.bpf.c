@@ -96,7 +96,7 @@ BPF_PROG (capture_pid, uint32_t op, uint32_t flags, void *uargs)
   ebpf_arch arch;
 #if defined(__aarch64__)
   unsigned long tflags;
-  EBPF_IF_PID (BPF_CORE_READ_INTO (&tflags, task, thread_info.flags) < 0)
+  EBPF_IF (BPF_CORE_READ_INTO (&tflags, task, thread_info.flags) < 0)
   failed = true;
 
   arch = COMPAT_ARCH (tflags);
