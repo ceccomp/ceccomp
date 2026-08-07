@@ -10,5 +10,6 @@
 #endif
 #include "i18n.h"
 #define M_VERSION_FORMAT _ ("ceccomp %s\nTagged on %s\nBuilt by %s\n")
+#define M_DEPENDENCY _ ("Dependencies:\n")
 
 #endif

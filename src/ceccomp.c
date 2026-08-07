@@ -4,6 +4,7 @@
 #include "disasm.h"
 #include "emu.h"
 #include "help.h"
+#include "main.h"
 #include "probe.h"
 #include "trace.h"
 #include "utils/color.h"
@@ -114,6 +115,32 @@ version (void)
 {
   printf (M_VERSION_FORMAT, CECCOMP_VERSION, CECCOMP_TAG_TIME,
           CECCOMP_BUILDER);
+
+  printf ("%s", M_DEPENDENCY);
+  char buf[32];
+  const struct scmp_version *ver = seccomp_version ();
+#define OFF LITERAL_STRLEN (GREENCLR)
+  int ver_strlen = snprintf (buf + OFF, sizeof (buf) - OFF - sizeof (CLR),
+                             "v%u.%u.%u", ver->major, ver->minor, ver->micro);
+  char *ver_str;
+  if (color_enable)
+    {
+      memcpy (buf, GREENCLR, OFF);
+      memcpy (buf + OFF + ver_strlen, CLR, sizeof (CLR));
+      ver_str = buf;
+    }
+  else
+    ver_str = buf + OFF;
+#undef OFF
+  printf ("libseccomp (%s)\n", ver_str);
+#if EBPF_SUPPORT == 1
+#include <bpf/libbpf.h>
+  printf ("libbpf     (%s%s%s)\n", color_enable ? GREENCLR : "",
+          libbpf_version_string (), color_enable ? CLR : "");
+#else
+  printf ("libbpf     (%s%c%s)\n", color_enable ? REDCLR : "", '-',
+          color_enable ? CLR : "");
+#endif
   exit (0);
 }
 
