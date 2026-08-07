@@ -243,22 +243,21 @@ EBPF_SKELS := $(patsubst $(EBPF_DIR)/%.bpf.c,$(EBPF_INC_DIR)/%.skel.h,$(EBPF_SRC
 VMLINUX_HEADER := $(EBPF_INC_DIR)/vmlinux.h
 VMLINUX_FILE := /sys/kernel/btf/vmlinux
 $(VMLINUX_HEADER): | $(EBPF_INC_DIR) $(MARK)
-	$Q$(call ECHO,BPFTOOL,$(VMLINUX_FILE))
+	$Q$(call ECHO,BPFTOOL,$@)
 	$Q$(BPFTOOL) btf dump file $(VMLINUX_FILE) format c > $@ \
 		2>$(BUILD_DIR)/bpftool.log; ret=$$?; \
 		grep -vF 'skipping /sys/kernel/btf/vmlinux' $(BUILD_DIR)/bpftool.log >&2; \
 		exit $$ret
 
 $(BUILD_DIR)/%.bpf.o: $(EBPF_DIR)/%.bpf.c Makefile | $(VMLINUX_HEADER) $(BUILD_DIR) $(MARK)
-	$Q$(call ECHO,BPF_CC,$<)
+	$Q$(call ECHO,BPF_CC,$@)
 	$Q$(BPF_CC) $(BPF_FLAGS) $< -c -o $@
 	{{LLVM_STRIP_IF}}
-	$Q$(call ECHO,STRIP,$@)
 	$Qllvm-strip -g $@
 	{{LLVM_STRIP_ENDIF}}
 
 $(EBPF_INC_DIR)/%.skel.h: $(BUILD_DIR)/%.bpf.o | $(EBPF_INC_DIR) $(MARK)
-	$Q$(call ECHO,BPFTOOL,$<)
+	$Q$(call ECHO,BPFTOOL,$@)
 	$Q$(BPFTOOL) gen skeleton $< > $@
 
 $(EBPF_INC_DIR):
