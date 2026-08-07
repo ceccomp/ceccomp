@@ -47,7 +47,7 @@ A tool to analyze seccomp filters like `seccomp-tools`, written in C
     and add `--without-i18n` flag if you don't have `gettext` package.
 
     ```sh
-    git clone https://github.com/dbgbgtf1/Ceccomp.git
+    git clone https://github.com/ceccomp/ceccomp.git
     cd Ceccomp
     ./configure
     ./configure # run this again if Makefile is not generated
@@ -60,7 +60,7 @@ A tool to analyze seccomp filters like `seccomp-tools`, written in C
     Clone the whole repo, and then run `./configure --devmode`.
 
     ```sh
-    git clone https://github.com/dbgbgtf1/Ceccomp.git
+    git clone https://github.com/ceccomp/ceccomp.git
     cd Ceccomp
     ./configure --devmode
     make

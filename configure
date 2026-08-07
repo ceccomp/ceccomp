@@ -65,7 +65,7 @@ def parse_args() -> tuple[argparse.Namespace, list[str]]:
     BPF_CC             BPF compiler (specify clang or bpf-*-gcc)
     BPFTOOL            BPF tool command
 
-Please report bug at https://github.com/dbgbgtf1/Ceccomp
+Please report bug at https://github.com/ceccomp/ceccomp
 Copyright (C) 2025-present, distributed under GPLv3 or later
     '''
     parser = argparse.ArgumentParser(

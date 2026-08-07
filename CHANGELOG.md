@@ -16,14 +16,14 @@ Items marked with :star: is the major change why we release a new version.
 * :star: Add tracee pid in comment when tracing process
 * Only run `make test` when `test` need to be compiled
 
-[#39]: https://github.com/dbgbgtf1/Ceccomp/issues/39
+[#39]: https://github.com/ceccomp/ceccomp/issues/39
 ## 4.2.2
 * :star: Keep `CC` as string in `configure` :link: [#37]
 * :star: Fix flaky seize test with `eventfd` :link: [#38]
 * Flush stdout in `configure` immediately
 
-[#37]: https://github.com/dbgbgtf1/Ceccomp/issues/37
-[#38]: https://github.com/dbgbgtf1/Ceccomp/issues/38
+[#37]: https://github.com/ceccomp/ceccomp/issues/37
+[#38]: https://github.com/ceccomp/ceccomp/issues/38
 ## 4.2.1
 * Fix test error on different architectures
 ## 4.2
@@ -43,11 +43,11 @@ Items marked with :star: is the major change why we release a new version.
 * Reject invalid architecture name
 * Add support for 32-bit arm, armv7l and armv8l
 
-[#31]: https://github.com/dbgbgtf1/Ceccomp/issues/31
+[#31]: https://github.com/ceccomp/ceccomp/issues/31
 [@k4lizen]: https://github.com/k4lizen
-[!33]: https://github.com/dbgbgtf1/Ceccomp/pulls/33
-[!35]: https://github.com/dbgbgtf1/Ceccomp/pulls/35
-[#34]: https://github.com/dbgbgtf1/Ceccomp/issues/34
+[!33]: https://github.com/ceccomp/ceccomp/pulls/33
+[!35]: https://github.com/ceccomp/ceccomp/pulls/35
+[#34]: https://github.com/ceccomp/ceccomp/issues/34
 ## 4.1
 * :star: Fix asm handle STX incorrectly
 * :star: Fix big endian machine tracing failure :link: [#29]
@@ -69,8 +69,8 @@ Items marked with :star: is the major change why we release a new version.
 
 Special credit for codex, which helps us hunt lots of bugs.
 
-[#29]: https://github.com/dbgbgtf1/Ceccomp/issues/29
-[#30]: https://github.com/dbgbgtf1/Ceccomp/issues/30
+[#29]: https://github.com/ceccomp/ceccomp/issues/29
+[#30]: https://github.com/ceccomp/ceccomp/issues/30
 ## 4.0
 * **BREAKING** :star: :fire: **We aggressively refactored our code and the asm grammar is a bit different from v3. Please refer to documentation for new grammar.** :fire:
 * :star: Add seize subfunction in trace pid :link: [#23]
@@ -88,14 +88,14 @@ Special credit for codex, which helps us hunt lots of bugs.
 * Allow returning numbers or `$A`
 * Fixed a typo in README :heart: [@k4lizen] :link: [!28]
 
-[#22]: https://github.com/dbgbgtf1/Ceccomp/issues/22
-[#25]: https://github.com/dbgbgtf1/Ceccomp/issues/25
-[#23]: https://github.com/dbgbgtf1/Ceccomp/issues/23
-[#17]: https://github.com/dbgbgtf1/Ceccomp/issues/17
+[#22]: https://github.com/ceccomp/ceccomp/issues/22
+[#25]: https://github.com/ceccomp/ceccomp/issues/25
+[#23]: https://github.com/ceccomp/ceccomp/issues/23
+[#17]: https://github.com/ceccomp/ceccomp/issues/17
 [@tesuji]: https://github.com/tesuji
-[!19]: https://github.com/dbgbgtf1/Ceccomp/pulls/19
+[!19]: https://github.com/ceccomp/ceccomp/pulls/19
 [@k4lizen]: https://github.com/k4lizen
-[!28]: https://github.com/dbgbgtf1/Ceccomp/pulls/28
+[!28]: https://github.com/ceccomp/ceccomp/pulls/28
 ## 3.5
 * **BREAKING** :star: Now `trace` and `probe` no more accepts `-a`; arch is automatically retrieved via ptrace
 * :star: Add `i686` arch support
@@ -115,8 +115,8 @@ Special credit for codex, which helps us hunt lots of bugs.
 * Use `git describe --long` to have unified name pattern in `configure` devmode
 * Add more tests to check ceccomp behaviour
 
-[#15]: https://github.com/dbgbgtf1/Ceccomp/issues/15
-[#16]: https://github.com/dbgbgtf1/Ceccomp/issues/16
+[#15]: https://github.com/ceccomp/ceccomp/issues/15
+[#16]: https://github.com/ceccomp/ceccomp/issues/16
 ## 3.3
 * :star: Add `--enable-static` in `configure` to build statically
 * Portable release in pip, for x86_64, i386, aarch64, armhf, riscv64
@@ -131,9 +131,9 @@ Special credit for codex, which helps us hunt lots of bugs.
 * Add a dark-mode css for html doc
 * Sort source object for reproducible build
 
-[#13]: https://github.com/dbgbgtf1/Ceccomp/issues/13
-[#12]: https://github.com/dbgbgtf1/Ceccomp/issues/12
-[#14]: https://github.com/dbgbgtf1/Ceccomp/issues/14
+[#13]: https://github.com/ceccomp/ceccomp/issues/13
+[#12]: https://github.com/ceccomp/ceccomp/issues/12
+[#14]: https://github.com/ceccomp/ceccomp/issues/14
 ## 3.1
 * **BREAKING** :star: Add support for multiple process tracing :link: [#3]
 * :star: Cover all cases of trace pid errors :link: [#11]
@@ -144,9 +144,9 @@ Special credit for codex, which helps us hunt lots of bugs.
 * Fix output file may not be opened correctly
 * Add a GitHub action to issue new release easily
 
-[#3]: https://github.com/dbgbgtf1/Ceccomp/issues/3
-[#11]: https://github.com/dbgbgtf1/Ceccomp/issues/11
-[#1]: https://github.com/dbgbgtf1/Ceccomp/issues/1
+[#3]: https://github.com/ceccomp/ceccomp/issues/3
+[#11]: https://github.com/ceccomp/ceccomp/issues/11
+[#1]: https://github.com/ceccomp/ceccomp/issues/1
 ## 3.0
 * **BREAKING** Remove `-o FILE` for `trace` pid mode
 * :star: Add doc system powered by *asciidoc* :link: [#2]
@@ -163,18 +163,18 @@ Special credit for codex, which helps us hunt lots of bugs.
 * Implement assigning `len(struct seccomp_data)` to `A` or `X`
 * Implement uninstall operation and verbose control in Makefile
 
-[#2]: https://github.com/dbgbgtf1/Ceccomp/issues/2
-[#5]: https://github.com/dbgbgtf1/Ceccomp/issues/5
-[#7]: https://github.com/dbgbgtf1/Ceccomp/issues/7
-[#10]: https://github.com/dbgbgtf1/Ceccomp/issues/10
-[#4]: https://github.com/dbgbgtf1/Ceccomp/issues/4
-[#9]: https://github.com/dbgbgtf1/Ceccomp/issues/9
+[#2]: https://github.com/ceccomp/ceccomp/issues/2
+[#5]: https://github.com/ceccomp/ceccomp/issues/5
+[#7]: https://github.com/ceccomp/ceccomp/issues/7
+[#10]: https://github.com/ceccomp/ceccomp/issues/10
+[#4]: https://github.com/ceccomp/ceccomp/issues/4
+[#9]: https://github.com/ceccomp/ceccomp/issues/9
 ## 2.9
 * :star: Fix Makefile compatibility among shells :link: [#6]
 * Add git-hook to remind dev to update version string
 * Update color in `return` BPF OP for better visual effect
 
-[#6]: https://github.com/dbgbgtf1/Ceccomp/issues/6
+[#6]: https://github.com/ceccomp/ceccomp/issues/6
 ## 2.8
 * :star: Improve compatibility among compilers
 * :star: Add Kbuild-like build prompt with progress

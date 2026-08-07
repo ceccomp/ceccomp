@@ -4,7 +4,7 @@ import sys
 import os
 
 CHANGELOG = 'CHANGELOG.md'
-DEFAULT_REPO = 'dbgbgtf1/Ceccomp'
+DEFAULT_REPO = 'ceccomp/ceccomp'
 
 # match 3 raw ref case：#123, !456, user/repo#789, user/repo!456
 pattern = re.compile(r'(?:\s+)((?:[\w.-]+/[\w.-]+)?[#!]\d+)$')

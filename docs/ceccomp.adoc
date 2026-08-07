@@ -285,7 +285,7 @@ depends on label declaration to decide where to jump, instead of lineno in
 _TEXT_ file.
 
 A valid _TEXT_ format is described in EBNF-like declaration here:
-https://github.com/dbgbgtf1/Ceccomp/issues/17#issuecomment-3610531705.
+https://github.com/ceccomp/ceccomp/issues/17#issuecomment-3610531705.
 If you have no interest to know what EBNF is, please keep reading for
 examples.
 
@@ -509,7 +509,7 @@ endif::[]
 
 == REPO
 
-Visit https://github.com/dbgbgtf1/Ceccomp to find the code.
+Visit https://github.com/ceccomp/ceccomp to find the code.
 Pull Requests and Issues are welcome!
 
 Copyright (C) 2025-present, distributed under GPLv3 or later.
