@@ -178,10 +178,10 @@
      "details.")
 #define M_PROG_TRUNCATED                                                      \
   _ ("Too many seccomp filters (> 32) in a task! The rest are truncated.")
-#define M_FAILED_OPEN_LOAD _ ("Failed to open or load ebpf prog %s")
-#define M_FAILED_UPDATE_MAP _ ("Failed to update ebpf map")
+#define M_FAILED_OPEN_LOAD _ ("Failed to open or load eBPF prog %s")
+#define M_FAILED_UPDATE_MAP _ ("Failed to update eBPF map")
 #define M_FAILED_CREATE_RINGBUF _ ("Failed to create ring buffer")
-#define M_FAILED_ATTACH _ ("Failed to attach ebpf")
+#define M_FAILED_ATTACH _ ("Failed to attach eBPF prog")
 #define M_CAPTURE_EBPF_IN_TASK _ ("Capturing new seccomp filter in thread %d")
 #define M_CAPTURE_DISABLED                                                    \
   _ ("Capture is disabled during configuration, probably due to absence of "  \
@@ -190,6 +190,6 @@
   _ ("Loading eBPF program require CAP_SYS_ADMIN || (CAP_BPF && "             \
      "CAP_PERFMON), you may restart ceccomp with sudo.")
 #define M_LINUX_NO_TASK_FROM_PID                                              \
-  _ ("Your kernel (%d.%d) is too old that task_from_pid is not available.")
+  _ ("Your kernel (%d.%d) is so old that task_from_pid is not available.")
 
 #endif

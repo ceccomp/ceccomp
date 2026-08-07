@@ -45,8 +45,8 @@
      "-c, --color (auto|always|never)  When to print in color, default as "   \
      "auto\n"                                                                 \
                                                                               \
-     "-e, --ebpf                       Disassemble eBPF-migrated seccomp "    \
-     "filter bytes instead\n"                                                 \
+     "-e, --ebpf                       Treat input as eBPF-migrated filter "  \
+     "bytes\n"                                                                \
                                                                               \
      "-f, --fmt (hexline|hexfmt|raw)   Output format, default as hexline\n"   \
                                                                               \
@@ -62,7 +62,7 @@
                                                                               \
      "-s, --seize                      Follow process to trace load-filter "  \
      "operation\n"                                                            \
-                                                                              \
+     "\n"                                                                     \
      "syscall_nr                       System call number or name (e.g. "     \
      "0|read)\n"                                                              \
      "args[0-5], ip                    args and ip (instruction pointer) "    \

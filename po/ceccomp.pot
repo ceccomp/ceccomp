@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-04 18:08+0800\n"
+"POT-Creation-Date: 2026-08-07 23:26+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: ../include/config.h:11
+#: ../include/config.h:12
 #, c-format
 msgid ""
 "ceccomp %s\n"
@@ -25,13 +25,19 @@ msgid ""
 "Built by %s\n"
 msgstr ""
 
+#: ../include/config.h:13
+msgid "Dependencies:\n"
+msgstr ""
+
 #: ../include/help.h:5
 msgid "Usage: ceccomp <subcommand> <args> <options>\n"
 msgstr ""
 
-#: ../include/help.h:25
+#: ../include/help.h:27
 msgid ""
 "asm          -- Assemble bpf text to raw bytes\n"
+"capture      -- Install eBPF prog to capture all seccomp filters during "
+"installation or extract installed filters in a process\n"
 "disasm       -- Disassemble raw bytes to bpf text\n"
 "emu          -- Emulate bpf program with given syscall and bpf text\n"
 "help         -- Display ceccomp help information\n"
@@ -42,21 +48,23 @@ msgid ""
 "version      -- Display ceccomp version\n"
 msgstr ""
 
-#: ../include/help.h:36
+#: ../include/help.h:40
 msgid ""
 "Options:\n"
 "-a, --arch (x86_64|aarch64|...)  Which architecture to resolve syscall_nr, "
 "read or write bytestream by the byteorder of arch, default as your arch\n"
+"-c, --color (auto|always|never)  When to print in color, default as auto\n"
+"-e, --ebpf                       Treat input as eBPF-migrated filter bytes\n"
 "-f, --fmt (hexline|hexfmt|raw)   Output format, default as hexline\n"
-"-p, --pid system_process_id      Extract bpf filters from process and print "
-"with bpf text form; CAP_SYS_ADMIN is needed to work\n"
 "-o, --output file                Print to file to avoid mixing ceccomp "
 "output and tracee program output, default as stderr\n"
+"-p, --pid system_process_id      Extract bpf filters from process (or "
+"thread) and print with bpf text form; CAP_SYS_ADMIN is needed to work\n"
 "-q, --quiet                      Print emulate result only or suppress the "
 "process info message in trace and probe\n"
 "-s, --seize                      Follow process to trace load-filter "
 "operation\n"
-"-c, --color (auto|always|never)  When to print in color, default as auto\n"
+"\n"
 "syscall_nr                       System call number or name (e.g. 0|read)\n"
 "args[0-5], ip                    args and ip (instruction pointer) used for "
 "emulation, default as 0\n"
@@ -144,324 +152,415 @@ msgstr ""
 msgid "Process %d invoked seccomp (%s, %s, &prog)"
 msgstr ""
 
-#: ../include/utils/error.h:37
+#: ../include/utils/error.h:38
 #, c-format
 msgid "Process %d invoked prctl (PR_SET_SECCOMP, %s, &prog)"
 msgstr ""
 
-#: ../include/utils/error.h:40
+#: ../include/utils/error.h:39
 #, c-format
 msgid "Process %d failed to load seccomp filter: %s"
 msgstr ""
 
-#: ../include/utils/error.h:41
+#: ../include/utils/error.h:40
 msgid "Unknown reason"
 msgstr ""
 
-#: ../include/utils/error.h:42
+#: ../include/utils/error.h:41
 msgid "Procfs not accessible, unable to perform"
 msgstr ""
 
-#: ../include/utils/error.h:43
+#: ../include/utils/error.h:42
 msgid "Found unresolvable non-classic BPF, skipping"
 msgstr ""
 
-#: ../include/utils/error.h:44
+#: ../include/utils/error.h:43
 msgid "Kernel thread can not be seized"
 msgstr ""
 
-#: ../include/utils/error.h:45
+#: ../include/utils/error.h:44
 #, c-format
 msgid "No seccomp filters found in process %d"
 msgstr ""
 
-#: ../include/utils/error.h:47
+#: ../include/utils/error.h:46
 #, c-format
 msgid "Target process is already being traced by process %d"
 msgstr ""
 
-#: ../include/utils/error.h:49
+#: ../include/utils/error.h:48
 #, c-format
 msgid ""
 "Process %d loaded strict seccomp mode, which only allows read, write, "
 "exit_group and sigreturn!"
 msgstr ""
 
-#: ../include/utils/error.h:51
+#: ../include/utils/error.h:50
 #, c-format
 msgid "Unknown error when get filter: %s"
 msgstr ""
 
-#: ../include/utils/error.h:52
+#: ../include/utils/error.h:51
 #, c-format
 msgid "Unknown error when seizing process: %s"
 msgstr ""
 
-#: ../include/utils/error.h:53
+#: ../include/utils/error.h:52
 msgid "The process to seize does not exist"
 msgstr ""
 
-#: ../include/utils/error.h:58
+#: ../include/utils/error.h:57
 msgid ""
 "Unexpected race condition detected when reading seccomp filters, please "
 "consider use eBPF-based trace in next version"
 msgstr ""
 
-#: ../include/utils/error.h:62
+#: ../include/utils/error.h:61
 msgid "perhaps seizing kthread or lacking CAP_SYS_PTRACE"
 msgstr ""
 
-#: ../include/utils/error.h:64
+#: ../include/utils/error.h:63
 msgid "Run with CAP_SYS_ADMIN capability to fetch seccomp filters"
 msgstr ""
 
-#: ../include/utils/error.h:66
+#: ../include/utils/error.h:65
 msgid "Run with CAP_SYS_PTRACE capability to seize a foreign process"
 msgstr ""
 
-#: ../include/utils/error.h:68
+#: ../include/utils/error.h:67
 msgid "32-bit tracer can not ptrace 64-bit tracee"
 msgstr ""
 
-#: ../include/utils/error.h:70
+#: ../include/utils/error.h:69
 #, c-format
 msgid "libseccomp does not support the tracee's arch (%#x)"
 msgstr ""
 
-#: ../include/utils/error.h:72
+#: ../include/utils/error.h:71
 msgid "perhaps lacking CAP_SYS_ADMIN or ceccomp is in seccomp mode"
 msgstr ""
 
-#: ../include/utils/error.h:74
+#: ../include/utils/error.h:73
 msgid "PTRACE_GET_SECCOMP_FILTER is not supported on your system"
 msgstr ""
 
-#: ../include/utils/error.h:76
+#: ../include/utils/error.h:75
 msgid ""
 "Ceccomp is in seccomp mode, fetching seccomp filters of other process is not "
 "permitted"
 msgstr ""
 
-#: ../include/utils/error.h:79
+#: ../include/utils/error.h:78
 msgid ""
 "perhaps PTRACE_GET_SECCOMP_FILTER is not supported or no seccomp filter in "
 "target process"
 msgstr ""
 
-#: ../include/utils/error.h:83
+#: ../include/utils/error.h:82
 msgid "Invalid color mode"
 msgstr ""
 
-#: ../include/utils/error.h:84
-msgid "Invalid format mode"
+#: ../include/utils/error.h:83
+msgid "Invalid asm format"
 msgstr ""
 
-#: ../include/utils/error.h:85
+#: ../include/utils/error.h:84
 msgid "Invalid number"
 msgstr ""
 
-#: ../include/utils/error.h:86
+#: ../include/utils/error.h:85
 #, c-format
 msgid "Unable to open file %s: %s"
 msgstr ""
 
-#: ../include/utils/error.h:89
+#: ../include/utils/error.h:88
 #, c-format
 msgid "Reading input failed: %s"
 msgstr ""
 
-#: ../include/utils/error.h:91
+#: ../include/utils/error.h:90
 #, c-format
 msgid "Found '\\0' at file offset %lu, perhaps it's not a text file?"
 msgstr ""
 
-#: ../include/utils/error.h:93
+#: ../include/utils/error.h:92
 msgid "No line break in source file, perhaps it's not a text file?"
 msgstr ""
 
-#: ../include/utils/error.h:95
+#: ../include/utils/error.h:94
 #, c-format
 msgid "Line %u has more than %u bytes, perhaps the input is not a text file?"
 msgstr ""
 
-#: ../include/utils/error.h:96
+#: ../include/utils/error.h:95
 msgid "The input file is greater than 4 MiB!"
 msgstr ""
 
-#: ../include/utils/error.h:98
+#: ../include/utils/error.h:97
 msgid "Found more than 16384 lines of text, perhaps it's not for ceccomp?"
 msgstr ""
 
-#: ../include/utils/error.h:101
+#: ../include/utils/error.h:100
 msgid "Can not find label declaration"
 msgstr ""
 
-#: ../include/utils/error.h:104
+#: ../include/utils/error.h:103
 msgid "Unexpected token"
 msgstr ""
 
-#: ../include/utils/error.h:105
+#: ../include/utils/error.h:104
 msgid "Found duplicated label declaration"
 msgstr ""
 
-#: ../include/utils/error.h:106
+#: ../include/utils/error.h:105
 msgid "Input number exceeds 32-bit range"
 msgstr ""
 
-#: ../include/utils/error.h:108
+#: ../include/utils/error.h:107
 msgid "Expect operator"
 msgstr ""
 
-#: ../include/utils/error.h:109
+#: ../include/utils/error.h:108
 msgid "Expect rvalue"
 msgstr ""
 
-#: ../include/utils/error.h:110
+#: ../include/utils/error.h:109
 msgid "Expect return value"
 msgstr ""
 
-#: ../include/utils/error.h:112
+#: ../include/utils/error.h:111
 msgid "Expect number"
 msgstr ""
 
-#: ../include/utils/error.h:113
+#: ../include/utils/error.h:112
 msgid "Expect parenthesis"
 msgstr ""
 
-#: ../include/utils/error.h:114
+#: ../include/utils/error.h:113
 msgid "Expect bracket"
 msgstr ""
 
-#: ../include/utils/error.h:115
+#: ../include/utils/error.h:114
 msgid "Expect comparator"
 msgstr ""
 
-#: ../include/utils/error.h:116
+#: ../include/utils/error.h:115
 msgid "Expect label"
 msgstr ""
 
-#: ../include/utils/error.h:117
+#: ../include/utils/error.h:116
 msgid "Expect valid syscall name"
 msgstr ""
 
-#: ../include/utils/error.h:119
+#: ../include/utils/error.h:118
 msgid ""
 "Architecture token does not match any libseccomp arch, perhaps system "
 "libseccomp is too old"
 msgstr ""
 
-#: ../include/utils/error.h:123
+#: ../include/utils/error.h:122
 msgid "Expect 'goto'"
 msgstr ""
 
-#: ../include/utils/error.h:124
+#: ../include/utils/error.h:123
 msgid "Expect '$A'"
 msgstr ""
 
-#: ../include/utils/error.h:125
+#: ../include/utils/error.h:124
 msgid "Expect 'else'"
 msgstr ""
 
-#: ../include/utils/error.h:128
+#: ../include/utils/error.h:127
 msgid "Rvalue should be '$A'"
 msgstr ""
 
-#: ../include/utils/error.h:129
+#: ../include/utils/error.h:128
 msgid "Rvalue can not be '$A'"
 msgstr ""
 
-#: ../include/utils/error.h:130
+#: ../include/utils/error.h:129
 msgid "Rvalue can not be '$X'"
 msgstr ""
 
-#: ../include/utils/error.h:132
+#: ../include/utils/error.h:131
 msgid "Rvalue should be '$A' or '$X'"
 msgstr ""
 
-#: ../include/utils/error.h:133
+#: ../include/utils/error.h:132
 msgid "Rvalue should be '$X' or number"
 msgstr ""
 
-#: ../include/utils/error.h:134
+#: ../include/utils/error.h:133
 msgid "Operator should be '='"
 msgstr ""
 
-#: ../include/utils/error.h:135
+#: ../include/utils/error.h:134
 msgid "Lvalue should be '$A'"
 msgstr ""
 
-#: ../include/utils/error.h:137
+#: ../include/utils/error.h:136
 msgid "seccomp_data load offset must be 4-byte aligned"
 msgstr ""
 
-#: ../include/utils/error.h:139
+#: ../include/utils/error.h:138
 msgid "seccomp_data load offset greater than the struct"
 msgstr ""
 
-#: ../include/utils/error.h:141
+#: ../include/utils/error.h:140
 msgid "Args index out of range (0-5)"
 msgstr ""
 
-#: ../include/utils/error.h:142
+#: ../include/utils/error.h:141
 msgid "Mem index out of range (0-15)"
 msgstr ""
 
-#: ../include/utils/error.h:143
+#: ../include/utils/error.h:142
 msgid "Accessing uninitialized mem"
 msgstr ""
 
-#: ../include/utils/error.h:144
+#: ../include/utils/error.h:143
 msgid "Dividing by zero"
 msgstr ""
 
-#: ../include/utils/error.h:145
+#: ../include/utils/error.h:144
 msgid "Left or right shifting more than 32 bits"
 msgstr ""
 
-#: ../include/utils/error.h:147
+#: ../include/utils/error.h:146
 msgid "Data carried by return motion exceeds 0xffff"
 msgstr ""
 
-#: ../include/utils/error.h:148
+#: ../include/utils/error.h:147
 msgid "JT is larger than 0xff"
 msgstr ""
 
-#: ../include/utils/error.h:149
+#: ../include/utils/error.h:148
 msgid "JT must be positive"
 msgstr ""
 
-#: ../include/utils/error.h:150
+#: ../include/utils/error.h:149
 msgid "JF is larger than 0xff"
 msgstr ""
 
-#: ../include/utils/error.h:151
+#: ../include/utils/error.h:150
 msgid "JF must be positive"
 msgstr ""
 
-#: ../include/utils/error.h:152
+#: ../include/utils/error.h:151
 msgid "JT out of filters"
 msgstr ""
 
-#: ../include/utils/error.h:153
+#: ../include/utils/error.h:152
 msgid "JF out of filters"
 msgstr ""
 
-#: ../include/utils/error.h:154
+#: ../include/utils/error.h:153
 msgid "JA out of filters"
 msgstr ""
 
-#: ../include/utils/error.h:155
+#: ../include/utils/error.h:154
 msgid "JA must be positive"
 msgstr ""
 
-#: ../include/utils/error.h:157
+#: ../include/utils/error.h:156
 msgid "BPF filters must end with return"
 msgstr ""
 
-#: ../include/utils/error.h:158
+#: ../include/utils/error.h:157
 msgid "The input does not contain any valid statement"
 msgstr ""
 
-#: ../include/utils/error.h:160
+#: ../include/utils/error.h:159
 msgid "Invalid or unknown operation"
+msgstr ""
+
+#: ../include/utils/error.h:163
+#, c-format
+msgid ""
+"Unexpected bpf_insn (#%u) in kernel migrated eBPF (assertion failed at "
+"%s#L%d: %s), please open an issue and upload your eBPF case"
+msgstr ""
+
+#: ../include/utils/error.h:166
+#, c-format
+msgid "Your eBPF case has been saved in %s (binary file)"
+msgstr ""
+
+#: ../include/utils/error.h:167
+#, c-format
+msgid "Failed to save your eBPF case due to %s"
+msgstr ""
+
+#: ../include/utils/error.h:169
+#, c-format
+msgid ""
+"#%u: Input eBPF insn does not meet assertion at %s#L%d: %s\n"
+"%s"
+msgstr ""
+
+#: ../include/utils/error.h:170
+msgid "Failed to convert eBPF back to cBPF"
+msgstr ""
+
+#: ../include/utils/error.h:172
+#, c-format
+msgid "eBPF program failed to locate seccomp filters, %s"
+msgstr ""
+
+#: ../include/utils/error.h:174
+#, c-format
+msgid "eBPF program failed to retrieve seccomp filter in a task, %s"
+msgstr ""
+
+#: ../include/utils/error.h:175
+#, c-format
+msgid "Thread %d does not exist"
+msgstr ""
+
+#: ../include/utils/error.h:177
+msgid ""
+"please read output from /sys/kernel/debug/tracing/trace_pipe for details."
+msgstr ""
+
+#: ../include/utils/error.h:180
+msgid "Too many seccomp filters (> 32) in a task! The rest are truncated."
+msgstr ""
+
+#: ../include/utils/error.h:181
+#, c-format
+msgid "Failed to open or load eBPF prog %s"
+msgstr ""
+
+#: ../include/utils/error.h:182
+msgid "Failed to update eBPF map"
+msgstr ""
+
+#: ../include/utils/error.h:183
+msgid "Failed to create ring buffer"
+msgstr ""
+
+#: ../include/utils/error.h:184
+msgid "Failed to attach eBPF prog"
+msgstr ""
+
+#: ../include/utils/error.h:185
+#, c-format
+msgid "Capturing new seccomp filter in thread %d"
+msgstr ""
+
+#: ../include/utils/error.h:187
+msgid ""
+"Capture is disabled during configuration, probably due to absence of libbpf. "
+"You may rebuild it with libbpf support."
+msgstr ""
+
+#: ../include/utils/error.h:190
+msgid ""
+"Loading eBPF program require CAP_SYS_ADMIN || (CAP_BPF && CAP_PERFMON), you "
+"may restart ceccomp with sudo."
+msgstr ""
+
+#: ../include/utils/error.h:193
+#, c-format
+msgid "Your kernel (%d.%d) is so old that task_from_pid is not available."
 msgstr ""
