@@ -1,0 +1,41 @@
+name: clang-format
+
+on:
+  push:
+
+env:
+  TERM: xterm-256color
+
+jobs:
+  format-check:
+    name: Check code formatting
+    runs-on: ubuntu-slim
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Install components
+        run: |
+          wget https://apt.llvm.org/llvm.sh
+          chmod +x llvm.sh
+          sudo ./llvm.sh 22
+          sudo apt install -y clang-format-22 diffutils
+
+      - name: Run clang-format
+        run: |
+          fail=0
+          # Same find logic as the Makefile: C_SRCS, INC_SRCS and EBPF_SRCS.
+          files=()
+          files+=( $(find src -name '*.c') )
+          files+=( $(find include \( -name lib -o -name ebpf \) -prune -o -name "*.h" -print) )
+          files+=( $(find ebpf -name '*.bpf.c') )
+          for file in "${files[@]}"; do
+            diff -u --color=always "$file" <(clang-format-22 "$file") || fail=$((fail + 1))
+          done
+          if [[ $fail -eq 0 ]]; then
+            echo "🎉 Congrats! All files are formatted."
+          else
+            echo "❌ $fail files are not formatted!"
+          fi
+          exit "$fail"
