@@ -1,0 +1,74 @@
+name: CI builds
+
+on:
+  push:
+
+env:
+  TERM: xterm-256color
+
+jobs:
+  build:
+    name: ${{ matrix.name }}
+    runs-on: ${{ matrix.runs-on }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: ubuntu-24.04 CI (clang)
+            runs-on: ubuntu-24.04
+            deps: asciidoctor gettext libbpf-dev libelf-dev libseccomp-dev pkgconf python3-pytest zlib1g-dev llvm linux-tools-common linux-tools-azure
+            bpf-cc: clang
+            need-bpftool-workaround: true
+
+          - name: ubuntu-26.04-arm CI (bpf-gcc)
+            runs-on: ubuntu-26.04-arm
+            deps: bpftool gcc-bpf libbpf-dev libseccomp-dev pkgconf python3-pytest
+            bpf-cc: bpf-gcc
+            need-bpftool-workaround: false
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+
+      - name: Install dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y ${{ matrix.deps }}
+
+      - name: Install bpftool workaround
+        if: matrix.need-bpftool-workaround
+        shell: bash
+        run: |
+          set -euo pipefail
+          KREL="$(uname -r)"
+          if ! /usr/sbin/bpftool -V >/dev/null 2>&1; then
+            if ! find /usr/lib -type f -name bpftool -perm -111 2>/dev/null | grep -q .; then
+              sudo apt install -y --no-install-recommends linux-tools-generic
+            fi
+            FALLBACK="$(find /usr/lib -type f -name bpftool -perm -111 2>/dev/null | sort -V | tail -n 1)"
+            [[ -n "$FALLBACK" ]] || { echo "No bpftool payload found"; exit 1; }
+            sudo mkdir -p "/usr/lib/linux-tools/${KREL}"
+            sudo ln -sf "$FALLBACK" "/usr/lib/linux-tools/${KREL}/bpftool"
+          fi
+
+      - name: Configure
+        run: BPF_CC=${{ matrix.bpf-cc }} CFLAGS=-pedantic ./configure --devmode --prefix=/usr --destdir=build/inst
+
+      - name: Make
+        run: |
+          make -j$(nproc)
+          make test -j$(nproc)
+
+      - name: Test
+        run: sudo pytest -v --color yes
+
+      - name: Install
+        run: |
+          make install
+          ./build/ceccomp version
+
+      - name: List files size
+        run: (cd build/inst && tree -C --du -h .)
