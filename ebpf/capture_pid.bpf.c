@@ -113,7 +113,7 @@ BPF_PROG (capture_pid, uint32_t op, uint32_t flags, void *uargs)
   arch = PROC_ARCH_OTHERS;
 #endif
 
-  for (uint32_t prog_index = 0; !failed && filter != NULL && prog_index < 32;
+  for (uint32_t prog_index = 0; filter != NULL && prog_index < 32;
        prog_index++)
     {
       struct seccomp_filter *next;
