@@ -1,6 +1,8 @@
 #include "config.h"
+#include "utils/proc_status.h"
 #include <stdint.h>
 #include <sys/types.h>
+#include <sys/utsname.h>
 
 #if EBPF_SUPPORT == 1
 #define _NO_VMLINUX_
@@ -48,6 +50,18 @@ libbpf_msg_dispatcher (enum libbpf_print_level level, const char *fmt,
     default:
       assert (!"Unexpected libbpf_print_level");
     }
+}
+
+static bool
+linux_have_task_from_pid (int *restrict major, int *restrict minor)
+{
+  struct utsname uts;
+  assert (!uname (&uts));
+  char *end = NULL;
+  *major = strtoul (uts.release, &end, 10);
+  assert (*end == '.');
+  *minor = strtoul (end + 1, &end, 10);
+  return *major > 6 || (*major == 6 && *minor >= 2);
 }
 
 typedef struct
@@ -167,7 +181,14 @@ capture_pid (pid_t pid, uint32_t scmp_arch)
 
   skel = capture_pid_bpf__open_and_load ();
   if (!skel)
-    error (M_FAILED_OPEN_LOAD, __func__);
+    {
+      int major, minor;
+      if (have_bpf_cap () == 0)
+        error ("%s", M_EBPF_NOT_CAPABLE);
+      if (!linux_have_task_from_pid (&major, &minor))
+        error (M_LINUX_NO_TASK_FROM_PID, major, minor);
+      error (M_FAILED_OPEN_LOAD, __func__);
+    }
 
   err = bpf_map_update_elem (bpf_map__fd (skel->maps.scmp_config), &zero,
                              &config, BPF_ANY);
@@ -233,7 +254,12 @@ capture (pid_t pid, uint32_t scmp_arch)
 
   skel = capture_bpf__open_and_load ();
   if (!skel)
-    error (M_FAILED_OPEN_LOAD, __func__);
+    {
+      if (have_bpf_cap () == 0)
+        // explicitly ignore broken /proc and enough caps
+        error ("%s", M_EBPF_NOT_CAPABLE);
+      error (M_FAILED_OPEN_LOAD, __func__);
+    }
 
   rb = ring_buffer__new (bpf_map__fd (skel->maps.scmp_events), on_events, &ctx,
                          NULL);

@@ -172,8 +172,7 @@
   _ ("eBPF program failed to locate seccomp filters, %s")
 #define M_UNKNOWN_TASK_ABORTED                                                \
   _ ("eBPF program failed to retrieve seccomp filter in a task, %s")
-#define M_PID_NOT_FOUND                                                       \
-  _ ("Thread %d does not exist")
+#define M_PID_NOT_FOUND _ ("Thread %d does not exist")
 #define M_CAPTURE_PID_HELP                                                    \
   _ ("please read output from /sys/kernel/debug/tracing/trace_pipe for "      \
      "details.")
@@ -187,5 +186,10 @@
 #define M_CAPTURE_DISABLED                                                    \
   _ ("Capture is disabled during configuration, probably due to absence of "  \
      "libbpf. You may rebuild it with libbpf support.")
+#define M_EBPF_NOT_CAPABLE                                                    \
+  _ ("Loading eBPF program require CAP_SYS_ADMIN || (CAP_BPF && "             \
+     "CAP_PERFMON), you may restart ceccomp with sudo.")
+#define M_LINUX_NO_TASK_FROM_PID                                              \
+  _ ("Your kernel (%d.%d) is too old that task_from_pid is not available.")
 
 #endif

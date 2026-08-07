@@ -1,5 +1,7 @@
 #include "utils/proc_status.h"
+#include "config.h"
 #include "main.h"
+#include <linux/capability.h>
 #include <stddef.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -75,3 +77,38 @@ may_be_listener_fd (int pid, long rax)
     return 0;
   return !memcmp (buf, NOTIFY_S, LITERAL_STRLEN (NOTIFY_S));
 }
+
+#if EBPF_SUPPORT == 1
+int
+have_bpf_cap (void)
+{
+  char buf[0x40];
+  char *end = NULL;
+  uint64_t caps = -1;
+  int rc = -1;
+
+  FILE *f = fopen ("/proc/self/status", "r");
+  if (f == NULL)
+    return -1;
+
+#define CAPEFF "CapEff:"
+  while (fgets (buf, 0x40, f))
+    if (STARTWITH (buf, CAPEFF))
+      {
+        caps = strtoull (buf + sizeof (CAPEFF), &end, 16);
+        if (end == buf + sizeof (CAPEFF))
+          goto out;
+        break;
+      }
+  if (caps == (uint64_t)-1)
+    goto out;
+
+#define CAPABLE(val, bit) ((val) & (1ull << (bit)))
+  rc = (CAPABLE (caps, CAP_BPF) && CAPABLE (caps, CAP_PERFMON))
+       || CAPABLE (caps, CAP_SYS_ADMIN);
+
+out:
+  fclose (f);
+  return rc;
+}
+#endif
