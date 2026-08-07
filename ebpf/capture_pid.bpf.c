@@ -92,7 +92,7 @@ BPF_PROG (capture_pid, uint32_t op, uint32_t flags, void *uargs)
   EBPF_IF (!(task = bpf_task_from_pid (config->target_pid)))
   {
     event_status = PID_NOT_FOUND;
-    goto end;
+    goto end_null;
   }
 
   struct seccomp_filter *filter = NULL;
@@ -157,6 +157,7 @@ end:
   bpf_task_release (task);
 
   pid_event *event;
+end_null:
   EBPF_IF (!(event = bpf_ringbuf_reserve (&scmp_events, sizeof (*event), 0)))
   return 0;
 
