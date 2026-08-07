@@ -67,7 +67,7 @@ CC := {{CC}}
 {{EBPF_IF}}
 BPF_CC := {{BPF_CC}}
 BPFTOOL := {{BPFTOOL}}
-BPF_FLAGS := -O2 -g -std=gnu17 -I$(INC_DIR) -D__TARGET_ARCH_{{BPF_ARCH}} {{BPF_EXTRA_FLAG}} -Wno-missing-declarations
+BPF_FLAGS := -O2 -g -I$(INC_DIR) -D__TARGET_ARCH_{{BPF_ARCH}} {{BPF_EXTRA_FLAG}} -Wno-missing-declarations
 {{EBPF_ENDIF}}
 
 LOCALE_DIR := {{LOCALEDIR}}
@@ -249,9 +249,13 @@ $(VMLINUX_HEADER): | $(EBPF_INC_DIR) $(MARK)
 		grep -vF 'skipping /sys/kernel/btf/vmlinux' $(BUILD_DIR)/bpftool.log >&2; \
 		exit $$ret
 
-$(BUILD_DIR)/%.bpf.o: $(EBPF_DIR)/%.bpf.c | $(VMLINUX_HEADER) $(BUILD_DIR) $(MARK)
+$(BUILD_DIR)/%.bpf.o: $(EBPF_DIR)/%.bpf.c Makefile | $(VMLINUX_HEADER) $(BUILD_DIR) $(MARK)
 	$Q$(call ECHO,BPF_CC,$<)
 	$Q$(BPF_CC) $(BPF_FLAGS) $< -c -o $@
+	{{LLVM_STRIP_IF}}
+	$Q$(call ECHO,STRIP,$@)
+	$Qllvm-strip -g $@
+	{{LLVM_STRIP_ENDIF}}
 
 $(EBPF_INC_DIR)/%.skel.h: $(BUILD_DIR)/%.bpf.o | $(EBPF_INC_DIR) $(MARK)
 	$Q$(call ECHO,BPFTOOL,$<)
@@ -291,7 +295,7 @@ $(BUILD_DIR)/test: $(TEST_OBJS) | $(BUILD_DIR) $(MARK)
 	$Q$(call ECHO,LD,$@)
 	$Q$(CC) $^ -o $@ $(LDFLAGS)
 
-$(CAPTURE_OBJ): $(CAPTURE_SRC) $(CONFIG_HEADER) {{EBPF_IF}}$(EBPF_SKELS){{EBPF_ENDIF}} | $(BUILD_DIR) $(MARK)
+$(CAPTURE_OBJ): $(CAPTURE_SRC) $(CONFIG_HEADER) {{EBPF_IF}}$(EBPF_SKELS){{EBPF_ENDIF}} Makefile | $(BUILD_DIR) $(MARK)
 	$Q$(call ECHO,CC,$@)
 	$Q$(CC) -I$(INC_DIR) $(CFLAGS) -Wno-overlength-strings $< -c -o $@
 

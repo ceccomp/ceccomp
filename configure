@@ -115,6 +115,8 @@ Copyright (C) 2025-present, distributed under GPLv3 or later
 
     return parser.parse_known_args()
 
+is_gcc_bpf: bool
+
 @dataclass
 class BuildOptions:
     prefix: str
@@ -259,9 +261,13 @@ class BuildOptions:
         bpf_cc = check_cmd('bpf_cc', 'clang', 'bpf-gcc')
         if isinstance(bpf_cc, str):
             bpf_cc = [bpf_cc]
+
+        global is_gcc_bpf
+        is_gcc_bpf = False
         if bpf_cc:
             if 'bpf' in bpf_cc[0]:
                 bpf_cc.append('-mlittle-endian')
+                is_gcc_bpf = True
             else:
                 bpf_cc.append('-target')
                 bpf_cc.append('bpf')
@@ -748,6 +754,8 @@ def check_omit_leaf_frame_pointer_flag(makefile: Makefile):
         info(TXT_GREEN('yes'))
         makefile.inject('ARCH_PRESERVE_FP', '-mno-omit-leaf-frame-pointer')
 
+found_llvm_strip = False
+
 @new_task
 def check_ebpf_infra(_: Makefile):
     pcheck('eBPF support tools')
@@ -792,6 +800,12 @@ def check_ebpf_infra(_: Makefile):
         buildopts.ebpf = False
         return
 
+    if shutil.which('llvm-strip'):
+        global found_llvm_strip
+        found_llvm_strip = True
+    elif not is_gcc_bpf:
+        warn('Can not find llvm-strip to strip bpf object, the final binary may be large')
+
     info(TXT_GREEN(f'yes, {buildopts.bpf_cc[0]}'))
 
 libbpf = '''
@@ -830,7 +844,7 @@ def check_libbpf(makefile: Makefile):
         error('Can not compile a minimum unit of libbpf, you may install it or disable eBPF support')
 
     bpfcc_flags = []
-    if 'bpf' in buildopts.bpf_cc[0]:
+    if is_gcc_bpf:
         # bpf-gcc
         bpfcc_flags = ['-O2', '-std=gnu17', '-isystem', f'{sys.prefix}/local/include',
                        '-isystem', f'{sys.prefix}/include']
@@ -860,12 +874,14 @@ def check_bpf_arch(makefile: Makefile):
         makefile.inject('EBPF_ON', '0')
         makefile.inject('EBPF', False)
         return
+
     arch = platform.machine()
     le = True # little endian
     extra_flags = []
-    if 'bpf' in buildopts.bpf_cc[0]:
+    if is_gcc_bpf:
         extra_flags.extend(['-isystem', f'{sys.prefix}/local/include',
-                            '-isystem', f'{sys.prefix}/include'])
+                            '-isystem', f'{sys.prefix}/include',
+                            '-std=gnu17'])
     if buildopts.target:
         arch = buildopts.target.split('-', 1)[0]
     if 'x86_64' in arch or re.match(r'i\d86', arch):
@@ -910,6 +926,8 @@ def check_bpf_arch(makefile: Makefile):
         buildopts.bpf_cc[-1] = 'bpf' + 'el' if le else 'eb'
     makefile.inject('BPF_CC', ' '.join(buildopts.bpf_cc))
     makefile.inject('BPFTOOL', buildopts.bpftool)
+
+    makefile.inject('LLVM_STRIP', not is_gcc_bpf and found_llvm_strip)
 
     makefile.inject('EBPF_ON', '1')
     makefile.inject('EBPF', True)
