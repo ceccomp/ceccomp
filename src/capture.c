@@ -1,5 +1,4 @@
 #include "config.h"
-#include "ebpf/vmlinux.h"
 #include <stdint.h>
 #include <sys/types.h>
 
@@ -146,7 +145,7 @@ on_pid_events (void *ctx, void *data, unsigned long size)
       else if (event->status == TASK_ABORTED)
         warn (M_UNKNOWN_TASK_ABORTED, M_CAPTURE_PID_HELP);
       else if (event->status == TASK_ABORTED)
-        warn (M_PID_NOT_FOUND, c->target_pid);
+        error (M_PID_NOT_FOUND, c->target_pid);
       break;
     default:
       assert (!"Unexpected status received from ebpf");
