@@ -800,13 +800,13 @@ def check_ebpf_infra(_: Makefile):
         buildopts.ebpf = False
         return
 
+    info(TXT_GREEN(f'yes, {buildopts.bpf_cc[0]}'))
+
     if shutil.which('llvm-strip'):
         global found_llvm_strip
         found_llvm_strip = True
     elif not is_gcc_bpf:
         warn('Can not find llvm-strip to strip bpf object, the final binary may be large')
-
-    info(TXT_GREEN(f'yes, {buildopts.bpf_cc[0]}'))
 
 libbpf = '''
 #include <bpf/libbpf.h>
@@ -865,6 +865,11 @@ def check_libbpf(makefile: Makefile):
 
     info(TXT_GREEN('yes'))
     makefile.inject('LIBBPF_FLAG', ' '.join(link_flags))
+
+    if is_gcc_bpf:
+        code, stdout, _ = run_command([buildopts.bpf_cc[0], '-dumpversion'])
+        if code or int(stdout.strip().split('.', 1)[0]) < 15:
+            warn('Recommends gcc>=15 to compile bpf, gcc<15 may not work properly')
 
 @new_task
 def check_bpf_arch(makefile: Makefile):
