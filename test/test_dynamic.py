@@ -55,7 +55,7 @@ def fill_pid(log: str, pid: int) -> str:
     idx = log.find('------')
     assert idx != -1
     prefix = f'PID={pid} '
-    return log.replace('-' * len(prefix), prefix, count=1)
+    return log[:idx] + prefix + log[idx + len(prefix):]
 
 # -a x86_64 option in COMMON_OPTS will be ignored in trace/probe
 

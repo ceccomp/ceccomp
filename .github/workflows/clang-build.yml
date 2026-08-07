@@ -59,7 +59,7 @@ jobs:
         run: make test -j$(nproc)
 
       - name: Test
-        run: pytest test
+        run: sudo pytest test
 
       - name: Install
         run: make install
