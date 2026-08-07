@@ -8,7 +8,7 @@
 struct
 {
   __uint (type, BPF_MAP_TYPE_RINGBUF);
-  __uint (max_entries, 0x20000);
+  __uint (max_entries, 0x100000);
 } scmp_events SEC (".maps");
 
 struct
