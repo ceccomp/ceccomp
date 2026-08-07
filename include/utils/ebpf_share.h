@@ -23,9 +23,10 @@ typedef enum
   CHUNK_DONE,
   PROG_DONE,
   PROG_ABORTED,
+  TRUNCATED,
   TASK_ABORTED,
   ALL_DONE,
-  TRUNCATED,
+  PID_NOT_FOUND
 } pid_event_status;
 
 typedef struct

@@ -172,6 +172,8 @@
   _ ("eBPF program failed to locate seccomp filters, %s")
 #define M_UNKNOWN_TASK_ABORTED                                                \
   _ ("eBPF program failed to retrieve seccomp filter in a task, %s")
+#define M_PID_NOT_FOUND                                                       \
+  _ ("eBPF program failed to get task from target pid %d")
 #define M_CAPTURE_PID_HELP                                                    \
   _ ("please read output from /sys/kernel/debug/tracing/trace_pipe for "      \
      "details.")

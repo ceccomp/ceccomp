@@ -1,4 +1,5 @@
 #include "config.h"
+#include "ebpf/vmlinux.h"
 #include <stdint.h>
 #include <sys/types.h>
 
@@ -61,6 +62,7 @@ typedef struct
   pid_event event;
   uint32_t flen;
   uint32_t scmp_arch;
+  pid_t target_pid;
   struct bpf_insn *ebpf_insns;
 } pid_event_ctx;
 
@@ -134,6 +136,7 @@ on_pid_events (void *ctx, void *data, unsigned long size)
       free (c->ebpf_insns);
       c->ebpf_insns = NULL;
       break;
+    case PID_NOT_FOUND:
     case TRUNCATED:
     case TASK_ABORTED:
     case ALL_DONE:
@@ -142,6 +145,8 @@ on_pid_events (void *ctx, void *data, unsigned long size)
         warn ("%s", M_PROG_TRUNCATED);
       else if (event->status == TASK_ABORTED)
         warn (M_UNKNOWN_TASK_ABORTED, M_CAPTURE_PID_HELP);
+      else if (event->status == TASK_ABORTED)
+        warn (M_PID_NOT_FOUND, c->target_pid);
       break;
     default:
       assert (!"Unexpected status received from ebpf");

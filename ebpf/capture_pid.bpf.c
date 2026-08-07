@@ -5,8 +5,8 @@
 #include <bpf/bpf_helpers.h>
 #include <bpf/bpf_tracing.h>
 
-extern struct task_struct *bpf_task_from_pid(s32 pid) __weak __ksym;
-extern void bpf_task_release(struct task_struct *p) __weak __ksym;
+extern struct task_struct *bpf_task_from_pid (s32 pid) __weak __ksym;
+extern void bpf_task_release (struct task_struct *p) __weak __ksym;
 
 struct
 {
@@ -88,25 +88,37 @@ BPF_PROG (capture_pid, uint32_t op, uint32_t flags, void *uargs)
   return 0;
 
   struct task_struct *task;
+  pid_event_status event_status = ALL_DONE;
   EBPF_IF (!(task = bpf_task_from_pid (config->target_pid)))
-  return 0;
+  {
+    event_status = PID_NOT_FOUND;
+    goto end;
+  }
 
-  bool failed = false;
   struct seccomp_filter *filter = NULL;
   EBPF_IF (BPF_CORE_READ_INTO (&filter, task, seccomp.filter) < 0)
-  failed = true;
+  {
+    event_status = TASK_ABORTED;
+    goto end;
+  }
 
   ebpf_arch arch;
 #if defined(__aarch64__)
   unsigned long tflags;
   EBPF_IF (BPF_CORE_READ_INTO (&tflags, task, thread_info.flags) < 0)
-  failed = true;
+  {
+    event_status = TASK_ABORTED;
+    goto end;
+  }
 
   arch = COMPAT_ARCH (tflags);
 #elif defined(__x86_64__)
   uint32_t status;
   EBPF_IF (BPF_CORE_READ_INTO (&status, task, thread_info.status) < 0)
-  failed = true;
+  {
+    event_status = TASK_ABORTED;
+    goto end;
+  }
 
   arch = COMPAT_ARCH (status);
 #else
@@ -135,19 +147,23 @@ BPF_PROG (capture_pid, uint32_t op, uint32_t flags, void *uargs)
     next:
       EBPF_IF (BPF_CORE_READ_INTO (&next, filter, prev) < 0)
       {
-        failed = true;
+        event_status = TASK_ABORTED;
         break;
       }
       filter = next;
     }
+
+end:
   bpf_task_release (task);
 
   pid_event *event;
   EBPF_IF (!(event = bpf_ringbuf_reserve (&scmp_events, sizeof (*event), 0)))
   return 0;
 
-  if (failed)
+  if (event_status == TASK_ABORTED)
     event->status = TASK_ABORTED;
+  else if (event_status == PID_NOT_FOUND)
+    event->status = PID_NOT_FOUND;
   else if (filter != NULL)
     event->status = TRUNCATED;
   else
