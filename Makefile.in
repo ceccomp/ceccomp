@@ -67,7 +67,7 @@ CC := {{CC}}
 {{EBPF_IF}}
 BPF_CC := {{BPF_CC}}
 BPFTOOL := {{BPFTOOL}}
-BPF_FLAGS := -O2 -g -I$(INC_DIR) -D__TARGET_ARCH_{{BPF_ARCH}} {{BPF_EXTRA_FLAG}} -Wno-missing-declarations
+BPF_FLAGS := -O2 -g -I$(INC_DIR) -isystem $(INC_DIR)/ebpf -D__TARGET_ARCH_{{BPF_ARCH}} {{BPF_EXTRA_FLAG}}
 {{EBPF_ENDIF}}
 
 LOCALE_DIR := {{LOCALEDIR}}

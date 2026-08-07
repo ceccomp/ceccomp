@@ -2,7 +2,7 @@
 #define EBPF_SHARE_H
 
 #ifndef _NO_VMLINUX_
-#include "ebpf/vmlinux.h"
+#include <vmlinux.h>
 #else
 #include <linux/bpf.h>
 #include <linux/bpf_common.h>

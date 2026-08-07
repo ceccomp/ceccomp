@@ -1,9 +1,9 @@
-#include "ebpf/vmlinux.h"
 #include "utils/ebpf_logger.h"
 #include "utils/ebpf_share.h"
 #include <bpf/bpf_core_read.h>
 #include <bpf/bpf_helpers.h>
 #include <bpf/bpf_tracing.h>
+#include <vmlinux.h>
 
 extern struct task_struct *bpf_task_from_pid (s32 pid) __weak __ksym;
 extern void bpf_task_release (struct task_struct *p) __weak __ksym;
