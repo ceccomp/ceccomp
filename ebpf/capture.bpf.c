@@ -155,7 +155,10 @@ BPF_PROG (seccomp_ret, uint32_t op, uint32_t flags, void *uargs, long ret)
   EBPF_IF_PID (
       !(event = bpf_ringbuf_reserve (&scmp_events, sizeof (global_event), 0)),
       pid)
-  return 0;
+  {
+    EBPF_LOG_IF_PID (bpf_map_delete_elem (&unverified_filters, &pid) < 0, pid);
+    return 0;
+  }
 
   event->pid = pid;
   event->op = op;
