@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2026-08-08 16:32+0800\n"
+"POT-Creation-Date: 2026-08-08 22:27+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -197,7 +197,7 @@ msgid "Stable installation:"
 msgstr ""
 
 #. type: Plain text
-#: ../README.md:58
+#: ../README.md:59
 #, markdown-text, no-wrap
 msgid ""
 "    Clone the whole repo, then run `./configure`. Dependencies will be "
@@ -206,15 +206,16 @@ msgid ""
 "disabled if not available.\n"
 "    For documentation generation, you need `asciidoctor`. For multi-language "
 "support, you need\n"
-"    `gettext` package. For eBPF support, you need `libbpf` and "
-"`bpftool`. You could use\n"
-"    `--without-doc`, `--without-i18n` and `--without-ebpf` to disable them "
-"explicitly.\n"
+"    `gettext` package. For eBPF support, you need `libbpf`, `bpftool` and a "
+"bpf C compiler,\n"
+"    `clang` with `llvm` package or `gcc-bpf>=15`. You could use "
+"`--without-doc`, `--without-i18n`\n"
+"    and `--without-ebpf` to disable them explicitly.\n"
 "    Please run `./configure --help` for more details.\n"
 msgstr ""
 
 #. type: Plain text
-#: ../README.md:67
+#: ../README.md:68
 #, markdown-text, no-wrap
 msgid ""
 "    ```sh\n"
@@ -228,19 +229,19 @@ msgid ""
 msgstr ""
 
 #. type: Bullet: '- '
-#: ../README.md:69
+#: ../README.md:70
 #, markdown-text
 msgid "Testing installation:"
 msgstr ""
 
 #. type: Plain text
-#: ../README.md:71
+#: ../README.md:72
 #, markdown-text, no-wrap
 msgid "    Clone the whole repo, and then run `./configure --devmode`.\n"
 msgstr ""
 
 #. type: Plain text
-#: ../README.md:78
+#: ../README.md:79
 #, markdown-text, no-wrap
 msgid ""
 "    ```sh\n"
@@ -252,27 +253,27 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../README.md:85
+#: ../README.md:86
 #, markdown-text, no-wrap
 msgid ""
 "> [!NOTE]\n"
 "> To build this project or enable some features, the lowest denpendency "
 "version\n"
 "> baselines are:\n"
-"> * Linux >= 5.3, libseccomp >= 2.5.0 (exclude libbpf support)\n"
+"> * Linux >= 5.3, libseccomp >= 2.5.0 (functions excluding capture)\n"
 "> * Linux >= 5.11, libbpf >= 0.6.0 (global capture, only x86_64 "
 "guaranteed)\n"
 "> * Linux >= 6.2, libbpf >= 0.6.0 (capture pid)\n"
 msgstr ""
 
 #. type: Title ##
-#: ../README.md:86
+#: ../README.md:87
 #, markdown-text, no-wrap
 msgid "Run Test"
 msgstr ""
 
 #. type: Plain text
-#: ../README.md:90
+#: ../README.md:91
 #, markdown-text
 msgid ""
 "Run configure and make, then invoke `pytest test` from repo root. Trace pid "
@@ -281,7 +282,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../README.md:93
+#: ../README.md:94
 #, markdown-text
 msgid ""
 "To run the test, you need 2 extra packages: `pkgconf` (required by "
@@ -289,13 +290,13 @@ msgid ""
 msgstr ""
 
 #. type: Title ##
-#: ../README.md:94
+#: ../README.md:95
 #, markdown-text, no-wrap
 msgid "CheatSheet"
 msgstr ""
 
 #. type: Plain text
-#: ../README.md:97
+#: ../README.md:98
 #, markdown-text, no-wrap
 msgid ""
 "<img width=\"2200\" height=\"1182\" alt=\"image\" "
@@ -304,13 +305,13 @@ msgid ""
 msgstr ""
 
 #. type: Title ##
-#: ../README.md:98
+#: ../README.md:99
 #, markdown-text, no-wrap
 msgid "Credits"
 msgstr ""
 
 #. type: Bullet: '- '
-#: ../README.md:107
+#: ../README.md:108
 #, markdown-text
 msgid ""
 "[libseccomp](https://github.com/seccomp/libseccomp): The library to support "
@@ -318,7 +319,7 @@ msgid ""
 msgstr ""
 
 #. type: Bullet: '- '
-#: ../README.md:107
+#: ../README.md:108
 #, markdown-text
 msgid ""
 "[libbpf](https://docs.kernel.org/bpf/libbpf/libbpf_overview.html): The "
@@ -326,7 +327,7 @@ msgid ""
 msgstr ""
 
 #. type: Bullet: '- '
-#: ../README.md:107
+#: ../README.md:108
 #, markdown-text
 msgid ""
 "[seccomp-tools](https://github.com/david942j/seccomp-tools): The tool in "
@@ -334,7 +335,7 @@ msgid ""
 msgstr ""
 
 #. type: Bullet: '- '
-#: ../README.md:107
+#: ../README.md:108
 #, markdown-text
 msgid ""
 "[Bootswatch](https://bootswatch.com/slate/): Provides awesome css for html "
@@ -342,13 +343,13 @@ msgid ""
 msgstr ""
 
 #. type: Bullet: '- '
-#: ../README.md:107
+#: ../README.md:108
 #, markdown-text
 msgid "[Linux kernel](https://github.com/torvalds/linux): Port some bpf checks"
 msgstr ""
 
 #. type: Bullet: '- '
-#: ../README.md:107
+#: ../README.md:108
 #, markdown-text
 msgid ""
 "[Verstable](https://github.com/JacksonAllan/Verstable): High-performance "
@@ -356,7 +357,7 @@ msgid ""
 msgstr ""
 
 #. type: Bullet: '- '
-#: ../README.md:107
+#: ../README.md:108
 #, markdown-text
 msgid ""
 "[a5hash](https://github.com/avaneev/a5hash): High-performance hash "
@@ -364,7 +365,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../README.md:109
+#: ../README.md:110
 #, markdown-text
 msgid ""
 "Any Issue or PR are welcome! :heart: Please read "
@@ -372,13 +373,13 @@ msgid ""
 msgstr ""
 
 #. type: Title ##
-#: ../README.md:110
+#: ../README.md:111
 #, markdown-text, no-wrap
 msgid "License"
 msgstr ""
 
 #. type: Plain text
-#: ../README.md:112
+#: ../README.md:113
 #, markdown-text
 msgid ""
 "Copyright (C) 2025-present, ceccomp contributors, distributed under GNU "

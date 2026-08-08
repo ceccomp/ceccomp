@@ -93,7 +93,7 @@ take `stdin` as input by default
 
 === disasm - DISASSEMBLE
 
-    ceccomp disasm [-c WHEN] [-a ARCH] [RAW]
+    ceccomp disasm [-c WHEN] [-a ARCH] [-e] [RAW]
 
 Disassemble _RAW_ to _TEXT_. Use it to see what does a filter do if you could not
 access filter via `trace` and have to manually extract the filter out.
@@ -107,6 +107,12 @@ Set to any architecture libseccomp supports. Will be used to determine
 how filtered syscall number in _RAW_ filter is translated to syscall name (for example,
 on x86_64, the number `0x3b` is translated to `execve` if is comparing syscall_nr, see
 the basic example above). The default value on your system is {ARCH}.
+
+-e, --ebpf::
+Treat _RAW_ as eBPF insn bytes instead of cBPF filter bytes. This flag is designed to
+test whether eBPF-to-cBPF conversion is working or not. To use this function, please
+dump installed eBPF insns migrated from seccomp filters in a process via eBPF or a
+kernel module.
 
 RAW::
 A binary file with raw BPF codes. Takes _stdin_ as input if not set. Treat `-` as _stdin_.

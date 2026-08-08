@@ -51,7 +51,8 @@
 
     克隆整个仓库，然后运行 `./configure`。依赖会被自动检测，请小心输出结果，
     因为组件不可用时会被自动禁用。要生成文档，您需要 `asciidoctor`，要启用多语言支持，
-    您需要 `gettext` 软件包。要启用 eBPF 支持，您需要 `libbpf` 和 `bpftool`。您可以使用
+    您需要 `gettext` 软件包。要启用 eBPF 支持，您需要 `libbpf`, `bpftool` 以及一个 BPF C 编译器，
+    如 `clang` 加上 `llvm` 软件包或 `gcc-bpf>=15`。您可以使用
     `--without-doc`, `--without-i18n` 和 `--without-ebpf` 标志来显式禁用它们。
     请运行 `./configure --help` 查看详情。
 
@@ -77,7 +78,7 @@
 
 > [!NOTE]
 > 要想构建这个项目或启用某些特性，最低的依赖版本基线是：
-> * Linux >= 5.3, libseccomp >= 2.5.0 (除了 libbpf 部分以外)
+> * Linux >= 5.3, libseccomp >= 2.5.0 (除了 capture 以外的功能)
 > * Linux >= 5.11, libbpf >= 0.6.0 (全局捕获，只保证 x86_64)
 > * Linux >= 6.2, libbpf >= 0.6.0 (捕获 PID)
 

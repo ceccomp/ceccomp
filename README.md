@@ -52,8 +52,9 @@ ceccomp in "C-comp" (/siːˈkɒmp/) or "seccomp" (/ˈsɛk.kɒmp/).
     Clone the whole repo, then run `./configure`. Dependencies will be detected automatically,
     please keep an eye on the output since components are automatically disabled if not available.
     For documentation generation, you need `asciidoctor`. For multi-language support, you need
-    `gettext` package. For eBPF support, you need `libbpf` and `bpftool`. You could use
-    `--without-doc`, `--without-i18n` and `--without-ebpf` to disable them explicitly.
+    `gettext` package. For eBPF support, you need `libbpf`, `bpftool` and a bpf C compiler,
+    `clang` with `llvm` package or `gcc-bpf>=15`. You could use `--without-doc`, `--without-i18n`
+    and `--without-ebpf` to disable them explicitly.
     Please run `./configure --help` for more details.
 
     ```sh
@@ -79,7 +80,7 @@ ceccomp in "C-comp" (/siːˈkɒmp/) or "seccomp" (/ˈsɛk.kɒmp/).
 > [!NOTE]
 > To build this project or enable some features, the lowest denpendency version
 > baselines are:
-> * Linux >= 5.3, libseccomp >= 2.5.0 (exclude libbpf support)
+> * Linux >= 5.3, libseccomp >= 2.5.0 (functions excluding capture)
 > * Linux >= 5.11, libbpf >= 0.6.0 (global capture, only x86_64 guaranteed)
 > * Linux >= 6.2, libbpf >= 0.6.0 (capture pid)
 

@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2026-08-08 16:32+0800\n"
+"POT-Creation-Date: 2026-08-08 22:27+0800\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Rocket Ma <marocketbd@gmail.com>\n"
 "Language-Team: \n"
@@ -171,24 +171,26 @@ msgid "Stable installation:"
 msgstr "稳定版安装："
 
 #. type: Plain text
-#: ../README.md:58
+#: ../README.md:59
 #, no-wrap
 msgid ""
 "    Clone the whole repo, then run `./configure`. Dependencies will be detected automatically,\n"
 "    please keep an eye on the output since components are automatically disabled if not available.\n"
 "    For documentation generation, you need `asciidoctor`. For multi-language support, you need\n"
-"    `gettext` package. For eBPF support, you need `libbpf` and `bpftool`. You could use\n"
-"    `--without-doc`, `--without-i18n` and `--without-ebpf` to disable them explicitly.\n"
+"    `gettext` package. For eBPF support, you need `libbpf`, `bpftool` and a bpf C compiler,\n"
+"    `clang` with `llvm` package or `gcc-bpf>=15`. You could use `--without-doc`, `--without-i18n`\n"
+"    and `--without-ebpf` to disable them explicitly.\n"
 "    Please run `./configure --help` for more details.\n"
 msgstr ""
 "    克隆整个仓库，然后运行 `./configure`。依赖会被自动检测，请小心输出结果，\n"
 "    因为组件不可用时会被自动禁用。要生成文档，您需要 `asciidoctor`，要启用多语言支持，\n"
-"    您需要 `gettext` 软件包。要启用 eBPF 支持，您需要 `libbpf` 和 `bpftool`。您可以使用\n"
+"    您需要 `gettext` 软件包。要启用 eBPF 支持，您需要 `libbpf`, `bpftool` 以及一个 BPF C 编译器，\n"
+"    如 `clang` 加上 `llvm` 软件包或 `gcc-bpf>=15`。您可以使用\n"
 "    `--without-doc`, `--without-i18n` 和 `--without-ebpf` 标志来显式禁用它们。\n"
 "    请运行 `./configure --help` 查看详情。\n"
 
 #. type: Plain text
-#: ../README.md:67
+#: ../README.md:68
 #, no-wrap
 msgid ""
 "    ```sh\n"
@@ -210,18 +212,18 @@ msgstr ""
 "    ```\n"
 
 #. type: Bullet: '- '
-#: ../README.md:69
+#: ../README.md:70
 msgid "Testing installation:"
 msgstr "测试版安装："
 
 #. type: Plain text
-#: ../README.md:71
+#: ../README.md:72
 #, no-wrap
 msgid "    Clone the whole repo, and then run `./configure --devmode`.\n"
 msgstr "   克隆完整仓库，然后运行 `./configure --devmode`。\n"
 
 #. type: Plain text
-#: ../README.md:78
+#: ../README.md:79
 #, no-wrap
 msgid ""
 "    ```sh\n"
@@ -239,30 +241,30 @@ msgstr ""
 "    ```\n"
 
 #. type: Plain text
-#: ../README.md:85
+#: ../README.md:86
 #, no-wrap
 msgid ""
 "> [!NOTE]\n"
 "> To build this project or enable some features, the lowest denpendency version\n"
 "> baselines are:\n"
-"> * Linux >= 5.3, libseccomp >= 2.5.0 (exclude libbpf support)\n"
+"> * Linux >= 5.3, libseccomp >= 2.5.0 (functions excluding capture)\n"
 "> * Linux >= 5.11, libbpf >= 0.6.0 (global capture, only x86_64 guaranteed)\n"
 "> * Linux >= 6.2, libbpf >= 0.6.0 (capture pid)\n"
 msgstr ""
 "> [!NOTE]\n"
 "> 要想构建这个项目或启用某些特性，最低的依赖版本基线是：\n"
-"> * Linux >= 5.3, libseccomp >= 2.5.0 (除了 libbpf 部分以外)\n"
+"> * Linux >= 5.3, libseccomp >= 2.5.0 (除了 capture 以外的功能)\n"
 "> * Linux >= 5.11, libbpf >= 0.6.0 (全局捕获，只保证 x86_64)\n"
 "> * Linux >= 6.2, libbpf >= 0.6.0 (捕获 PID)\n"
 
 #. type: Title ##
-#: ../README.md:86
+#: ../README.md:87
 #, no-wrap
 msgid "Run Test"
 msgstr "运行测试"
 
 #. type: Plain text
-#: ../README.md:90
+#: ../README.md:91
 msgid ""
 "Run configure and make, then invoke `pytest test` from repo root. Trace pid case will be skipped if no CAP_SYS_ADMIN. If you find some checks failed, please submit an "
 "issue to report your case."
@@ -271,76 +273,76 @@ msgstr ""
 "例。"
 
 #. type: Plain text
-#: ../README.md:93
+#: ../README.md:94
 msgid "To run the test, you need 2 extra packages: `pkgconf` (required by `pkg-config`) and `python-pytest` (required by `pytest`)."
 msgstr "要想运行测试，您需要 2 个额外的软件包: `pkgconf` (被 `pkg-config` 需要) 和 `python-pytest` (被 `pytest` 需要)。"
 
 #. type: Title ##
-#: ../README.md:94
+#: ../README.md:95
 #, no-wrap
 msgid "CheatSheet"
 msgstr "速览表"
 
 #. type: Plain text
-#: ../README.md:97
+#: ../README.md:98
 #, no-wrap
 msgid "<img width=\"2200\" height=\"1182\" alt=\"image\" src=\"https://github.com/user-attachments/assets/74a427d6-8e26-46dc-9883-9aad818d6d64\" />\n"
 msgstr "<img width=\"2200\" height=\"1182\" alt=\"image\" src=\"https://github.com/user-attachments/assets/74a427d6-8e26-46dc-9883-9aad818d6d64\" />\n"
 
 #. type: Title ##
-#: ../README.md:98
+#: ../README.md:99
 #, no-wrap
 msgid "Credits"
 msgstr "致谢"
 
 #. type: Bullet: '- '
-#: ../README.md:107
+#: ../README.md:108
 msgid "[libseccomp](https://github.com/seccomp/libseccomp): The library to support syscall lookups"
 msgstr "[libseccomp](https://github.com/seccomp/libseccomp): 用于支持系统调用查询的软件库"
 
 #. type: Bullet: '- '
-#: ../README.md:107
+#: ../README.md:108
 msgid "[libbpf](https://docs.kernel.org/bpf/libbpf/libbpf_overview.html): The library to support eBPF functions"
 msgstr "[libbpf](https://docs.kernel.org/bpf/libbpf/libbpf_overview.html): 用来支持 eBPF 功能的软件库"
 
 #. type: Bullet: '- '
-#: ../README.md:107
+#: ../README.md:108
 msgid "[seccomp-tools](https://github.com/david942j/seccomp-tools): The tool in Ruby inspires us to write ceccomp"
 msgstr "[seccomp-tools](https://github.com/david942j/seccomp-tools): 启发我们编写 ceccomp 的 Ruby 工具"
 
 #. type: Bullet: '- '
-#: ../README.md:107
+#: ../README.md:108
 msgid "[Bootswatch](https://bootswatch.com/slate/): Provides awesome css for html doc under MIT"
 msgstr "[Bootswatch](https://bootswatch.com/slate/): 提供了基于 MIT 协议的用于 html 文档的精美 CSS"
 
 #. type: Bullet: '- '
-#: ../README.md:107
+#: ../README.md:108
 msgid "[Linux kernel](https://github.com/torvalds/linux): Port some bpf checks"
 msgstr "[Linux kernel](https://github.com/torvalds/linux): 移植了一些 BPF 的检查"
 
 #. type: Bullet: '- '
-#: ../README.md:107
+#: ../README.md:108
 msgid "[Verstable](https://github.com/JacksonAllan/Verstable): High-performance hash table implementation in C"
 msgstr "[Verstable](https://github.com/JacksonAllan/Verstable): C 语言高性能哈希表实现"
 
 #. type: Bullet: '- '
-#: ../README.md:107
+#: ../README.md:108
 msgid "[a5hash](https://github.com/avaneev/a5hash): High-performance hash implementation for short strings in C"
 msgstr "[a5hash](https://github.com/avaneev/a5hash): C 语言高性能短字符串哈希实现"
 
 #. type: Plain text
-#: ../README.md:109
+#: ../README.md:110
 msgid "Any Issue or PR are welcome! :heart: Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details."
 msgstr "欢迎任何 issue 或 PR！ :heart: 详情请阅读 [CONTRIBUTING.md](CONTRIBUTING.md)。"
 
 #. type: Title ##
-#: ../README.md:110
+#: ../README.md:111
 #, no-wrap
 msgid "License"
 msgstr "许可证"
 
 #. type: Plain text
-#: ../README.md:112
+#: ../README.md:113
 msgid "Copyright (C) 2025-present, ceccomp contributors, distributed under GNU General Public License v3.0 or Later"
 msgstr "Copyright (C) 2025-现在，ceccomp 贡献者，按 GNU General Public License v3.0 or Later 分发"
 
