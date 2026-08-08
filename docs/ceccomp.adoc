@@ -284,7 +284,9 @@ Capture seccomp filters in global scope if *PID* not set. The eBPF program
 will trace `seccomp_check_filter` kernel function, reliably intercepting seccomp
 filters that the kernel will load, WITHOUT race conditions compared to
 <<trace - TRACE FILTER IN RUNTIME>>. This function is named "global capture"
-below. Linux 5.15 is the lowest recommended kernel version to run this function.
+below. Linux 5.15 is the lowest recommended kernel version to run this function
+on _x86_64_, other architecture may require higher kernel version to run this
+function.
 
 If *PID* is set, an eBPF program to extract installed seccomp filters in the
 corresponding thread will be installed. Note that inside kernel, `pid` is
@@ -295,6 +297,12 @@ not require `CONFIG_CHECKPOINT_RESTORE` kernel config, and is functional
 even if `ceccomp` itself is under seccomp. This function is named "capture pid"
 below. Linux 6.2 is the lowest kernel version to run this function, as
 `bpf_task_from_pid` was introduced then.
+
+Currently, compat task detection is only supported on _x86_64_ and _aarch64_.
+With this feature, `ceccomp` can identify whether a task is native (64-bit
+task on 64-bit kernel) or "compatible" (32-bit task on 64-bit kernel), so that
+`ceccomp` can pass the correct architecture token to libseccomp to query
+syscall name in captured seccomp filters.
 
 WHEN::
 Argument description can be found in <<asm - ASSEMBLE>> section.
