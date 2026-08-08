@@ -418,12 +418,12 @@ image::trace_completion.webp[]
 === probe 示例
 image::probe.webp[]
 
-=== capture example
-Globally capture:
+=== capture 示例
+全局捕获：
 
 image::capture.webp[]
 
-Capture filters in a thread:
+捕获线程中的过滤器：
 
 image::capture_pid.webp[]
 endif::[]
