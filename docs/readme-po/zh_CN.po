@@ -331,7 +331,7 @@ msgstr "[a5hash](https://github.com/avaneev/a5hash): C 语言高性能短字符�
 #. type: Plain text
 #: ../README.md:109
 msgid "Any Issue or PR are welcome! :heart: Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details."
-msgstr "欢迎任何 issue 或 PR！:heart: 详情请阅读 [CONTRIBUTING.md](CONTRIBUTING.md)。"
+msgstr "欢迎任何 issue 或 PR！ :heart: 详情请阅读 [CONTRIBUTING.md](CONTRIBUTING.md)。"
 
 #. type: Title ##
 #: ../README.md:110

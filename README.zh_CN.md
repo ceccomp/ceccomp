@@ -106,7 +106,7 @@
 - [Verstable](https://github.com/JacksonAllan/Verstable): C 语言高性能哈希表实现
 - [a5hash](https://github.com/avaneev/a5hash): C 语言高性能短字符串哈希实现
 
-欢迎任何 issue 或 PR！:heart: 详情请阅读 [CONTRIBUTING.md](CONTRIBUTING.md)。
+欢迎任何 issue 或 PR！ :heart: 详情请阅读 [CONTRIBUTING.md](CONTRIBUTING.md)。
 
 ## 许可证
 
