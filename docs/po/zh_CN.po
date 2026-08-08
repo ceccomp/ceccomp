@@ -6,8 +6,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: ceccomp docs\n"
-"POT-Creation-Date: 2026-08-08 13:20+0800\n"
-"PO-Revision-Date: 2026-08-08 13:23+0800\n"
+"POT-Creation-Date: 2026-08-08 13:34+0800\n"
+"PO-Revision-Date: 2026-08-08 13:35+0800\n"
 "Last-Translator: Rocket Ma <marocketbd@gmail.com>\n"
 "Language-Team: RocketDev\n"
 "Language: zh_CN\n"
@@ -1492,14 +1492,42 @@ msgstr "probe 示例"
 msgid "probe.webp"
 msgstr "probe.webp"
 
+#. type: Title ===
+#: ceccomp.adoc:544
+#, no-wrap
+msgid "capture example"
+msgstr "capture 示例"
+
+#. type: Plain text
+#: ceccomp.adoc:546
+msgid "Globally capture:"
+msgstr "全局捕获："
+
+#. type: Target for macro image
+#: ceccomp.adoc:547
+#, no-wrap
+msgid "capture.webp"
+msgstr "capture.webp"
+
+#. type: Plain text
+#: ceccomp.adoc:550
+msgid "Capture filters in a thread:"
+msgstr "捕获线程中的过滤器："
+
+#. type: Target for macro image
+#: ceccomp.adoc:551
+#, no-wrap
+msgid "capture_pid.webp"
+msgstr "capture_pid.webp"
+
 #. type: Title ==
-#: ceccomp.adoc:545
+#: ceccomp.adoc:554
 #, no-wrap
 msgid "REPO"
 msgstr "仓库"
 
 #. type: Plain text
-#: ceccomp.adoc:549
+#: ceccomp.adoc:558
 msgid ""
 "Visit https://github.com/ceccomp/ceccomp to find the code.  Pull Requests "
 "and Issues are welcome!"
@@ -1508,6 +1536,6 @@ msgstr ""
 "欢迎提交 Pull Requests 和 Issues ！"
 
 #. type: Plain text
-#: ceccomp.adoc:550
+#: ceccomp.adoc:559
 msgid "Copyright (C) 2025-present, distributed under GPLv3 or later."
 msgstr "Copyright (C) 2025-现在，基于 GPLv3 或更新版本分发。"

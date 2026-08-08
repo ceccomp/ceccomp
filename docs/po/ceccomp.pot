@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2026-08-08 13:20+0800\n"
+"POT-Creation-Date: 2026-08-08 13:34+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1221,20 +1221,48 @@ msgstr ""
 msgid "probe.webp"
 msgstr ""
 
+#. type: Title ===
+#: ceccomp.adoc:544
+#, no-wrap
+msgid "capture example"
+msgstr ""
+
+#. type: Plain text
+#: ceccomp.adoc:546
+msgid "Globally capture:"
+msgstr ""
+
+#. type: Target for macro image
+#: ceccomp.adoc:547
+#, no-wrap
+msgid "capture.webp"
+msgstr ""
+
+#. type: Plain text
+#: ceccomp.adoc:550
+msgid "Capture filters in a thread:"
+msgstr ""
+
+#. type: Target for macro image
+#: ceccomp.adoc:551
+#, no-wrap
+msgid "capture_pid.webp"
+msgstr ""
+
 #. type: Title ==
-#: ceccomp.adoc:545
+#: ceccomp.adoc:554
 #, no-wrap
 msgid "REPO"
 msgstr ""
 
 #. type: Plain text
-#: ceccomp.adoc:549
+#: ceccomp.adoc:558
 msgid ""
 "Visit https://github.com/ceccomp/ceccomp to find the code.  Pull Requests "
 "and Issues are welcome!"
 msgstr ""
 
 #. type: Plain text
-#: ceccomp.adoc:550
+#: ceccomp.adoc:559
 msgid "Copyright (C) 2025-present, distributed under GPLv3 or later."
 msgstr ""

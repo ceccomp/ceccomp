@@ -540,6 +540,15 @@ image::trace_completion.webp[]
 
 === probe example
 image::probe.webp[]
+
+=== capture example
+Globally capture:
+
+image::capture.webp[]
+
+Capture filters in a thread:
+
+image::capture_pid.webp[]
 endif::[]
 
 == REPO

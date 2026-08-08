@@ -417,6 +417,15 @@ image::trace_completion.webp[]
 
 === probe 示例
 image::probe.webp[]
+
+=== capture example
+Globally capture:
+
+image::capture.webp[]
+
+Capture filters in a thread:
+
+image::capture_pid.webp[]
 endif::[]
 
 == 仓库
