@@ -1,0 +1,333 @@
+# SOME DESCRIPTIVE TITLE
+# Copyright (C) YEAR Free Software Foundation, Inc.
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"POT-Creation-Date: 2026-08-08 14:48+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#. type: Title #
+#: ../README.md:1
+#, markdown-text, no-wrap
+msgid "Ceccomp"
+msgstr ""
+
+#. type: Plain text
+#: ../README.md:4
+#, markdown-text
+msgid "A tool to analyze seccomp filters like `seccomp-tools`, written in C"
+msgstr ""
+
+#. type: Title ##
+#: ../README.md:5
+#, markdown-text, no-wrap
+msgid "Features"
+msgstr ""
+
+#. type: Bullet: '- '
+#: ../README.md:16
+#, markdown-text
+msgid ":gear: Robust assembler and disassembler"
+msgstr ""
+
+#. type: Bullet: '- '
+#: ../README.md:16
+#, markdown-text
+msgid ":blue_book: Complete documentation"
+msgstr ""
+
+#. type: Bullet: '- '
+#: ../README.md:16
+#, markdown-text
+msgid ":1234: Various architecture support powered by libseccomp"
+msgstr ""
+
+#. type: Bullet: '- '
+#: ../README.md:16
+#, markdown-text
+msgid ":globe_with_meridians: Multi-language support"
+msgstr ""
+
+#. type: Bullet: '- '
+#: ../README.md:16
+#, markdown-text
+msgid ":feather: Minimum build depencies for core binary"
+msgstr ""
+
+#. type: Bullet: '- '
+#: ../README.md:16
+#, markdown-text
+msgid ":paintbrush: Enhanced syntax highlighting"
+msgstr ""
+
+#. type: Bullet: '- '
+#: ../README.md:16
+#, markdown-text
+msgid ":100: Informational error messages"
+msgstr ""
+
+#. type: Bullet: '- '
+#: ../README.md:16
+#, markdown-text
+msgid ":shell: Powerful Zshell completion"
+msgstr ""
+
+#. type: Bullet: '- '
+#: ../README.md:16
+#, markdown-text
+msgid ":no_entry_sign: Pure C without LLM-generated garbage"
+msgstr ""
+
+#. type: Title ##
+#: ../README.md:17
+#, markdown-text, no-wrap
+msgid "Doc & Screenshots"
+msgstr ""
+
+#. type: Plain text
+#: ../README.md:20
+#, markdown-text
+msgid "[English Version](docs/ceccomp.adoc) | [中文文档](docs/ceccomp.zh_CN.adoc)"
+msgstr ""
+
+#. type: Title ##
+#: ../README.md:21
+#, markdown-text, no-wrap
+msgid "Install"
+msgstr ""
+
+#. type: Bullet: '- '
+#: ../README.md:24
+#, markdown-text
+msgid "Arch Linux users:"
+msgstr ""
+
+#. type: Plain text
+#: ../README.md:28
+#, markdown-text, no-wrap
+msgid ""
+"    ceccomp is available in official extra repo now:\n"
+"    "
+"[![Arch](https://repology.org/badge/version-for-repo/arch/ceccomp.svg?header=Arch%20Linux%20extra)](https://repology.org/project/ceccomp/versions)\n"
+"    [![Manjaro "
+"Stable](https://repology.org/badge/version-for-repo/manjaro_stable/ceccomp.svg?header=Manjaro%20Stable)](https://repology.org/project/ceccomp/versions)\n"
+msgstr ""
+
+#. type: Bullet: '- '
+#: ../README.md:30
+#, markdown-text
+msgid "Debian, Ubuntu or Kali users:"
+msgstr ""
+
+#. type: Plain text
+#: ../README.md:32
+#, markdown-text, no-wrap
+msgid "    ceccomp is available with `apt` now if you are using distros below:\n"
+msgstr ""
+
+#. type: Plain text
+#: ../README.md:38
+#, markdown-text, no-wrap
+msgid ""
+"    [![Debian "
+"testing](https://repology.org/badge/version-for-repo/debian_14/ceccomp.svg?header=Debian%20testing)](https://repology.org/project/ceccomp/versions)\n"
+"    [![Debian "
+"unstable](https://repology.org/badge/version-for-repo/debian_unstable/ceccomp.svg?header=Debian%20unstable)](https://repology.org/project/ceccomp/versions)\n"
+"    [![Ubuntu "
+"26.04](https://repology.org/badge/version-for-repo/ubuntu_26_04/ceccomp.svg?header=Ubuntu%2026.04)](https://repology.org/project/ceccomp/versions)\n"
+"    [![Ubuntu "
+"26.10](https://repology.org/badge/version-for-repo/ubuntu_26_10/ceccomp.svg?header=Ubuntu%2026.10)](https://repology.org/project/ceccomp/versions)\n"
+"    [![Kali "
+"Linux](https://repology.org/badge/version-for-repo/kali_rolling/ceccomp.svg?header=Kali%20Linux)](https://repology.org/project/ceccomp/versions)\n"
+msgstr ""
+
+#. type: Bullet: '- '
+#: ../README.md:40
+#, markdown-text
+msgid "NixOS users:"
+msgstr ""
+
+#. type: Plain text
+#: ../README.md:43
+#, markdown-text, no-wrap
+msgid ""
+"    @tesuji helps us submit a PR at NixOS, but it's blocked as nobody "
+"cares... If you\n"
+"    like our software, please :+1: in NixOS/nixpkgs#462592 to help ceccomp "
+"into nixpkgs!\n"
+msgstr ""
+
+#. type: Bullet: '- '
+#: ../README.md:45
+#, markdown-text
+msgid "Stable installation:"
+msgstr ""
+
+#. type: Plain text
+#: ../README.md:48
+#, markdown-text, no-wrap
+msgid ""
+"    Clone the whole repo, then run `./configure`. Add `--without-doc` flag "
+"if you don't have `asciidoctor`,\n"
+"    and add `--without-i18n` flag if you don't have `gettext` package.\n"
+msgstr ""
+
+#. type: Plain text
+#: ../README.md:57
+#, markdown-text, no-wrap
+msgid ""
+"    ```sh\n"
+"    git clone https://github.com/ceccomp/ceccomp.git\n"
+"    cd Ceccomp\n"
+"    ./configure\n"
+"    ./configure # run this again if Makefile is not generated\n"
+"    make\n"
+"    make install # install at /usr/bin\n"
+"    ```\n"
+msgstr ""
+
+#. type: Bullet: '- '
+#: ../README.md:59
+#, markdown-text
+msgid "Testing installation:"
+msgstr ""
+
+#. type: Plain text
+#: ../README.md:61
+#, markdown-text, no-wrap
+msgid "    Clone the whole repo, and then run `./configure --devmode`.\n"
+msgstr ""
+
+#. type: Plain text
+#: ../README.md:68
+#, markdown-text, no-wrap
+msgid ""
+"    ```sh\n"
+"    git clone https://github.com/ceccomp/ceccomp.git\n"
+"    cd Ceccomp\n"
+"    ./configure --devmode\n"
+"    make\n"
+"    ```\n"
+msgstr ""
+
+#. type: Title ##
+#: ../README.md:69
+#, markdown-text, no-wrap
+msgid "Run Test"
+msgstr ""
+
+#. type: Plain text
+#: ../README.md:73
+#, markdown-text
+msgid ""
+"Run configure and make, then invoke `pytest test` from repo root. Trace pid "
+"case will be skipped if no CAP_SYS_ADMIN. If you find some checks failed, "
+"please submit an issue to report your case."
+msgstr ""
+
+#. type: Plain text
+#: ../README.md:76
+#, markdown-text
+msgid ""
+"To run the test, you need 2 extra packages: `pkgconf` (required by "
+"`pkg-config`) and `python-pytest` (required by `pytest`)."
+msgstr ""
+
+#. type: Title ##
+#: ../README.md:77
+#, markdown-text, no-wrap
+msgid "CheatSheet"
+msgstr ""
+
+#. type: Plain text
+#: ../README.md:80
+#, markdown-text, no-wrap
+msgid ""
+"<img width=\"2200\" height=\"1182\" alt=\"image\" "
+"src=\"https://github.com/user-attachments/assets/74a427d6-8e26-46dc-9883-9aad818d6d64\" "
+"/>\n"
+msgstr ""
+
+#. type: Title ##
+#: ../README.md:81
+#, markdown-text, no-wrap
+msgid "Credits"
+msgstr ""
+
+#. type: Bullet: '- '
+#: ../README.md:89
+#, markdown-text
+msgid ""
+"[libseccomp](https://github.com/seccomp/libseccomp): The library to support "
+"syscall lookups"
+msgstr ""
+
+#. type: Bullet: '- '
+#: ../README.md:89
+#, markdown-text
+msgid ""
+"[seccomp-tools](https://github.com/david942j/seccomp-tools): The tool in "
+"Ruby inspires us to write ceccomp"
+msgstr ""
+
+#. type: Bullet: '- '
+#: ../README.md:89
+#, markdown-text
+msgid ""
+"[Bootswatch](https://bootswatch.com/slate/): Provides awesome css for html "
+"doc under MIT"
+msgstr ""
+
+#. type: Bullet: '- '
+#: ../README.md:89
+#, markdown-text
+msgid "[Linux kernel](https://github.com/torvalds/linux): Port some bpf checks"
+msgstr ""
+
+#. type: Bullet: '- '
+#: ../README.md:89
+#, markdown-text
+msgid ""
+"[Verstable](https://github.com/JacksonAllan/Verstable): High-performance "
+"hash table implementation in C"
+msgstr ""
+
+#. type: Bullet: '- '
+#: ../README.md:89
+#, markdown-text
+msgid ""
+"[a5hash](https://github.com/avaneev/a5hash): High-performance hash "
+"implementation for short strings in C"
+msgstr ""
+
+#. type: Plain text
+#: ../README.md:91
+#, markdown-text
+msgid ""
+"Any Issue or PR are welcome! :heart: Please read "
+"[CONTRIBUTING.md](CONTRIBUTING.md) for details."
+msgstr ""
+
+#. type: Title ##
+#: ../README.md:92
+#, markdown-text, no-wrap
+msgid "License"
+msgstr ""
+
+#. type: Plain text
+#: ../README.md:94
+#, markdown-text
+msgid ""
+"Copyright (C) 2025-present, ceccomp contributors, distributed under GNU "
+"General Public License v3.0 or Later"
+msgstr ""

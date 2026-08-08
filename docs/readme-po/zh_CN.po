@@ -1,0 +1,335 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"POT-Creation-Date: 2026-08-08 14:48+0800\n"
+"PO-Revision-Date: \n"
+"Last-Translator: Rocket Ma <marocketbd@gmail.com>\n"
+"Language-Team: \n"
+"Language: zh_CN\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 3.9\n"
+
+#. type: Title #
+#: ../README.md:1
+#, no-wrap
+msgid "Ceccomp"
+msgstr "Ceccomp"
+
+#. type: Plain text
+#: ../README.md:4
+msgid "A tool to analyze seccomp filters like `seccomp-tools`, written in C"
+msgstr "用 C 重写的，类似 `seccomp-tools` 的用于分析 seccomp 过滤器的工具"
+
+#. type: Title ##
+#: ../README.md:5
+#, no-wrap
+msgid "Features"
+msgstr "功能"
+
+#. type: Bullet: '- '
+#: ../README.md:16
+msgid ":gear: Robust assembler and disassembler"
+msgstr ":gear: 健壮的汇编器和反汇编器"
+
+#. type: Bullet: '- '
+#: ../README.md:16
+msgid ":blue_book: Complete documentation"
+msgstr ":blue_book: 完善的文档"
+
+#. type: Bullet: '- '
+#: ../README.md:16
+msgid ":1234: Various architecture support powered by libseccomp"
+msgstr ":1234: 由 libseccomp 驱动的多架构支持"
+
+#. type: Bullet: '- '
+#: ../README.md:16
+msgid ":globe_with_meridians: Multi-language support"
+msgstr ":globe_with_meridians: 多语言支持"
+
+#. type: Bullet: '- '
+#: ../README.md:16
+msgid ":feather: Minimum build depencies for core binary"
+msgstr ":feather: 构建核心二进制的依赖很少"
+
+#. type: Bullet: '- '
+#: ../README.md:16
+msgid ":paintbrush: Enhanced syntax highlighting"
+msgstr ":paintbrush: 更好的语法高亮"
+
+#. type: Bullet: '- '
+#: ../README.md:16
+msgid ":100: Informational error messages"
+msgstr ":100: 详实的错误信息"
+
+#. type: Bullet: '- '
+#: ../README.md:16
+msgid ":shell: Powerful Zshell completion"
+msgstr ":shell: 强大的 Zshell 补全脚本"
+
+#. type: Bullet: '- '
+#: ../README.md:16
+msgid ":no_entry_sign: Pure C without LLM-generated garbage"
+msgstr ":no_entry_sign: 纯 C 编写，没有 LLM 垃圾"
+
+#. type: Title ##
+#: ../README.md:17
+#, no-wrap
+msgid "Doc & Screenshots"
+msgstr "文档 & 截图"
+
+#. type: Plain text
+#: ../README.md:20
+msgid ""
+"[English Version](docs/ceccomp.adoc) | [中文文档](docs/ceccomp.zh_CN.adoc)"
+msgstr ""
+"[English Version](docs/ceccomp.adoc) | [中文文档](docs/ceccomp.zh_CN.adoc)"
+
+#. type: Title ##
+#: ../README.md:21
+#, no-wrap
+msgid "Install"
+msgstr "安装"
+
+#. type: Bullet: '- '
+#: ../README.md:24
+msgid "Arch Linux users:"
+msgstr "Arch Linux 用户："
+
+#. type: Plain text
+#: ../README.md:28
+#, no-wrap
+msgid ""
+"    ceccomp is available in official extra repo now:\n"
+"    [![Arch](https://repology.org/badge/version-for-repo/arch/ceccomp.svg?header=Arch%20Linux%20extra)](https://repology.org/project/ceccomp/versions)\n"
+"    [![Manjaro Stable](https://repology.org/badge/version-for-repo/manjaro_stable/ceccomp.svg?header=Manjaro%20Stable)](https://repology.org/project/ceccomp/versions)\n"
+msgstr ""
+"    ceccomp 已在官方 extra 仓库可用：\n"
+"    [![Arch](https://repology.org/badge/version-for-repo/arch/ceccomp.svg?header=Arch%20Linux%20extra)](https://repology.org/project/ceccomp/versions)\n"
+"    [![Manjaro Stable](https://repology.org/badge/version-for-repo/manjaro_stable/ceccomp.svg?header=Manjaro%20Stable)](https://repology.org/project/ceccomp/versions)\n"
+
+#. type: Bullet: '- '
+#: ../README.md:30
+msgid "Debian, Ubuntu or Kali users:"
+msgstr "Debian, Ubuntu 或 Kali 用户："
+
+#. type: Plain text
+#: ../README.md:32
+#, no-wrap
+msgid "    ceccomp is available with `apt` now if you are using distros below:\n"
+msgstr "    如果您在使用如下发行版，那么 ceccomp 可以使用 `apt` 获取：\n"
+
+#. type: Plain text
+#: ../README.md:38
+#, no-wrap
+msgid ""
+"    [![Debian testing](https://repology.org/badge/version-for-repo/debian_14/ceccomp.svg?header=Debian%20testing)](https://repology.org/project/ceccomp/versions)\n"
+"    [![Debian unstable](https://repology.org/badge/version-for-repo/debian_unstable/ceccomp.svg?header=Debian%20unstable)](https://repology.org/project/ceccomp/versions)\n"
+"    [![Ubuntu 26.04](https://repology.org/badge/version-for-repo/ubuntu_26_04/ceccomp.svg?header=Ubuntu%2026.04)](https://repology.org/project/ceccomp/versions)\n"
+"    [![Ubuntu 26.10](https://repology.org/badge/version-for-repo/ubuntu_26_10/ceccomp.svg?header=Ubuntu%2026.10)](https://repology.org/project/ceccomp/versions)\n"
+"    [![Kali Linux](https://repology.org/badge/version-for-repo/kali_rolling/ceccomp.svg?header=Kali%20Linux)](https://repology.org/project/ceccomp/versions)\n"
+msgstr ""
+"    [![Debian testing](https://repology.org/badge/version-for-repo/debian_14/ceccomp.svg?header=Debian%20testing)](https://repology.org/project/ceccomp/versions)\n"
+"    [![Debian unstable](https://repology.org/badge/version-for-repo/debian_unstable/ceccomp.svg?header=Debian%20unstable)](https://repology.org/project/ceccomp/versions)\n"
+"    [![Ubuntu 26.04](https://repology.org/badge/version-for-repo/ubuntu_26_04/ceccomp.svg?header=Ubuntu%2026.04)](https://repology.org/project/ceccomp/versions)\n"
+"    [![Ubuntu 26.10](https://repology.org/badge/version-for-repo/ubuntu_26_10/ceccomp.svg?header=Ubuntu%2026.10)](https://repology.org/project/ceccomp/versions)\n"
+"    [![Kali Linux](https://repology.org/badge/version-for-repo/kali_rolling/ceccomp.svg?header=Kali%20Linux)](https://repology.org/project/ceccomp/versions)\n"
+
+#. type: Bullet: '- '
+#: ../README.md:40
+msgid "NixOS users:"
+msgstr "NixOS 用户"
+
+#. type: Plain text
+#: ../README.md:43
+#, no-wrap
+msgid ""
+"    @tesuji helps us submit a PR at NixOS, but it's blocked as nobody cares... If you\n"
+"    like our software, please :+1: in NixOS/nixpkgs#462592 to help ceccomp into nixpkgs!\n"
+msgstr ""
+"    @tesuji 帮我们在 NixOS 提交了一个 PR，但是由于无人关心，进度停滞不前... 如果\n"
+"    您喜欢我们的软件，请在 NixOS/nixpkgs#462592 :+1: 来帮助 ceccomp 进入 nixpkgs！\n"
+
+#. type: Bullet: '- '
+#: ../README.md:45
+msgid "Stable installation:"
+msgstr "稳定版安装："
+
+#. type: Plain text
+#: ../README.md:48
+#, no-wrap
+msgid ""
+"    Clone the whole repo, then run `./configure`. Add `--without-doc` flag if you don't have `asciidoctor`,\n"
+"    and add `--without-i18n` flag if you don't have `gettext` package.\n"
+msgstr ""
+"    克隆完整仓库，然后运行 `./configure`。如果您没有 `asciidoctor`， 请添加 `--without-doc` 标志，\n"
+"    如果您没有 `gettext` 包，请添加 `--without-i18n` 标志。\n"
+
+#. type: Plain text
+#: ../README.md:57
+#, no-wrap
+msgid ""
+"    ```sh\n"
+"    git clone https://github.com/ceccomp/ceccomp.git\n"
+"    cd Ceccomp\n"
+"    ./configure\n"
+"    ./configure # run this again if Makefile is not generated\n"
+"    make\n"
+"    make install # install at /usr/bin\n"
+"    ```\n"
+msgstr ""
+"    ```sh\n"
+"    git clone https://github.com/ceccomp/ceccomp.git\n"
+"    cd Ceccomp\n"
+"    ./configure\n"
+"    ./configure # 如果 Makefile 没有生成就再运行一次\n"
+"    make\n"
+"    make install # 安装在 /usr/local/bin\n"
+"    ```\n"
+
+#. type: Bullet: '- '
+#: ../README.md:59
+msgid "Testing installation:"
+msgstr "测试版安装："
+
+#. type: Plain text
+#: ../README.md:61
+#, no-wrap
+msgid "    Clone the whole repo, and then run `./configure --devmode`.\n"
+msgstr "   克隆完整仓库，然后运行 `./configure --devmode`。\n"
+
+#. type: Plain text
+#: ../README.md:68
+#, no-wrap
+msgid ""
+"    ```sh\n"
+"    git clone https://github.com/ceccomp/ceccomp.git\n"
+"    cd Ceccomp\n"
+"    ./configure --devmode\n"
+"    make\n"
+"    ```\n"
+msgstr ""
+"    ```sh\n"
+"    git clone https://github.com/ceccomp/ceccomp.git\n"
+"    cd Ceccomp\n"
+"    ./configure --devmode\n"
+"    make\n"
+"    ```\n"
+
+#. type: Title ##
+#: ../README.md:69
+#, no-wrap
+msgid "Run Test"
+msgstr "运行测试"
+
+#. type: Plain text
+#: ../README.md:73
+msgid ""
+"Run configure and make, then invoke `pytest test` from repo root. Trace pid "
+"case will be skipped if no CAP_SYS_ADMIN. If you find some checks failed, "
+"please submit an issue to report your case."
+msgstr ""
+"运行 configure 后 make，然后再项目根目录下运行 `pytest test`。如果没有 "
+"CAP_SYS_ADMIN，追踪 pid 的测试案例会被跳过。如果您发现一些测试失败了，请开一"
+"个 issue 并上报您的案例。"
+
+#. type: Plain text
+#: ../README.md:76
+msgid ""
+"To run the test, you need 2 extra packages: `pkgconf` (required by `pkg-"
+"config`) and `python-pytest` (required by `pytest`)."
+msgstr ""
+"要想运行测试，您需要 2 个额外的软件包: `pkgconf` (被 `pkg-config` 需要) 和 "
+"`python-pytest` (被 `pytest` 需要)。"
+
+#. type: Title ##
+#: ../README.md:77
+#, no-wrap
+msgid "CheatSheet"
+msgstr "速览表"
+
+#. type: Plain text
+#: ../README.md:80
+#, no-wrap
+msgid "<img width=\"2200\" height=\"1182\" alt=\"image\" src=\"https://github.com/user-attachments/assets/74a427d6-8e26-46dc-9883-9aad818d6d64\" />\n"
+msgstr "<img width=\"2200\" height=\"1182\" alt=\"image\" src=\"https://github.com/user-attachments/assets/74a427d6-8e26-46dc-9883-9aad818d6d64\" />\n"
+
+#. type: Title ##
+#: ../README.md:81
+#, no-wrap
+msgid "Credits"
+msgstr "致谢"
+
+#. type: Bullet: '- '
+#: ../README.md:89
+msgid ""
+"[libseccomp](https://github.com/seccomp/libseccomp): The library to support "
+"syscall lookups"
+msgstr ""
+"[libseccomp](https://github.com/seccomp/libseccomp): 用于支持系统调用查询的软"
+"件库"
+
+#. type: Bullet: '- '
+#: ../README.md:89
+msgid ""
+"[seccomp-tools](https://github.com/david942j/seccomp-tools): The tool in "
+"Ruby inspires us to write ceccomp"
+msgstr ""
+"[seccomp-tools](https://github.com/david942j/seccomp-tools): 启发我们编写 "
+"ceccomp 的 Ruby 工具"
+
+#. type: Bullet: '- '
+#: ../README.md:89
+msgid ""
+"[Bootswatch](https://bootswatch.com/slate/): Provides awesome css for html "
+"doc under MIT"
+msgstr ""
+"[Bootswatch](https://bootswatch.com/slate/): 提供了基于 MIT 协议的用于 html "
+"文档的精美 CSS"
+
+#. type: Bullet: '- '
+#: ../README.md:89
+msgid "[Linux kernel](https://github.com/torvalds/linux): Port some bpf checks"
+msgstr ""
+"[Linux kernel](https://github.com/torvalds/linux): 移植了一些 BPF 的检查"
+
+#. type: Bullet: '- '
+#: ../README.md:89
+msgid ""
+"[Verstable](https://github.com/JacksonAllan/Verstable): High-performance "
+"hash table implementation in C"
+msgstr ""
+"[Verstable](https://github.com/JacksonAllan/Verstable): C 语言高性能哈希表实"
+"现"
+
+#. type: Bullet: '- '
+#: ../README.md:89
+msgid ""
+"[a5hash](https://github.com/avaneev/a5hash): High-performance hash "
+"implementation for short strings in C"
+msgstr ""
+"[a5hash](https://github.com/avaneev/a5hash): C 语言高性能短字符串哈希实现"
+
+#. type: Plain text
+#: ../README.md:91
+msgid ""
+"Any Issue or PR are welcome! :heart: Please read [CONTRIBUTING.md]"
+"(CONTRIBUTING.md) for details."
+msgstr ""
+"欢迎任何 issue 或 PR！:heart: 详情请阅读 [CONTRIBUTING.md](CONTRIBUTING.md)。"
+
+#. type: Title ##
+#: ../README.md:92
+#, no-wrap
+msgid "License"
+msgstr "许可证"
+
+#. type: Plain text
+#: ../README.md:94
+msgid ""
+"Copyright (C) 2025-present, ceccomp contributors, distributed under GNU "
+"General Public License v3.0 or Later"
+msgstr ""
+"Copyright (C) 2025-现在，ceccomp 贡献者，按 GNU General Public License v3.0 "
+"or Later 分发"
