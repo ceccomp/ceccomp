@@ -320,7 +320,7 @@ depends on label declaration to decide where to jump, instead of lineno in
 _TEXT_ file.
 
 A valid _TEXT_ format is described in EBNF-like declaration here:
-https://github.com/ceccomp/ceccomp/issues/17#issuecomment-3610531705.
+https://github.com/ceccomp/ceccomp/issues/17#issuecomment-3610531705 .
 If you have no interest to know what EBNF is, please keep reading for
 examples.
 

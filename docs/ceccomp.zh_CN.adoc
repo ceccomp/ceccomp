@@ -226,7 +226,7 @@ NOTE: 此子命令在 _4.3 版本_ 中被引入。
 
 IMPORTANT: _4.0 版本_ 提高了词法分析器代码的可读性，伴随着大幅修改的语法。前缀为 `#` 的行现在是注释了。同时 _行号_ 被替换为 _标签_，现在词法分析器根据标签定义来决定跳转到哪里，而不是根据 _TEXT_ 文件中的行号。
 
-这里有正确的 _TEXT_ 格式，以类 EBNF 语法描述：https://github.com/ceccomp/ceccomp/issues/17#issuecomment-3610531705。 没兴趣了解 EBNF？请继续阅读以下的例子。
+这里有正确的 _TEXT_ 格式，以类 EBNF 语法描述：https://github.com/ceccomp/ceccomp/issues/17#issuecomment-3610531705 。 没兴趣了解 EBNF？请继续阅读以下的例子。
 
 其余未描述到的BPF操作都被内核禁止了。
 
