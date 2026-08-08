@@ -1,6 +1,9 @@
-# Ceccomp
+# Ceccomp <img src="https://raw.githubusercontent.com/ceccomp/.github/main/ceccomp-icon.png" alt="ceccomp icon" width="128" height="128" align="right" />
 
-A tool to analyze seccomp filters like `seccomp-tools`, written in C
+→ Read this in [简体中文](README.zh_CN.md) ←
+
+C reimplementation of `seccomp-tools` with advanced features. We basically pronounce
+ceccomp in "C-comp" (/siːˈkɒmp/) or "seccomp" (/ˈsɛk.kɒmp/).
 
 ## Features
 
@@ -8,11 +11,12 @@ A tool to analyze seccomp filters like `seccomp-tools`, written in C
 - :blue_book: Complete documentation
 - :1234: Various architecture support powered by libseccomp
 - :globe_with_meridians: Multi-language support
-- :feather: Minimum build depencies for core binary
+- :feather: Minimum build dependencies for core binary
 - :paintbrush: Enhanced syntax highlighting
 - :100: Informational error messages
 - :shell: Powerful Zshell completion
 - :no_entry_sign: Pure C without LLM-generated garbage
+- :bee: Advanced function powered by eBPF
 
 ## Doc & Screenshots
 
@@ -38,13 +42,19 @@ A tool to analyze seccomp filters like `seccomp-tools`, written in C
 
 - NixOS users:
 
-    @tesuji helps us submit a PR at NixOS, but it's blocked as nobody cares... If you
+    @tesuji helps us submit a PR at NixOS, but it's blocked as currently... If you
     like our software, please :+1: in NixOS/nixpkgs#462592 to help ceccomp into nixpkgs!
+
+# Build
 
 - Stable installation:
 
-    Clone the whole repo, then run `./configure`. Add `--without-doc` flag if you don't have `asciidoctor`,
-    and add `--without-i18n` flag if you don't have `gettext` package.
+    Clone the whole repo, then run `./configure`. Dependencies will be detected automatically,
+    please keep an eye on the output since components are automatically disabled if not available.
+    For documentation generation, you need `asciidoctor`. For multi-language support, you need
+    `gettext` package. For eBPF support, you need `libbpf` and `bpftool`. You could use
+    `--without-doc`, `--without-i18n` and `--without-ebpf` to disable them explicitly.
+    Please run `./configure --help` for more details.
 
     ```sh
     git clone https://github.com/ceccomp/ceccomp.git
@@ -52,7 +62,7 @@ A tool to analyze seccomp filters like `seccomp-tools`, written in C
     ./configure
     ./configure # run this again if Makefile is not generated
     make
-    make install # install at /usr/bin
+    make install # install at /usr/local/bin
     ```
 
 - Testing installation:
@@ -65,6 +75,13 @@ A tool to analyze seccomp filters like `seccomp-tools`, written in C
     ./configure --devmode
     make
     ```
+
+> [!NOTE]
+> To build this project or enable some features, the lowest denpendency version
+> baselines are:
+> * Linux >= 5.3, libseccomp >= 2.5.0 (exclude libbpf support)
+> * Linux >= 5.11, libbpf >= 0.6.0 (global capture, only x86_64 guaranteed)
+> * Linux >= 6.2, libbpf >= 0.6.0 (capture pid)
 
 ## Run Test
 
@@ -81,6 +98,7 @@ To run the test, you need 2 extra packages: `pkgconf` (required by `pkg-config`)
 ## Credits
 
 - [libseccomp](https://github.com/seccomp/libseccomp): The library to support syscall lookups
+- [libbpf](https://docs.kernel.org/bpf/libbpf/libbpf_overview.html): The library to support eBPF functions
 - [seccomp-tools](https://github.com/david942j/seccomp-tools): The tool in Ruby inspires us to write ceccomp
 - [Bootswatch](https://bootswatch.com/slate/): Provides awesome css for html doc under MIT
 - [Linux kernel](https://github.com/torvalds/linux): Port some bpf checks
