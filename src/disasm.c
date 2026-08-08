@@ -132,12 +132,8 @@ read_insns (FILE *from, uint32_t *count, uint32_t *map_sizep)
 
 void
 print_prog (uint32_t scmp_arch, fprog *prog, pid_t pid, FILE *output_fp,
-            bool trustful, bool need_reverse)
+            bool trustful)
 {
-  if (need_reverse)
-    for (uint32_t i = 0; i < prog->len; i++)
-      reverse_endian (&prog->filter[i]);
-
   vector_t v;
 
   // str pile for syscall names
@@ -181,7 +177,6 @@ void
 disasm (FILE *fp, uint32_t scmp_arch, bool ebpf)
 {
   fprog prog;
-  bool reverse = false;
   if (ebpf)
     {
       uint32_t count, map_size;
@@ -201,9 +196,12 @@ disasm (FILE *fp, uint32_t scmp_arch, bool ebpf)
     }
   else
     {
-      reverse = need_reverse_endian (scmp_arch);
       assert (init_global_filters (BPF_MAXINSNS));
       prog.len = read_filters (g_filters, fp);
+
+      if (need_reverse_endian (scmp_arch))
+        for (uint32_t i = 0; i < prog.len; i++)
+          reverse_endian ((filter *)g_filters + i);
     }
   prog.filter = g_filters;
   if (prog.len == 0)
@@ -212,5 +210,5 @@ disasm (FILE *fp, uint32_t scmp_arch, bool ebpf)
       return;
     }
 
-  print_prog (scmp_arch, &prog, 0, stdout, false, reverse);
+  print_prog (scmp_arch, &prog, 0, stdout, false);
 }

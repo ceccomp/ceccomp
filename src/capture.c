@@ -112,7 +112,7 @@ do_ebpf_disasm (pid_event_ctx *c, uint32_t default_scmp_arch)
   fprog prog = { .len = cbpf_len, .filter = cbpf_buf };
   uint32_t scmp_arch = trans_ebpf_arch (c->event.ebpf_arch, default_scmp_arch);
 
-  print_prog (scmp_arch, &prog, 0, stdout, true, false);
+  print_prog (scmp_arch, &prog, 0, stdout, true);
   free (cbpf_buf);
 }
 
@@ -231,7 +231,7 @@ on_events (void *ctx, void *data, unsigned long size)
   fprog prog = { .len = event->prog.flen, .filter = event->prog.filters };
 
   c->scmp_arch = trans_ebpf_arch (event->ebpf_arch, c->scmp_arch);
-  print_prog (c->scmp_arch, &prog, event->pid, c->fp, true, false);
+  print_prog (c->scmp_arch, &prog, event->pid, c->fp, true);
   return 0;
 }
 
