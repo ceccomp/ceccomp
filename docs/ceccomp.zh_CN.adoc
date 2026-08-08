@@ -202,11 +202,31 @@ NOTE: 从 _4.2 版本_ 开始 `dump` 子命令作为 `trace` 的别名被加入�
 
 NOTE: `seccomp-tools` 没有等价的子命令。
 
+=== capture - 用 eBPF 捕获过滤器
+
+    ceccomp capture [-c WHEN] [-p PID]
+
+未设置 *PID* 时在全局范围内捕获 seccomp 过滤器。eBPF 程序将追踪 `seccomp_check_filter` 内核函数，可靠地拦截内核将加载的 seccomp 过滤器，而相比 <<trace - 运行时捕获过滤器>> 没有条件竞争的风险。这个功能在下方被称为“全局捕获”。Linux 5.15 是运行该功能的最低推荐内核版本。
+
+当设置了 *PID* 时，将安装用来从对应线程中提取已安装过的 seccomp 过滤器的 eBPF 程序。注意在内核中，`pid` 指线程 id，而 `tgid` 指进程 id。eBPF 程序会直接把由原始 seccomp 过滤器转换后的 eBPF 指令抽取出来并转换回去，用以执行 <<disasm - 反汇编>>。这个功能不需要 `CONFIG_CHECKPOINT_RESTORE` 内核配置，甚至在 `ceccomp` 处在 seccomp 状态时仍能工作。这个功能在下方被称为“捕获 PID”。Linux 6.2 是运行该功能的最低内核版本，因为这时 `bpf_task_from_pid` 函数才被引入。
+
+WHEN::
+参数描述可以在 <<asm - 汇编>> 一节中找到。
+
+PID::
+从哪个 *线程* 中提取 seccomp 过滤器指令。
+
+NOTE: 所有出现在“全局捕获”或“捕获 PID”中的 *PID* 是 *初始命名空间 PID*，而不是当前命名空间中的 PID。推荐只在初始命名空间中运行 `ceccomp capture`。
+
+NOTE: 此模块是可选的，您可以在配置阶段将其禁用。此模块需要 libbpf 才能工作。
+
+NOTE: 此子命令在 _4.3 版本_ 中被引入。
+
 == TEXT 语法参考
 
 IMPORTANT: _4.0 版本_ 提高了词法分析器代码的可读性，伴随着大幅修改的语法。前缀为 `#` 的行现在是注释了。同时 _行号_ 被替换为 _标签_，现在词法分析器根据标签定义来决定跳转到哪里，而不是根据 _TEXT_ 文件中的行号。
 
-这里有正确的 _TEXT_ 格式，以类 EBNF 语法描述：https://github.com/dbgbgtf1/Ceccomp/issues/17#issuecomment-3610531705。 没兴趣了解 EBNF？请继续阅读以下的例子。
+这里有正确的 _TEXT_ 格式，以类 EBNF 语法描述：https://github.com/ceccomp/ceccomp/issues/17#issuecomment-3610531705。 没兴趣了解 EBNF？请继续阅读以下的例子。
 
 其余未描述到的BPF操作都被内核禁止了。
 
@@ -401,6 +421,6 @@ endif::[]
 
 == 仓库
 
-在 https://github.com/dbgbgtf1/Ceccomp 可以找到源代码。 欢迎提交 Pull Requests 和 Issues ！
+在 https://github.com/ceccomp/ceccomp 可以找到源代码。 欢迎提交 Pull Requests 和 Issues ！
 
 Copyright (C) 2025-现在，基于 GPLv3 或更新版本分发。

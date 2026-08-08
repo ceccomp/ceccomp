@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-07 23:26+0800\n"
+"POT-Creation-Date: 2026-08-08 12:27+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -557,7 +557,7 @@ msgstr ""
 #: ../include/utils/error.h:190
 msgid ""
 "Loading eBPF program require CAP_SYS_ADMIN || (CAP_BPF && CAP_PERFMON), you "
-"may restart ceccomp with sudo."
+"may rerun ceccomp with sudo."
 msgstr ""
 
 #: ../include/utils/error.h:193
