@@ -17,13 +17,13 @@ jobs:
           - name: ubuntu-24.04 CI (clang)
             runs-on: ubuntu-24.04
             deps: asciidoctor gettext libbpf-dev libelf-dev libseccomp-dev pkgconf python3-pytest zlib1g-dev llvm linux-tools-common linux-tools-azure
-            bpf-cc: clang
+            extra-env: BPF_CC=clang CC=clang
             need-bpftool-workaround: true
 
           - name: ubuntu-26.04-arm CI (bpf-gcc)
             runs-on: ubuntu-26.04-arm
             deps: bpftool gcc-bpf libbpf-dev libseccomp-dev pkgconf python3-pytest
-            bpf-cc: bpf-gcc
+            extra-env: BPF_CC=bpf-gcc
             need-bpftool-workaround: false
 
     steps:
@@ -55,7 +55,7 @@ jobs:
           fi
 
       - name: Configure
-        run: BPF_CC=${{ matrix.bpf-cc }} CFLAGS=-pedantic ./configure --devmode --prefix=/usr --destdir=build/inst
+        run: ${{ matrix.extra-env }} CFLAGS=-pedantic ./configure --devmode --prefix=/usr --destdir=build/inst
 
       - name: Make
         run: |
