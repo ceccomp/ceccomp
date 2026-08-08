@@ -1,6 +1,9 @@
-# Ceccomp
+# Ceccomp <img src="https://raw.githubusercontent.com/ceccomp/.github/main/ceccomp-icon.png" alt="ceccomp icon" width="128" height="128" align="right" />
 
-用 C 重写的，类似 `seccomp-tools` 的用于分析 seccomp 过滤器的工具
+→ 用 [English](README.md) 阅读文档 ←
+
+具有高级功能的对于 `seccomp-tools` 的 C 语言重新实现。我们基本上把 ceccomp 读作 “C-comp” (/siːˈkɒmp/)
+或者 “seccomp” (/ˈsɛk.kɒmp/)。
 
 ## 功能
 
@@ -13,6 +16,7 @@
 - :100: 详实的错误信息
 - :shell: 强大的 Zshell 补全脚本
 - :no_entry_sign: 纯 C 编写，没有 LLM 垃圾
+- :bee: 由 eBPF 驱动的高级功能
 
 ## 文档 & 截图
 
@@ -36,15 +40,20 @@
     [![Ubuntu 26.10](https://repology.org/badge/version-for-repo/ubuntu_26_10/ceccomp.svg?header=Ubuntu%2026.10)](https://repology.org/project/ceccomp/versions)
     [![Kali Linux](https://repology.org/badge/version-for-repo/kali_rolling/ceccomp.svg?header=Kali%20Linux)](https://repology.org/project/ceccomp/versions)
 
-- NixOS 用户
+- NixOS 用户：
 
-    @tesuji 帮我们在 NixOS 提交了一个 PR，但是由于无人关心，进度停滞不前... 如果
-    您喜欢我们的软件，请在 NixOS/nixpkgs#462592 :+1: 来帮助 ceccomp 进入 nixpkgs！
+    @tesuji 帮我们在 NixOS 提交了一个 PR，但是目前进度停滞不前...
+    如果您喜欢我们的软件，请在 NixOS/nixpkgs#462592 :+1: 来帮助 ceccomp 进入 nixpkgs！
+
+# 构建
 
 - 稳定版安装：
 
-    克隆完整仓库，然后运行 `./configure`。如果您没有 `asciidoctor`， 请添加 `--without-doc` 标志，
-    如果您没有 `gettext` 包，请添加 `--without-i18n` 标志。
+    克隆整个仓库，然后运行 `./configure`。依赖会被自动检测，请小心输出结果，
+    因为组件不可用时会被自动禁用。要生成文档，您需要 `asciidoctor`，要启用多语言支持，
+    您需要 `gettext` 软件包。要启用 eBPF 支持，您需要 `libbpf` 和 `bpftool`。您可以使用
+    `--without-doc`, `--without-i18n` 和 `--without-ebpf` 标志来显式禁用它们。
+    请运行 `./configure --help` 查看详情。
 
     ```sh
     git clone https://github.com/ceccomp/ceccomp.git
@@ -66,6 +75,12 @@
     make
     ```
 
+> [!NOTE]
+> 要想构建这个项目或启用某些特性，最低的依赖版本基线是：
+> * Linux >= 5.3, libseccomp >= 2.5.0 (除了 libbpf 部分以外)
+> * Linux >= 5.11, libbpf >= 0.6.0 (全局捕获，只保证 x86_64)
+> * Linux >= 6.2, libbpf >= 0.6.0 (捕获 PID)
+
 ## 运行测试
 
 运行 configure 后 make，然后再项目根目录下运行 `pytest test`。如果没有 CAP_SYS_ADMIN，追踪 pid
@@ -81,6 +96,8 @@
 ## 致谢
 
 - [libseccomp](https://github.com/seccomp/libseccomp): 用于支持系统调用查询的软件库
+- [libbpf](https://docs.kernel.org/bpf/libbpf/libbpf_overview.html): 用来支持
+  eBPF 功能的软件库
 - [seccomp-tools](https://github.com/david942j/seccomp-tools): 启发我们编写
   ceccomp 的 Ruby 工具
 - [Bootswatch](https://bootswatch.com/slate/): 提供了基于 MIT 协议的用于 html 文档的精美

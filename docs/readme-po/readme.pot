@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2026-08-08 14:48+0800\n"
+"POT-Creation-Date: 2026-08-08 16:32+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -19,101 +19,118 @@ msgstr ""
 #. type: Title #
 #: ../README.md:1
 #, markdown-text, no-wrap
-msgid "Ceccomp"
+msgid ""
+"Ceccomp <img "
+"src=\"https://raw.githubusercontent.com/ceccomp/.github/main/ceccomp-icon.png\" "
+"alt=\"ceccomp icon\" width=\"128\" height=\"128\" align=\"right\" />"
 msgstr ""
 
 #. type: Plain text
 #: ../README.md:4
 #, markdown-text
-msgid "A tool to analyze seccomp filters like `seccomp-tools`, written in C"
+msgid "→ Read this in [简体中文](README.zh_CN.md) ←"
+msgstr ""
+
+#. type: Plain text
+#: ../README.md:7
+#, markdown-text
+msgid ""
+"C reimplementation of `seccomp-tools` with advanced features. We basically "
+"pronounce ceccomp in \"C-comp\" (/siːˈkɒmp/) or \"seccomp\" (/ˈsɛk.kɒmp/)."
 msgstr ""
 
 #. type: Title ##
-#: ../README.md:5
+#: ../README.md:8
 #, markdown-text, no-wrap
 msgid "Features"
 msgstr ""
 
 #. type: Bullet: '- '
-#: ../README.md:16
+#: ../README.md:20
 #, markdown-text
 msgid ":gear: Robust assembler and disassembler"
 msgstr ""
 
 #. type: Bullet: '- '
-#: ../README.md:16
+#: ../README.md:20
 #, markdown-text
 msgid ":blue_book: Complete documentation"
 msgstr ""
 
 #. type: Bullet: '- '
-#: ../README.md:16
+#: ../README.md:20
 #, markdown-text
 msgid ":1234: Various architecture support powered by libseccomp"
 msgstr ""
 
 #. type: Bullet: '- '
-#: ../README.md:16
+#: ../README.md:20
 #, markdown-text
 msgid ":globe_with_meridians: Multi-language support"
 msgstr ""
 
 #. type: Bullet: '- '
-#: ../README.md:16
+#: ../README.md:20
 #, markdown-text
-msgid ":feather: Minimum build depencies for core binary"
+msgid ":feather: Minimum build dependencies for core binary"
 msgstr ""
 
 #. type: Bullet: '- '
-#: ../README.md:16
+#: ../README.md:20
 #, markdown-text
 msgid ":paintbrush: Enhanced syntax highlighting"
 msgstr ""
 
 #. type: Bullet: '- '
-#: ../README.md:16
+#: ../README.md:20
 #, markdown-text
 msgid ":100: Informational error messages"
 msgstr ""
 
 #. type: Bullet: '- '
-#: ../README.md:16
+#: ../README.md:20
 #, markdown-text
 msgid ":shell: Powerful Zshell completion"
 msgstr ""
 
 #. type: Bullet: '- '
-#: ../README.md:16
+#: ../README.md:20
 #, markdown-text
 msgid ":no_entry_sign: Pure C without LLM-generated garbage"
 msgstr ""
 
-#. type: Title ##
-#: ../README.md:17
-#, markdown-text, no-wrap
-msgid "Doc & Screenshots"
-msgstr ""
-
-#. type: Plain text
+#. type: Bullet: '- '
 #: ../README.md:20
 #, markdown-text
-msgid "[English Version](docs/ceccomp.adoc) | [中文文档](docs/ceccomp.zh_CN.adoc)"
+msgid ":bee: Advanced function powered by eBPF"
 msgstr ""
 
 #. type: Title ##
 #: ../README.md:21
 #, markdown-text, no-wrap
+msgid "Doc & Screenshots"
+msgstr ""
+
+#. type: Plain text
+#: ../README.md:24
+#, markdown-text
+msgid "[English Version](docs/ceccomp.adoc) | [中文文档](docs/ceccomp.zh_CN.adoc)"
+msgstr ""
+
+#. type: Title ##
+#: ../README.md:25
+#, markdown-text, no-wrap
 msgid "Install"
 msgstr ""
 
 #. type: Bullet: '- '
-#: ../README.md:24
+#: ../README.md:28
 #, markdown-text
 msgid "Arch Linux users:"
 msgstr ""
 
 #. type: Plain text
-#: ../README.md:28
+#: ../README.md:32
 #, markdown-text, no-wrap
 msgid ""
 "    ceccomp is available in official extra repo now:\n"
@@ -124,19 +141,19 @@ msgid ""
 msgstr ""
 
 #. type: Bullet: '- '
-#: ../README.md:30
+#: ../README.md:34
 #, markdown-text
 msgid "Debian, Ubuntu or Kali users:"
 msgstr ""
 
 #. type: Plain text
-#: ../README.md:32
+#: ../README.md:36
 #, markdown-text, no-wrap
 msgid "    ceccomp is available with `apt` now if you are using distros below:\n"
 msgstr ""
 
 #. type: Plain text
-#: ../README.md:38
+#: ../README.md:42
 #, markdown-text, no-wrap
 msgid ""
 "    [![Debian "
@@ -152,38 +169,52 @@ msgid ""
 msgstr ""
 
 #. type: Bullet: '- '
-#: ../README.md:40
+#: ../README.md:44
 #, markdown-text
 msgid "NixOS users:"
 msgstr ""
 
 #. type: Plain text
-#: ../README.md:43
+#: ../README.md:47
 #, markdown-text, no-wrap
 msgid ""
-"    @tesuji helps us submit a PR at NixOS, but it's blocked as nobody "
-"cares... If you\n"
+"    @tesuji helps us submit a PR at NixOS, but it's blocked as "
+"currently... If you\n"
 "    like our software, please :+1: in NixOS/nixpkgs#462592 to help ceccomp "
 "into nixpkgs!\n"
 msgstr ""
 
+#. type: Title #
+#: ../README.md:48
+#, markdown-text, no-wrap
+msgid "Build"
+msgstr ""
+
 #. type: Bullet: '- '
-#: ../README.md:45
+#: ../README.md:51
 #, markdown-text
 msgid "Stable installation:"
 msgstr ""
 
 #. type: Plain text
-#: ../README.md:48
+#: ../README.md:58
 #, markdown-text, no-wrap
 msgid ""
-"    Clone the whole repo, then run `./configure`. Add `--without-doc` flag "
-"if you don't have `asciidoctor`,\n"
-"    and add `--without-i18n` flag if you don't have `gettext` package.\n"
+"    Clone the whole repo, then run `./configure`. Dependencies will be "
+"detected automatically,\n"
+"    please keep an eye on the output since components are automatically "
+"disabled if not available.\n"
+"    For documentation generation, you need `asciidoctor`. For multi-language "
+"support, you need\n"
+"    `gettext` package. For eBPF support, you need `libbpf` and "
+"`bpftool`. You could use\n"
+"    `--without-doc`, `--without-i18n` and `--without-ebpf` to disable them "
+"explicitly.\n"
+"    Please run `./configure --help` for more details.\n"
 msgstr ""
 
 #. type: Plain text
-#: ../README.md:57
+#: ../README.md:67
 #, markdown-text, no-wrap
 msgid ""
 "    ```sh\n"
@@ -192,24 +223,24 @@ msgid ""
 "    ./configure\n"
 "    ./configure # run this again if Makefile is not generated\n"
 "    make\n"
-"    make install # install at /usr/bin\n"
+"    make install # install at /usr/local/bin\n"
 "    ```\n"
 msgstr ""
 
 #. type: Bullet: '- '
-#: ../README.md:59
+#: ../README.md:69
 #, markdown-text
 msgid "Testing installation:"
 msgstr ""
 
 #. type: Plain text
-#: ../README.md:61
+#: ../README.md:71
 #, markdown-text, no-wrap
 msgid "    Clone the whole repo, and then run `./configure --devmode`.\n"
 msgstr ""
 
 #. type: Plain text
-#: ../README.md:68
+#: ../README.md:78
 #, markdown-text, no-wrap
 msgid ""
 "    ```sh\n"
@@ -220,14 +251,28 @@ msgid ""
 "    ```\n"
 msgstr ""
 
+#. type: Plain text
+#: ../README.md:85
+#, markdown-text, no-wrap
+msgid ""
+"> [!NOTE]\n"
+"> To build this project or enable some features, the lowest denpendency "
+"version\n"
+"> baselines are:\n"
+"> * Linux >= 5.3, libseccomp >= 2.5.0 (exclude libbpf support)\n"
+"> * Linux >= 5.11, libbpf >= 0.6.0 (global capture, only x86_64 "
+"guaranteed)\n"
+"> * Linux >= 6.2, libbpf >= 0.6.0 (capture pid)\n"
+msgstr ""
+
 #. type: Title ##
-#: ../README.md:69
+#: ../README.md:86
 #, markdown-text, no-wrap
 msgid "Run Test"
 msgstr ""
 
 #. type: Plain text
-#: ../README.md:73
+#: ../README.md:90
 #, markdown-text
 msgid ""
 "Run configure and make, then invoke `pytest test` from repo root. Trace pid "
@@ -236,7 +281,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../README.md:76
+#: ../README.md:93
 #, markdown-text
 msgid ""
 "To run the test, you need 2 extra packages: `pkgconf` (required by "
@@ -244,13 +289,13 @@ msgid ""
 msgstr ""
 
 #. type: Title ##
-#: ../README.md:77
+#: ../README.md:94
 #, markdown-text, no-wrap
 msgid "CheatSheet"
 msgstr ""
 
 #. type: Plain text
-#: ../README.md:80
+#: ../README.md:97
 #, markdown-text, no-wrap
 msgid ""
 "<img width=\"2200\" height=\"1182\" alt=\"image\" "
@@ -259,13 +304,13 @@ msgid ""
 msgstr ""
 
 #. type: Title ##
-#: ../README.md:81
+#: ../README.md:98
 #, markdown-text, no-wrap
 msgid "Credits"
 msgstr ""
 
 #. type: Bullet: '- '
-#: ../README.md:89
+#: ../README.md:107
 #, markdown-text
 msgid ""
 "[libseccomp](https://github.com/seccomp/libseccomp): The library to support "
@@ -273,7 +318,15 @@ msgid ""
 msgstr ""
 
 #. type: Bullet: '- '
-#: ../README.md:89
+#: ../README.md:107
+#, markdown-text
+msgid ""
+"[libbpf](https://docs.kernel.org/bpf/libbpf/libbpf_overview.html): The "
+"library to support eBPF functions"
+msgstr ""
+
+#. type: Bullet: '- '
+#: ../README.md:107
 #, markdown-text
 msgid ""
 "[seccomp-tools](https://github.com/david942j/seccomp-tools): The tool in "
@@ -281,7 +334,7 @@ msgid ""
 msgstr ""
 
 #. type: Bullet: '- '
-#: ../README.md:89
+#: ../README.md:107
 #, markdown-text
 msgid ""
 "[Bootswatch](https://bootswatch.com/slate/): Provides awesome css for html "
@@ -289,13 +342,13 @@ msgid ""
 msgstr ""
 
 #. type: Bullet: '- '
-#: ../README.md:89
+#: ../README.md:107
 #, markdown-text
 msgid "[Linux kernel](https://github.com/torvalds/linux): Port some bpf checks"
 msgstr ""
 
 #. type: Bullet: '- '
-#: ../README.md:89
+#: ../README.md:107
 #, markdown-text
 msgid ""
 "[Verstable](https://github.com/JacksonAllan/Verstable): High-performance "
@@ -303,7 +356,7 @@ msgid ""
 msgstr ""
 
 #. type: Bullet: '- '
-#: ../README.md:89
+#: ../README.md:107
 #, markdown-text
 msgid ""
 "[a5hash](https://github.com/avaneev/a5hash): High-performance hash "
@@ -311,7 +364,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../README.md:91
+#: ../README.md:109
 #, markdown-text
 msgid ""
 "Any Issue or PR are welcome! :heart: Please read "
@@ -319,13 +372,13 @@ msgid ""
 msgstr ""
 
 #. type: Title ##
-#: ../README.md:92
+#: ../README.md:110
 #, markdown-text, no-wrap
 msgid "License"
 msgstr ""
 
 #. type: Plain text
-#: ../README.md:94
+#: ../README.md:112
 #, markdown-text
 msgid ""
 "Copyright (C) 2025-present, ceccomp contributors, distributed under GNU "
