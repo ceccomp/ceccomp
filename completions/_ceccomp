@@ -6,7 +6,7 @@ local state
 local archs=(
     'x86_64' 'i386' 'x32' 'aarch64' 'arm' 'loongarch64' 'm68k' 'mips' 'mipsel'
     'mips64' 'mipsel64' 'mips64n32' 'mipsel64n32' 'parisc' 'parisc64' 'ppc64' 'ppc64le'
-    'ppc' 's390x' 's390' 'riscv64' 'sh' 'sheb'
+    'ppc' 's390x' 's390' 'riscv64' 'sh' 'sheb' 'sh4'
 )
 arch_compstr=(
     '(-a --arch)'{-a,--arch}"[Target BPF architecture]:ARCH:($archs)"
@@ -27,6 +27,7 @@ local syscalls=(
 if (( CURRENT == 2 )) {
     subcmd=(
         'asm:Assemble bpf text to raw bytes'
+        'capture:Install eBPF prog to capture all seccomp filters or extract filters in a process'
         'disasm:Disassemble raw bytes to bpf text'
         'trace:Run program or trace pid, extract bpf filter and then print to text'
         'emu:Emulate bpf program with given syscall and bpf text'
@@ -61,6 +62,24 @@ if (( CURRENT == 2 )) {
                 '(-s --seize)'{-s,--seize}'[Follow pid to trace load-filter operation (pid mode)]' \
                 $output_compstr \
                 '*:arguments:_files'
+            # complete non-kernel pids like kill
+            if [[ $state == 'getpid' ]] {
+                local line pids lines
+                pids=()
+                # extract command output line by line
+                lines=("${(@f)$(ps --ppid 2 -p 2 -N -o pid=,tty=,user=,comm=)}")
+                for line ($lines) {
+                    pids+=${line[(w)1]} # extract first word (pid)
+                }
+                _wanted nonk-pids expl 'non-kernel process ID' \
+                    compadd -o nosort -ld lines -a pids
+            }
+            ;;
+        (capture)
+            _arguments -C \
+                $color_compstr \
+                '(-p --pid)'{-p,--pid}'[Which thread to extract filters from]:PID:->getpid' \
+                '*: :'
             # complete non-kernel pids like kill
             if [[ $state == 'getpid' ]] {
                 local line pids lines

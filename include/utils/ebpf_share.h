@@ -64,7 +64,7 @@ typedef enum
   (((status) & TS_COMPAT) ? PROC_ARCH_X86 : PROC_ARCH_X64)
 #endif
 
-#define CHUNK_SIZE (4096 * sizeof(struct bpf_insn))
+#define CHUNK_SIZE (4096 * sizeof (struct bpf_insn))
 #define CHUNK_INSN_SIZE (CHUNK_SIZE / sizeof (struct bpf_insn))
 
 typedef struct

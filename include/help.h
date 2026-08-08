@@ -18,7 +18,7 @@
   "ceccomp trace   [ -c WHEN ] [ -o FILE ] [ -q ] PROGRAM [ program-args ]\n" \
   "                [ -c WHEN ] [ -s ] [ -q ] -p PID"
 
-#define CAPTURE_HINT "ceccomp capture [ -p PID ]"
+#define CAPTURE_HINT "ceccomp capture [ -c WHEN ] [ -p PID ]"
 
 #define HELP_HINT "ceccomp help"
 #define VERSION_HINT "ceccomp version"
