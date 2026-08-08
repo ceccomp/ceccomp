@@ -76,7 +76,7 @@ To run the test, you need 2 extra packages: `pkgconf` (required by `pkg-config`)
 
 ## CheatSheet
 
-<img width="2205" height="1158" alt="image" src="https://github.com/user-attachments/assets/c97d75ef-43e6-43dc-b2a3-45a75ff1187b" />
+<img width="2211" height="1189" alt="image" src="https://github.com/user-attachments/assets/da175522-7860-48f4-b074-91c5c05611b2" />
 
 ## Credits
 
