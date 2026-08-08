@@ -8,15 +8,23 @@ Items marked with :star: is the major change why we release a new version.
 <!-- reversed. Then run scripts/complete-url.py to format raw ref to URL. -->
 
 ## 4.3 (INCOMING)
+* :star: New subcommand `capture` to manipulate seccomp with eBPF :link: [#24]
 * :star: Add new asm format **c-macro** to port *TEXT* easily :link: [#39]
 * :star: Add support for *sh* since libseccomp 2.6
 * :star: Prints seccomp flags when tracing and applies stricter check on return value
 * :star: `$A / $X` (`$X == 0`) should return `KILL` instead of continuing
 * :star: Use `seccomp_arch_native` instead of `uname -m` to improve robustness
-* :star: Add tracee pid in comment when tracing process
+* :star: Add tracee pid in output comment when tracing process
+* :star: Automatically disable components that are not available during configuration
 * Only run `make test` when `test` need to be compiled
+* New flag `-e` for `disasm` to treat input as eBPF bytes
+* Fix `trace` compilation compatibility with Linux 5.15 headers
+* Fix unit tests compatibility with python 3.13
+* `version` now displays dependency versions
+* Add GitHub CI to automatically test code
 
 [#39]: https://github.com/ceccomp/ceccomp/issues/39
+[#24]: https://github.com/ceccomp/ceccomp/issues/24
 ## 4.2.2
 * :star: Keep `CC` as string in `configure` :link: [#37]
 * :star: Fix flaky seize test with `eventfd` :link: [#38]
