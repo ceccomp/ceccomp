@@ -276,6 +276,41 @@ could be found in <<EXAMPLES>> section.
 
 NOTE: `seccomp-tools` don't have this subcommand.
 
+=== capture - CAPTURE FILTERS WITH EBPF
+
+    ceccomp capture [-c WHEN] [-p PID]
+
+Capture seccomp filters in global scope if *PID* not set. The eBPF program
+will trace `seccomp_check_filter` kernel function, reliably intercepting seccomp
+filters that the kernel will load, WITHOUT race conditions compared to
+<<trace - TRACE FILTER IN RUNTIME>>. This function is named "global capture"
+below. Linux 5.15 is the lowest recommended kernel version to run this function.
+
+If *PID* is set, an eBPF program to extract installed seccomp filters in the
+corresponding thread will be installed. Note that inside kernel, `pid` is
+referred thread id and `tgid` is referred to process id. The eBPF program
+directly pulls eBPF insns migrated from original seccomp filters out and
+converts them back to perform <<disasm - DISASSEMBLE>>. This function does
+not require `CONFIG_CHECKPOINT_RESTORE` kernel config, and is functional
+even if `ceccomp` itself is under seccomp. This function is named "capture pid"
+below. Linux 6.2 is the lowest kernel version to run this function, as
+`bpf_task_from_pid` was introduced then.
+
+WHEN::
+Argument description can be found in <<asm - ASSEMBLE>> section.
+
+PID::
+Which *thread* to extract seccomp filter insns from.
+
+NOTE: All *PID* presented in either "global capture" or "capture pid" are
+*INITIAL NAMESPACE PID*, not PID in current namespace. It's recommended that
+only run `ceccomp capture` in initial namespace.
+
+NOTE: This module is optional, you can opt it out during configuration. This
+module require libbpf to work.
+
+NOTE: This subcommand was introduced in _version 4.3_.
+
 == TEXT GRAMMAR REFERENCE
 
 IMPORTANT: The grammar changed greatly since _version 4.0_ as we

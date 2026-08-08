@@ -188,7 +188,7 @@
      "libbpf. You may rebuild it with libbpf support.")
 #define M_EBPF_NOT_CAPABLE                                                    \
   _ ("Loading eBPF program require CAP_SYS_ADMIN || (CAP_BPF && "             \
-     "CAP_PERFMON), you may restart ceccomp with sudo.")
+     "CAP_PERFMON), you may rerun ceccomp with sudo.")
 #define M_LINUX_NO_TASK_FROM_PID                                              \
   _ ("Your kernel (%d.%d) is so old that task_from_pid is not available.")
 
