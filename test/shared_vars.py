@@ -1,3 +1,4 @@
+from __future__ import annotations
 import os
 import platform
 import subprocess
@@ -84,7 +85,7 @@ class CornerCaseFile:
     stderr: str | None
 
     @staticmethod
-    def parse(content: str) -> CornerCaseFile:
+    def parse(content: str) -> 'CornerCaseFile':
         pos_list = [
             content.find('CLI'),
             content.find('STDIN'),
