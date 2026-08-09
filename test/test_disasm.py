@@ -32,17 +32,14 @@ def test_error_cases(errorid: str):
     chunk_file = ERR_CASE_DIR / f'b{errorid}'
     with chunk_file.open() as f:
         blob = f.read()
-    in_idx = blob.find('STDIN')
-    out_idx = blob.find('STDOUT')
-    err_idx = blob.find('STDERR')
-    assert in_idx != -1 and err_idx != -1
+    parsed = CornerCaseFile.parse(blob)
+    assert parsed.stdin
+    assert parsed.stderr
 
-    stdin = bytes.fromhex(blob[in_idx + 6 : err_idx])
+    stdin = bytes.fromhex(parsed.stdin)
     _, stdout, stderr = run_process(
         [CECCOMP, 'disasm', '-', '-a', 'x86_64'], stdin=stdin, is_binary=True,
     )
-    if out_idx == -1:
-        assert stderr.decode() == blob[err_idx + 7:]
-    else:
-        assert stderr.decode() == blob[err_idx + 7 : out_idx]
-        assert stdout.decode() == blob[out_idx + 7:]
+    assert stderr.decode() == parsed.stderr
+    if parsed.stdout:
+        assert stdout.decode() == parsed.stdout

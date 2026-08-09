@@ -63,32 +63,24 @@ def test_edge_cases(errns: SimpleNamespace, edgeid: str):
     chunk_file = ERR_CASE_DIR / f'e{edgeid}'
     with chunk_file.open() as f:
         blob = f.read()
+    parsed = CornerCaseFile.parse(blob)
+    assert parsed.cli
 
-    cli_idx = blob.find('CLI')
-    in_idx = blob.find('STDIN')
-    out_idx = blob.find('STDOUT')
-    err_idx = blob.find('STDERR')
-    assert cli_idx != -1 and in_idx != -1 and out_idx != -1
-    cli = blob[cli_idx + 4 : in_idx].strip().split()
-    stdin = blob[in_idx + 6 : out_idx]
-    if err_idx == -1:
-        stdout, stderr = blob[out_idx + 7:], None
-    else:
-        stdout, stderr = blob[out_idx + 7 : err_idx], blob[err_idx + 7:]
-
+    cli = parsed.cli.strip().split()
+    stdin = parsed.stdin
     is_disasm = cli[0] == 'disasm'
     if is_disasm:
-        stdin = bytes.fromhex(stdin)
+        stdin = bytes.fromhex(parsed.stdin)
 
-    _, real_out, real_err = run_process(
+    _, stdout, stderr = run_process(
         [CECCOMP, *cli], stdin=stdin, is_binary=is_disasm,
     )
-    errns.stderr = real_err
+    errns.stderr = stderr
     if is_disasm:
-        assert real_out.decode() == stdout
-    elif stdout.rstrip() == '$STANDARD_HELP':
-        assert real_out == STANDARD_HELP
+        assert stdout.decode() == parsed.stdout
+    elif parsed.stdout.rstrip() == '$STANDARD_HELP':
+        assert stdout == STANDARD_HELP
     else:
-        assert real_out == stdout
-    if stderr:
-        assert real_err == stderr
+        assert stdout == parsed.stdout
+    if parsed.stderr:
+        assert stderr == parsed.stderr

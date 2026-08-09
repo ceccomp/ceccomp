@@ -32,14 +32,13 @@ def test_error_cases(errorid: str):
     chunk_file = ERR_CASE_DIR / f'a{errorid}'
     with chunk_file.open() as f:
         blob = f.read()
-    in_idx = blob.find('STDIN')
-    err_idx = blob.find('STDERR')
-    assert in_idx != -1 and err_idx != -1
+    parsed = CornerCaseFile.parse(blob)
+    assert parsed.stdin
+    assert parsed.stderr
 
-    stdin = blob[in_idx + 6 : err_idx]
     _, _, stderr = run_process(
         # error case for asm will not print to stdout,
         # so no need to specify arch
-        [CECCOMP, 'asm', '-'], stdin=stdin,
+        [CECCOMP, 'asm', '-'], stdin=parsed.stdin,
     )
-    assert stderr == blob[err_idx + 7:]
+    assert stderr == parsed.stderr
