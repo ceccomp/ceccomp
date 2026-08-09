@@ -5,9 +5,10 @@
 #include <stdint.h>
 #include <string.h>
 
+#include "attributes.h"
 #include "lib/a5hash-5.25.h"
 
-static uint64_t
+AttrPure static uint64_t
 hash_hkey (hkey_t key)
 {
 #if __SIZEOF_POINTER__ == 8
@@ -17,7 +18,7 @@ hash_hkey (hkey_t key)
 #endif
 }
 
-static bool
+AttrPure static bool
 cmpr_hkey (hkey_t key1, hkey_t key2)
 {
   if (key1.len != key2.len)
@@ -35,7 +36,7 @@ cmpr_hkey (hkey_t key1, hkey_t key2)
 str_table hash_table;
 
 int
-insert_key (hkey_t *key, uint16_t line_nr)
+insert_key (const hkey_t *key, uint16_t line_nr)
 {
   size_t prev_size = vt_size (&hash_table);
   str_table_itr itr = vt_get_or_insert (&hash_table, *key, line_nr);
@@ -47,7 +48,7 @@ insert_key (hkey_t *key, uint16_t line_nr)
 }
 
 uint16_t
-find_key (hkey_t *key)
+find_key (const hkey_t *key)
 {
   str_table_itr itr = vt_get (&hash_table, *key);
   if (vt_is_end (itr))

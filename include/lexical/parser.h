@@ -1,6 +1,7 @@
 #ifndef PARSER_H
 #define PARSER_H
 
+#include "attributes.h"
 #include "main.h"
 #include "token.h"
 #include "utils/hash.h"
@@ -33,7 +34,7 @@ typedef struct
   // but EQUAL is skipped
 } assign_line_t;
 
-typedef enum __attribute__ ((packed))
+typedef enum AttrPacked
 {
   CMP_NUMBER = 0,
   CMP_ARCH = 1,

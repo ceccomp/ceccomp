@@ -1,3 +1,4 @@
+#include "attributes.h"
 #include "config.h"
 #include "utils/proc_status.h"
 #include <stdint.h>
@@ -79,7 +80,7 @@ typedef struct
   struct bpf_insn *ebpf_insns;
 } pid_event_ctx;
 
-static uint32_t
+AttrConst static uint32_t
 trans_ebpf_arch (ebpf_arch arch, uint32_t scmp_arch)
 {
   switch (arch)
@@ -103,7 +104,7 @@ trans_ebpf_arch (ebpf_arch arch, uint32_t scmp_arch)
 }
 
 static void
-do_ebpf_disasm (pid_event_ctx *c, uint32_t default_scmp_arch)
+do_ebpf_disasm (const pid_event_ctx *c, uint32_t default_scmp_arch)
 {
   filter *cbpf_buf = malloc (c->flen * sizeof (filter));
   int32_t cbpf_len = ebpf2cbpf (c->ebpf_insns, c->flen, cbpf_buf, true);
@@ -235,18 +236,9 @@ on_events (void *ctx, void *data, unsigned long size)
   return 0;
 }
 
-void
-capture (pid_t pid, uint32_t scmp_arch)
+static void
+global_capture (uint32_t scmp_arch)
 {
-  libbpf_set_print (libbpf_msg_dispatcher);
-
-  if (pid != 0)
-    {
-      capture_pid (pid, scmp_arch);
-      return;
-    }
-
-  // capture globally
   struct capture_bpf *skel;
   struct ring_buffer *rb;
   global_event_ctx ctx = { .fp = stdout, .scmp_arch = scmp_arch };
@@ -275,6 +267,17 @@ capture (pid_t pid, uint32_t scmp_arch)
 
   ring_buffer__free (rb);
   capture_bpf__destroy (skel);
+}
+
+void
+capture (pid_t pid, uint32_t scmp_arch)
+{
+  libbpf_set_print (libbpf_msg_dispatcher);
+
+  if (pid != 0)
+    capture_pid (pid, scmp_arch);
+  else
+    global_capture (scmp_arch);
 }
 #else // EBPF_SUPPORT == 0
 void

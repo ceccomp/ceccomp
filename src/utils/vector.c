@@ -46,7 +46,7 @@ free_vector (vector_t *v)
 }
 
 void *
-push_vector (vector_t *v, void *elem)
+push_vector (vector_t *v, const void *elem)
 {
   if (UNLIKELY (v->count >= v->capacity))
     {

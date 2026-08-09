@@ -13,7 +13,6 @@
 #include "utils/read_source.h"
 #include "utils/vector.h"
 #include <assert.h>
-#include <errno.h>
 #include <linux/bpf_common.h>
 #include <linux/filter.h>
 #include <seccomp.h>
@@ -120,11 +119,11 @@ assign_line (assign_line_t *line)
 
 #define DO_COMPARE(comparator) (bool)(A_reg comparator right)
 
-static label_t *
-jump_line (jump_line_t *line)
+static const label_t *
+jump_line (const jump_line_t *line)
 {
-  label_t *jt = &line->jt;
-  label_t *jf = &line->jf;
+  const label_t *jt = &line->jt;
+  const label_t *jf = &line->jf;
 
   if (!line->if_condition)
     return jt;
@@ -222,8 +221,8 @@ return_line (statement_t *statement, bool quiet)
 }
 
 static uint32_t
-code_nr_to_text_nr (vector_t *text_v, vector_t *code_ptr_v, statement_t *cur,
-                    label_t *jmp)
+code_nr_to_text_nr (vector_t *text_v, vector_t *code_ptr_v,
+                    const statement_t *cur, const label_t *jmp)
 {
   if (jmp->key.len == 0) // if ... goto xxx; false case -> jmp.code_nr is NULL
     return cur->text_nr + 1;
@@ -248,9 +247,9 @@ code_nr_to_text_nr (vector_t *text_v, vector_t *code_ptr_v, statement_t *cur,
 }
 
 static void
-print_label_decl (statement_t *statement)
+print_label_decl (const statement_t *statement)
 {
-  string_t *label_decl = &statement->label_decl;
+  const string_t *label_decl = &statement->label_decl;
   if (label_decl->start)
     {
       fwrite (label_decl->start, 1, label_decl->len, stdout);
@@ -260,7 +259,7 @@ print_label_decl (statement_t *statement)
 }
 
 static void
-emulate_printer (statement_t *statement, bool is_skipped, bool quiet)
+emulate_printer (const statement_t *statement, bool is_skipped, bool quiet)
 {
   if (quiet)
     return;
@@ -287,7 +286,7 @@ emulator (vector_t *text_v, vector_t *code_ptr_v, bool quiet)
 {
   uint32_t read_idx = 1;
   uint32_t exec_idx = 1;
-  label_t *jmp;
+  const label_t *jmp;
 
   statement_t *statement = NULL;
   for (; read_idx < text_v->count; read_idx++)
@@ -331,7 +330,7 @@ out:
 }
 
 static void
-init_attr (emu_arg_t *emu_arg)
+init_attr (const emu_arg_t *emu_arg)
 {
   A_reg = 0;
   X_reg = 0;
@@ -362,7 +361,7 @@ init_attr (emu_arg_t *emu_arg)
 }
 
 void
-emulate_v (vector_t *text_v, vector_t *code_ptr_v, emu_arg_t *emu_arg,
+emulate_v (vector_t *text_v, vector_t *code_ptr_v, const emu_arg_t *emu_arg,
            FILE *output_fp)
 {
   init_attr (emu_arg);
@@ -401,7 +400,7 @@ emulate_v (vector_t *text_v, vector_t *code_ptr_v, emu_arg_t *emu_arg,
 }
 
 void
-emulate (emu_arg_t *emu_arg)
+emulate (const emu_arg_t *emu_arg)
 {
   size_t lines = init_source (emu_arg->text_file) + 1;
   init_scanner (next_line ());

@@ -1,4 +1,5 @@
 #include "lexical/scanner.h"
+#include "attributes.h"
 #include "config.h"
 #include "lexical/token.h"
 #include "main.h"
@@ -39,7 +40,7 @@ static uint8_t unknown_count = 0;
     }                                                                         \
   while (0)
 
-static inline bool
+AttrPure static inline bool
 isidentifier (char c)
 {
   return isalnum_l (c, lc_c) || c == '_';

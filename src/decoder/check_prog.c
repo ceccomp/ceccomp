@@ -90,7 +90,7 @@ report_error (filter f, uint32_t filter_idx, err_idx idx, bool fatal,
 #define FATAL true
 // return true means stop check
 static void
-check_filter (filter *fptr, uint32_t pc, uint32_t flen)
+check_filter (const filter *fptr, uint32_t pc, uint32_t flen)
 {
   filter f = fptr[pc];
   uint16_t code = f.code;
@@ -109,12 +109,12 @@ check_filter (filter *fptr, uint32_t pc, uint32_t flen)
         REPORT (K_ERR, FATAL, M_INVALID_ATTR_LOAD);
       return;
     case BPF_LD | BPF_W | BPF_LEN:
-      f.code = BPF_LD | BPF_IMM;
-      f.k = sizeof (struct seccomp_data);
+      // f.code = BPF_LD | BPF_IMM;
+      // f.k = sizeof (struct seccomp_data);
       return;
     case BPF_LDX | BPF_W | BPF_LEN:
-      f.code = BPF_LDX | BPF_IMM;
-      f.k = sizeof (struct seccomp_data);
+      // f.code = BPF_LDX | BPF_IMM;
+      // f.k = sizeof (struct seccomp_data);
       return;
     case BPF_ALU | BPF_DIV | BPF_K:
       if (f.k == 0)
@@ -164,7 +164,7 @@ check_filter (filter *fptr, uint32_t pc, uint32_t flen)
 }
 
 bool
-check_prog (fprog *prog)
+check_prog (const fprog *prog)
 {
   masks = reallocate (NULL, sizeof (*masks) * prog->len);
   memset (masks, 0xff, sizeof (*masks) * prog->len);

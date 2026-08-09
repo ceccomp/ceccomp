@@ -1,4 +1,5 @@
 #include "asm.h"
+#include "attributes.h"
 #include "lexical/parser.h"
 #include "lexical/scanner.h"
 #include "lexical/token.h"
@@ -35,8 +36,8 @@ static uint32_t retvals[] = {
   [BASE_retvals (ERRNO)] = SCMP_ACT_ERRNO (0),
 };
 
-static filter
-return_line (return_line_t *return_line)
+AttrPure static filter
+return_line (const return_line_t *return_line)
 {
   filter f = { .code = BPF_RET, .jf = 0, .jt = 0, .k = 0 };
   if (return_line->ret_obj.type == A)
@@ -64,8 +65,8 @@ static const uint32_t operator_table[] = {
   [BASE_operator (XOR_TO)] = BPF_XOR,
 };
 
-static filter
-alu_line (assign_line_t *assign_line)
+AttrPure static filter
+alu_line (const assign_line_t *assign_line)
 {
   filter f = { .code = BPF_ALU, .jf = 0, .jt = 0, .k = 0 };
   f.code |= operator_table[BASE_operator (assign_line->operator)];
@@ -82,15 +83,15 @@ alu_line (assign_line_t *assign_line)
 }
 #undef BASE_operator
 
-static filter
+AttrConst static filter
 negative_line (void)
 {
   filter f = { .code = BPF_ALU | BPF_NEG, .jf = 0, .jt = 0, .k = 0 };
   return f;
 }
 
-static filter
-st_stx_line (assign_line_t *assign_line)
+AttrPure static filter
+st_stx_line (const assign_line_t *assign_line)
 {
   filter f = { .code = 0, .jf = 0, .jt = 0, .k = 0 };
   f.k = assign_line->left_var.data;
@@ -101,8 +102,8 @@ st_stx_line (assign_line_t *assign_line)
   return f;
 }
 
-static filter
-ldx_line (assign_line_t *assign_line)
+AttrPure static filter
+ldx_line (const assign_line_t *assign_line)
 {
   filter f = { .code = 0, .jf = 0, .jt = 0, .k = 0 };
   if (assign_line->right_var.type == A)
@@ -133,8 +134,8 @@ static const uint32_t offset_table[] = {
   [BASE_off (ATTR_HIGHARG)] = offsetof (seccomp_data, args) + 4,
 };
 
-static uint32_t
-offset_abs (obj_t *obj)
+AttrPure static uint32_t
+offset_abs (const obj_t *obj)
 {
   uint32_t offset = offset_table[BASE_off (obj->type)];
   if (obj->type == ATTR_LOWARG || obj->type == ATTR_HIGHARG)
@@ -143,8 +144,8 @@ offset_abs (obj_t *obj)
 }
 #undef BASE_off
 
-static filter
-ld_line (assign_line_t *assign_line)
+AttrPure static filter
+ld_line (const assign_line_t *assign_line)
 {
   filter f = { .code = 0, .jf = 0, .jt = 0, .k = 0 };
 
@@ -171,8 +172,8 @@ ld_line (assign_line_t *assign_line)
   return f;
 }
 
-static filter
-assign_line (assign_line_t *assign_line)
+AttrPure static filter
+assign_line (const assign_line_t *assign_line)
 {
   if (assign_line->operator >= ADD_TO && assign_line->operator <= XOR_TO)
     return alu_line (assign_line);

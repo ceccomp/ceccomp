@@ -1,6 +1,7 @@
 #ifndef REVERSE_ENDIAN_H
 #define REVERSE_ENDIAN_H
 
+#include "attributes.h"
 #include "main.h"
 #include <byteswap.h>
 #include <linux/audit.h>
@@ -8,7 +9,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-static inline bool
+AttrConst static inline bool
 need_reverse_endian (uint32_t target_scmp_arch)
 {
 #if __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__

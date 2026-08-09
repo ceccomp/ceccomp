@@ -1,4 +1,5 @@
 #include "resolver/resolver.h"
+#include "attributes.h"
 #include "lexical/parser.h"
 #include "lexical/token.h"
 #include "utils/error.h"
@@ -26,6 +27,7 @@ static uint16_t bpf_len = 0;
   while (0)
 
 #define SPRINTF_CAT(...) print += sprintf (print, __VA_ARGS__)
+
 static void
 report_error (const char *error_msg)
 {
@@ -45,7 +47,7 @@ report_error (const char *error_msg)
   warn ("%s", buf);
 }
 
-static bool
+AttrConst static bool
 match_from_to (token_type type, token_type from, token_type to)
 {
   return type >= from && type <= to;
@@ -58,7 +60,7 @@ error_line (void)
   char buf[0x400];
   char *print = buf;
 
-  error_line_t *error_line = &local->error_line;
+  const error_line_t *error_line = &local->error_line;
 
   uint16_t err_len = error_line->error_start - local->line_start;
   SPRINTF_CAT ("%hu:%hu: %s\n", local->text_nr, err_len + 1,
@@ -77,17 +79,17 @@ error_line (void)
 #define IS_ARG_OUT_RANGE(obj) is_out_range (obj, 5)
 #define IS_MEM_OUT_RANGE(obj) is_out_range (obj, 15)
 
-static bool
-is_out_range (obj_t *obj, uint32_t max_idx)
+AttrPure static bool
+is_out_range (const obj_t *obj, uint32_t max_idx)
 {
   return obj->data > max_idx;
 }
 
 static void
-assign_A (assign_line_t *assign_line)
+assign_A (const assign_line_t *assign_line)
 {
   token_type operator = assign_line->operator;
-  obj_t *right = &assign_line->right_var;
+  const obj_t *right = &assign_line->right_var;
 
   if (operator == NEGATIVE)
     {
@@ -128,10 +130,10 @@ assign_A (assign_line_t *assign_line)
 }
 
 static void
-assign_X (assign_line_t *assign_line)
+assign_X (const assign_line_t *assign_line)
 {
-  token_type *operator = &assign_line->operator;
-  obj_t *right = &assign_line->right_var;
+  const token_type *operator = &assign_line->operator;
+  const obj_t *right = &assign_line->right_var;
 
   if (*operator != EQUAL)
     REPORT_ERROR (M_OPERATOR_SHOULD_BE_EQUAL);
@@ -154,11 +156,11 @@ assign_X (assign_line_t *assign_line)
 }
 
 static void
-assign_MEM (assign_line_t *assign_line)
+assign_MEM (const assign_line_t *assign_line)
 {
-  obj_t *left = &assign_line->left_var;
+  const obj_t *left = &assign_line->left_var;
   token_type operator = assign_line->operator;
-  obj_t *right = &assign_line->right_var;
+  const obj_t *right = &assign_line->right_var;
 
   if (operator != EQUAL)
     REPORT_ERROR (M_OPERATOR_SHOULD_BE_EQUAL);
@@ -175,7 +177,7 @@ assign_MEM (assign_line_t *assign_line)
 static void
 assign_line (void)
 {
-  assign_line_t *assign_line = &local->assign_line;
+  const assign_line_t *assign_line = &local->assign_line;
   if (assign_line->left_var.type == A)
     assign_A (assign_line);
   else if (assign_line->left_var.type == X)
@@ -252,7 +254,7 @@ jump_line (void)
 static void
 return_line (void)
 {
-  return_line_t *return_line = &local->return_line;
+  const return_line_t *return_line = &local->return_line;
   token_type ret_type = return_line->ret_obj.type;
   if (ret_type == A || ret_type == NUMBER)
     return;

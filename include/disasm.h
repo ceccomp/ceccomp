@@ -7,7 +7,7 @@
 #include <stdio.h>
 #include <sys/types.h>
 
-extern void print_prog (uint32_t scmp_arch, fprog *prog, pid_t pid,
+extern void print_prog (uint32_t scmp_arch, const fprog *prog, pid_t pid,
                         FILE *output_fp, bool trustful);
 
 extern void disasm (FILE *fp, uint32_t scmp_arch, bool ebpf);

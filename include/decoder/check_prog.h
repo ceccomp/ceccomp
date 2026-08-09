@@ -5,6 +5,6 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-extern bool check_prog (fprog *prog);
+extern bool check_prog (const fprog *prog);
 
 #endif

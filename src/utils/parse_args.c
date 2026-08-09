@@ -1,4 +1,5 @@
 #include "utils/parse_args.h"
+#include "attributes.h"
 #include "utils/arch_trans.h"
 #include "utils/error.h"
 #include "utils/logger.h"
@@ -51,7 +52,7 @@ fail_fast_resolve_arch (const char *archname)
   return arch;
 }
 
-static subcommand_t
+AttrPure static subcommand_t
 parse_subcommand (const char *arg)
 {
   if (!strcmp (arg, "asm"))
@@ -103,7 +104,8 @@ parse_print_mode (const char *arg)
 }
 
 static int
-parse_asm (asm_arg_t *args, int key, const char *arg, struct argp_state *state)
+parse_asm (asm_arg_t *args, int key, const char *arg,
+           const struct argp_state *state)
 {
   switch (key)
     {
@@ -124,7 +126,7 @@ parse_asm (asm_arg_t *args, int key, const char *arg, struct argp_state *state)
 
 static int
 parse_disasm (disasm_arg_t *args, int key, const char *arg,
-              struct argp_state *state)
+              const struct argp_state *state)
 {
   switch (key)
     {
@@ -157,7 +159,8 @@ parse_capture (capture_arg_t *args, int key, const char *arg)
 }
 
 static int
-parse_emu (emu_arg_t *args, int key, const char *arg, struct argp_state *state)
+parse_emu (emu_arg_t *args, int key, const char *arg,
+           const struct argp_state *state)
 {
   switch (key)
     {
@@ -185,7 +188,7 @@ parse_emu (emu_arg_t *args, int key, const char *arg, struct argp_state *state)
 
 static int
 parse_trace (trace_arg_t *args, int key, const char *arg,
-             struct argp_state *state)
+             const struct argp_state *state)
 {
   switch (key)
     {
@@ -220,7 +223,7 @@ parse_trace (trace_arg_t *args, int key, const char *arg,
 
 static int
 parse_probe (probe_arg_t *args, int key, const char *arg,
-             struct argp_state *state)
+             const struct argp_state *state)
 {
   switch (key)
     {

@@ -26,7 +26,7 @@ static const char *to_test_list[]
         "mmap", "mprotect", "sendfile", "ptrace", "fork" };
 
 static uint32_t
-fetch_text_from_trace (FILE **text, char *argv[], bool quiet)
+fetch_text_from_trace (FILE **text, char *const argv[], bool quiet)
 {
   *text = tmpfile ();
   if (*text == NULL)
@@ -50,7 +50,7 @@ init_emu_arg (emu_arg_t *emu_arg, FILE *text, uint32_t scmp_arch)
 }
 
 void
-probe (char *argv[], FILE *output_fp, bool quiet)
+probe (char *const argv[], FILE *output_fp, bool quiet)
 {
   FILE *text;
   emu_arg_t emu_arg;

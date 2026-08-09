@@ -2,6 +2,7 @@
  * https://elixir.bootlin.com/glibc/glibc-2.43/source/stdio-common/errname.c
  * for the method of implementing X macro strings. */
 #include "utils/valid_insns.h"
+#include "attributes.h"
 #include "main.h"
 #include <assert.h>
 #include <linux/filter.h>
@@ -38,7 +39,7 @@ const uint8_t insn_name_map[] = {
 #undef X
 };
 
-const char *
+AttrPure const char *
 get_insn_name (int insn_code)
 {
   return (const char *)&insn_names + insn_name_idxs[insn_name_map[insn_code]];

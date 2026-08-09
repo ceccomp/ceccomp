@@ -284,14 +284,14 @@ decode_filter (filter f, statement_t *statement)
 }
 
 bool
-decode_filters (fprog *prog, vector_t *v, bool trustful)
+decode_filters (const fprog *prog, vector_t *v, bool trustful)
 {
   // make sure all filter are valid
   // give warning about fatal and normal errors
   bool error = trustful ? false : check_prog (prog);
 
-  statement_t statement;
-  push_vector (v, &statement);
+  statement_t statement = { 0 };
+  push_vector (v, &statement); // skip 1 element
 
   for (uint32_t i = 0; i < prog->len; i++)
     {

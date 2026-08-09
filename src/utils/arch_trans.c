@@ -1,4 +1,5 @@
 #include "utils/arch_trans.h"
+#include "attributes.h"
 #include "lexical/token.h"
 #include <assert.h>
 #include <seccomp.h>
@@ -22,7 +23,7 @@ static const uint32_t arch_pairs[] = {
 #endif
 };
 
-uint32_t
+AttrPure uint32_t
 internal_arch_to_scmp_arch (uint32_t internal_arch)
 {
   // ARCH_X86 = 0, so (arch >= ARCH_X86) is always true;
@@ -32,7 +33,7 @@ internal_arch_to_scmp_arch (uint32_t internal_arch)
   return -1;
 }
 
-uint32_t
+AttrPure uint32_t
 scmp_arch_to_internal_arch (uint32_t scmp_arch)
 {
   switch (scmp_arch)
@@ -55,7 +56,7 @@ scmp_arch_to_internal_arch (uint32_t scmp_arch)
   if (!strncmp (str, token_pairs[arch].start, token_pairs[arch].len + ext))   \
     return arch;
 
-token_type
+AttrPure token_type
 str_to_internal_arch (const char *str, bool strict)
 {
   int ext = strict ? 1 : 0;
@@ -108,7 +109,7 @@ str_to_internal_arch (const char *str, bool strict)
   return UNKNOWN;
 }
 
-uint32_t
+AttrPure uint32_t
 str_to_scmp_arch (const char *str, bool strict)
 {
   token_type tk = str_to_internal_arch (str, strict);
@@ -117,7 +118,7 @@ str_to_scmp_arch (const char *str, bool strict)
   return internal_arch_to_scmp_arch (tk);
 }
 
-const string_t *
+AttrPure const string_t *
 scmp_arch_to_internal_str (uint32_t scmp_arch)
 {
   int32_t idx = scmp_arch_to_internal_arch (scmp_arch);
@@ -126,7 +127,7 @@ scmp_arch_to_internal_str (uint32_t scmp_arch)
   return &token_pairs[idx];
 }
 
-const char *
+AttrPure const char *
 scmp_arch_to_scmp_str (uint32_t scmp_arch)
 {
   switch (scmp_arch)

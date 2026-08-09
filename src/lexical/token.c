@@ -54,7 +54,7 @@ const string_t token_pairs[] = {
 // clang-format on
 
 void
-init_token (token_t *token, scanner_t *scanner, token_type type)
+init_token (token_t *token, const scanner_t *scanner, token_type type)
 {
   token->type = type;
   token->token_start = scanner->token_start;
@@ -63,7 +63,7 @@ init_token (token_t *token, scanner_t *scanner, token_type type)
 }
 
 void
-init_token_data (token_t *token, scanner_t *scanner, token_type type,
+init_token_data (token_t *token, const scanner_t *scanner, token_type type,
                  uint32_t data)
 {
   init_token (token, scanner, type);

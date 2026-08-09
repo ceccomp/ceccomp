@@ -1,7 +1,8 @@
+#include "attributes.h"
 #define _GNU_SOURCE
-#include "disasm.h"
 #include "decoder/decoder.h"
 #include "decoder/formatter.h"
+#include "disasm.h"
 #include "lexical/parser.h"
 #include "main.h"
 #include "resolver/render.h"
@@ -46,7 +47,7 @@ init_global_filters (uint32_t insn_count)
   return true;
 }
 
-__attribute__ ((destructor)) static void
+AttrDtor static void
 free_global_filters (void)
 {
   if (g_filters)
@@ -80,7 +81,7 @@ read_filters (filter *filters, FILE *from)
 
 #define BLK_SIZE 0x2000
 // Returned bpf_insn pointer requested with mmap, release it later!
-static struct bpf_insn *
+AttrMalloc static struct bpf_insn *
 read_insns (FILE *from, uint32_t *count, uint32_t *map_sizep)
 {
   void *base;
@@ -131,7 +132,7 @@ read_insns (FILE *from, uint32_t *count, uint32_t *map_sizep)
 }
 
 void
-print_prog (uint32_t scmp_arch, fprog *prog, pid_t pid, FILE *output_fp,
+print_prog (uint32_t scmp_arch, const fprog *prog, pid_t pid, FILE *output_fp,
             bool trustful)
 {
   vector_t v;

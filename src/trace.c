@@ -1,4 +1,5 @@
 #include "trace.h"
+#include "attributes.h"
 #include "disasm.h"
 #include "main.h"
 #include "utils/error.h"
@@ -62,7 +63,7 @@ static uint64_t prctl_nr;
 static uint32_t saved_arch = -1;
 
 static long
-check_scmp_mode (syscall_info *info, int pid, long *rval)
+check_scmp_mode (const syscall_info *info, int pid, long *rval)
 {
   long seccomp_mode = LOAD_ELSE;
   uint64_t nr = info->entry.nr;
@@ -111,7 +112,7 @@ check_scmp_mode (syscall_info *info, int pid, long *rval)
 }
 
 static size_t
-peek_data_check (pid_t pid, size_t *addr)
+peek_data_check (pid_t pid, const size_t *addr)
 {
   errno = 0;
   size_t result = ptrace (PTRACE_PEEKDATA, pid, addr, 0);
@@ -121,7 +122,7 @@ peek_data_check (pid_t pid, size_t *addr)
 }
 
 static void
-dump_filter (syscall_info *info, int pid, fprog *prog)
+dump_filter (const syscall_info *info, int pid, fprog *prog)
 {
   size_t *filters = (size_t *)prog->filter;
   // args2 is the prog addrs
@@ -156,7 +157,7 @@ dump_filter (syscall_info *info, int pid, fprog *prog)
 }
 
 static void
-mode_filter (syscall_info *info, int pid, fprog *prog, FILE *output_fp)
+mode_filter (const syscall_info *info, int pid, fprog *prog, FILE *output_fp)
 {
   if (UNLIKELY (!g_filters))
     assert (init_global_filters (BPF_MAXINSNS));
@@ -166,8 +167,8 @@ mode_filter (syscall_info *info, int pid, fprog *prog, FILE *output_fp)
   print_prog (info->arch, prog, pid, output_fp, true);
 }
 
-__attribute__ ((noreturn)) static void
-child (char *argv[])
+AttrNoReturn static void
+child (char *const argv[])
 {
   ptrace (PTRACE_TRACEME, 0, 0, 0);
   raise (SIGSTOP);
@@ -193,7 +194,7 @@ handle_fork (pid_t pid, int status, bool quiet)
 }
 
 static void
-info_parse (syscall_info *info, pid_t pid)
+info_parse (const syscall_info *info, pid_t pid)
 {
   // prctl (PR_SET_SECCOMP, seccomp_mode, &prog);
   // seccomp (seccomp_mode, flags, &prog);
@@ -340,7 +341,7 @@ parent (pid_t child_pid, FILE *output_fp, uint32_t extra_ptrace_flags,
     }
 }
 
-static void
+AttrNoReturn static void
 exit_on_sig (int signo)
 {
   // flush files when recved normal signals
@@ -348,7 +349,7 @@ exit_on_sig (int signo)
 }
 
 uint32_t
-program_trace (char *argv[], FILE *output_fp, bool quiet, bool oneshot)
+program_trace (char *const argv[], FILE *output_fp, bool quiet, bool oneshot)
 {
   signal (SIGINT, exit_on_sig);
   signal (SIGTERM, exit_on_sig);
@@ -376,7 +377,7 @@ einval_get_filter (pid_t pid)
   // if mode == STATUS_NONE, return to print "no filters found"
 }
 
-__attribute__ ((noreturn)) static void
+AttrNoReturn static void
 eacces_get_filter (pid_t pid)
 {
   seccomp_mode mode = get_proc_seccomp (pid);
@@ -411,7 +412,7 @@ error_get_filter (pid_t pid, int err)
     }
 }
 
-__attribute__ ((noreturn)) static void
+AttrNoReturn static void
 eperm_seize (pid_t pid)
 {
   // seizing a thread in the same thread group may cause EPERM

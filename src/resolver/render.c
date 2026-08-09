@@ -1,4 +1,5 @@
 #include "resolver/render.h"
+#include "attributes.h"
 #include "lexical/parser.h"
 #include "lexical/token.h"
 #include "main.h"
@@ -14,10 +15,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-static statement_t *local;
-static uint32_t default_arch;
-
-typedef enum __attribute__ ((packed))
+typedef enum AttrPacked
 {
   NONE = 0,  // 0b00
   ARCH = 1,  // 0b01
@@ -34,6 +32,8 @@ typedef struct
 } stat_ctx_t;
 
 static stat_ctx_t *list;
+static statement_t *local;
+static uint32_t default_arch;
 
 #define FORCE true
 
@@ -67,11 +67,11 @@ set_ctx (uint32_t dest_idx, uint32_t src_idx, bool force)
 }
 
 static void
-assign_line (assign_line_t *assign_line, stat_ctx_t *ctx)
+assign_line (const assign_line_t *assign_line, stat_ctx_t *ctx)
 {
-  obj_t *left = &assign_line->left_var;
+  const obj_t *left = &assign_line->left_var;
+  const obj_t *right = &assign_line->right_var;
   token_type op = assign_line->operator;
-  obj_t *right = &assign_line->right_var;
 
   stat_t *left_stat;
   stat_t right_stat;

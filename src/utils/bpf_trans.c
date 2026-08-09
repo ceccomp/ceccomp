@@ -83,8 +83,8 @@ typedef enum
  * insn.
  */
 static struct sock_filter
-jmp_insn (struct bpf_insn *ebpfp, check_path path, uint32_t large_k, int *ate,
-          InsnFlag *flag)
+jmp_insn (const struct bpf_insn *ebpfp, check_path path, uint32_t large_k,
+          int *ate, InsnFlag *flag)
 {
   // in 1st pass, clear instructions, do relocation later
   struct bpf_insn insn;
@@ -306,7 +306,7 @@ countbits (uint32_t from, uint32_t to)
 }
 
 long
-ebpf2cbpf (struct bpf_insn *restrict ebpfs, const uint32_t ebpf_len,
+ebpf2cbpf (struct bpf_insn *restrict ebpfs, uint32_t ebpf_len,
            struct sock_filter *restrict cbpf_buf, bool trustful)
 {
   volatile uint32_t i = 0;

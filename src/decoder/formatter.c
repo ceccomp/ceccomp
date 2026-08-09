@@ -12,7 +12,7 @@
 FILE *fp;
 
 static void
-print_num (obj_t *tk)
+print_num (const obj_t *tk)
 {
   if (tk->literal.start != NULL)
     fwrite (tk->literal.start, 1, tk->literal.len, fp);
@@ -21,33 +21,33 @@ print_num (obj_t *tk)
 }
 
 static void
-print_str (obj_t *tk)
+print_str (const obj_t *tk)
 {
   fwrite (token_pairs[tk->type].start, 1, token_pairs[tk->type].len, fp);
 }
 
 static void
-print_identifier (obj_t *tk)
+print_identifier (const obj_t *tk)
 {
   fwrite (tk->literal.start, 1, tk->literal.len, fp);
 }
 
 static void
-print_dec_bracket (obj_t *tk)
+print_dec_bracket (const obj_t *tk)
 {
   fwrite (token_pairs[tk->type].start, 1, token_pairs[tk->type].len, fp);
   fprintf (fp, "[%u]", tk->data);
 }
 
 static void
-print_hex_bracket (obj_t *tk)
+print_hex_bracket (const obj_t *tk)
 {
   fwrite (token_pairs[tk->type].start, 1, token_pairs[tk->type].len, fp);
   fprintf (fp, "[0x%x]", tk->data);
 }
 
 static void
-print_paren (obj_t *tk)
+print_paren (const obj_t *tk)
 {
   fwrite (token_pairs[tk->type].start, 1, token_pairs[tk->type].len, fp);
   fprintf (fp, "(%u)", tk->data);
@@ -81,7 +81,7 @@ static const obj_print_t obj_print[] = {
 };
 
 static void
-obj_printer (obj_t *obj)
+obj_printer (const obj_t *obj)
 {
   if (color_enable)
     fprintf (fp, "%s", obj_print[obj->type].color);
@@ -91,7 +91,7 @@ obj_printer (obj_t *obj)
 }
 
 void
-extern_obj_printer (FILE *output_fp, obj_t *obj)
+extern_obj_printer (FILE *output_fp, const obj_t *obj)
 {
   fp = output_fp;
   obj_printer (obj);
@@ -104,19 +104,19 @@ print_token_pair (token_type type)
 }
 
 static void
-assign_line (statement_t *statement)
+assign_line (const statement_t *statement)
 {
-  assign_line_t *assign_line = &statement->assign_line;
-  obj_t *left = &assign_line->left_var;
-  obj_t *right = &assign_line->right_var;
+  const assign_line_t *line = &statement->assign_line;
+  const obj_t *left = &line->left_var;
+  const obj_t *right = &line->right_var;
 
   obj_printer (left);
   fputc (' ', fp);
-  if (assign_line->operator == NEGATIVE)
+  if (line->operator == NEGATIVE)
     fprintf (fp, "= -");
   else
     {
-      print_token_pair (assign_line->operator);
+      print_token_pair (line->operator);
       fputc (' ', fp);
     }
 
@@ -124,7 +124,7 @@ assign_line (statement_t *statement)
 }
 
 static inline void
-print_label (label_t *label, uint16_t pc)
+print_label (const label_t *label, uint16_t pc)
 {
   if (label->key.start == NULL)
     fprintf (fp, DEFAULT_LABEL, pc + label->code_nr + 1);
@@ -133,7 +133,7 @@ print_label (label_t *label, uint16_t pc)
 }
 
 static void
-print_ja (statement_t *statement)
+print_ja (const statement_t *statement)
 {
   print_token_pair (GOTO);
   fputc (' ', fp);
@@ -141,10 +141,10 @@ print_ja (statement_t *statement)
 }
 
 static void
-jump_line (statement_t *statement)
+jump_line (const statement_t *statement)
 {
-  jump_line_t *jump_line = &statement->jump_line;
-  if (!jump_line->if_condition)
+  const jump_line_t *line = &statement->jump_line;
+  if (!line->if_condition)
     {
       print_ja (statement);
       return;
@@ -152,22 +152,22 @@ jump_line (statement_t *statement)
 
   print_token_pair (IF);
   fputc (' ', fp);
-  if (jump_line->if_bang)
+  if (line->if_bang)
     print_token_pair (BANG);
   print_token_pair (LEFT_PAREN);
   obj_t obj_A = { .type = A, .data = 0 };
   obj_printer (&obj_A);
   fputc (' ', fp);
-  print_token_pair (jump_line->comparator);
+  print_token_pair (line->comparator);
   fputc (' ', fp);
-  obj_printer (&jump_line->cmpobj);
+  obj_printer (&line->cmpobj);
   print_token_pair (RIGHT_PAREN);
   fputc (' ', fp);
   print_token_pair (GOTO);
   fputc (' ', fp);
-  print_label (&jump_line->jt, statement->code_nr);
+  print_label (&line->jt, statement->code_nr);
 
-  if (jump_line->jf.code_nr == 0)
+  if (line->jf.code_nr == 0)
     return;
 
   print_token_pair (COMMA);
@@ -176,11 +176,11 @@ jump_line (statement_t *statement)
   fputc (' ', fp);
   print_token_pair (GOTO);
   fputc (' ', fp);
-  print_label (&jump_line->jf, statement->code_nr);
+  print_label (&line->jf, statement->code_nr);
 }
 
 static void
-return_line (statement_t *statement)
+return_line (const statement_t *statement)
 {
   print_token_pair (RETURN);
   fputc (' ', fp);
@@ -188,12 +188,12 @@ return_line (statement_t *statement)
 }
 
 static void
-print_comment (statement_t *statement)
+print_comment (const statement_t *statement)
 {
   if (statement->comment == -1)
     return;
 
-  char *comment_start = statement->line_start + statement->comment;
+  const char *comment_start = statement->line_start + statement->comment;
   uint16_t comment_len = statement->line_len - statement->comment;
   if (comment_len == 0)
     return;
@@ -227,7 +227,7 @@ print_as_comment (FILE *output_fp, const char *comment_fmt, ...)
 }
 
 void
-print_statement (FILE *output_fp, statement_t *statement)
+print_statement (FILE *output_fp, const statement_t *statement)
 {
   fp = output_fp;
 

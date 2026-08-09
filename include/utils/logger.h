@@ -1,6 +1,7 @@
 #ifndef LOGGER_H
 #define LOGGER_H
 
+#include "attributes.h"
 #include <stdbool.h>
 #include <stdio.h>
 #include <sys/cdefs.h>
@@ -14,10 +15,10 @@ typedef enum
 } print_level_t;
 
 // clang-format off
-__attribute__ ((noinline)) void info_print (print_level_t lv, const char *caller_func, const char *fmt, ...) __attribute__ ((format (printf, 3, 4)));
-__attribute__ ((noinline)) __attribute__ ((noreturn)) void error_print (const char *caller_func, const char *fmt, ...) __attribute__ ((format (printf, 2, 3)));
-
+AttrNoInline AttrPrintf(3, 4) void info_print (print_level_t lv, const char *caller_func, const char *fmt, ...);
+AttrNoReturn AttrNoInline AttrPrintf(2, 3) void error_print (const char *caller_func, const char *fmt, ...);
 // clang-format on
+
 int ceccomp_vprint (bool from_external, print_level_t lv,
                     const char *caller_func, const char *fmt, va_list args);
 
