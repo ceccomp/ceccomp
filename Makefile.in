@@ -94,6 +94,10 @@ ifeq ($(STATIC), 1)
 	LDFLAGS += -static
 endif
 
+ifdef EXPORT
+	CFLAGS += -DEXPORT
+endif
+
 all: ceccomp {{DOC_IF}}doc{{DOC_ENDIF}} {{I18N_IF}}mo{{I18N_ENDIF}}
 
 {{I18N_IF}}

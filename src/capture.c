@@ -106,6 +106,19 @@ trans_ebpf_arch (ebpf_arch arch, uint32_t scmp_arch)
 static void
 do_ebpf_disasm (const pid_event_ctx *c, uint32_t default_scmp_arch)
 {
+#ifdef EXPORT
+#include <stdio.h>
+#include <sys/stat.h>
+  // FOR DEBUGGING PURPOSE: directly export ebpf insn bytes
+  char path[] = "XXXXXX.bin";
+  int fd = mkstemps (path, 4);
+  fchmod (fd, 0666);
+  FILE *f = fdopen (fd, "wb");
+  fwrite (c->ebpf_insns, sizeof (filter), c->flen, f);
+  fclose (f);
+  info ("Writing to %s", path);
+#endif
+
   filter *cbpf_buf = malloc (c->flen * sizeof (filter));
   int32_t cbpf_len = ebpf2cbpf (c->ebpf_insns, c->flen, cbpf_buf, true);
   if (UNLIKELY (cbpf_len == -1))
