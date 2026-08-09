@@ -1,4 +1,5 @@
 #include "asm.h"
+#include "attributes.h"
 #include "capture.h"
 #include "config.h"
 #include "disasm.h"
@@ -90,7 +91,7 @@ init_args (ceccomp_arg_t *args)
   args->capture_arg->scmp_arch = local_arch;
 }
 
-__attribute__ ((noreturn)) static void
+AttrNoReturn static void
 help (int exit_code)
 {
   printf ("%s", M_CECCOMP_USAGE);
@@ -110,7 +111,7 @@ help (int exit_code)
   exit (exit_code);
 }
 
-__attribute__ ((noreturn)) static void
+AttrNoReturn static void
 version (void)
 {
   printf (M_VERSION_FORMAT, CECCOMP_VERSION, CECCOMP_TAG_TIME,
@@ -228,4 +229,6 @@ main (int argc, char *argv[])
     default:
       assert (!"unknown mode");
     }
+
+  return 0;
 }
