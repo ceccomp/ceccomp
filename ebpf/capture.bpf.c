@@ -37,30 +37,34 @@ BPF_PROG (seccomp_check_filter_entry, struct sock_filter *filter,
   ebpf_prog *tmp;
   bool tmp_cond;
 
-  EBPF_IF_PID (!(tmp = bpf_map_lookup_elem (&tmp_buf, &zero)), pid) return 0;
+  EBPF_IF_PID (!(tmp = bpf_map_lookup_elem (&tmp_buf, &zero)), pid)
+    return 0;
 
-  EBPF_IF_PID (
-      bpf_map_update_elem (&unverified_filters, &pid, tmp, BPF_ANY) < 0, pid)
-  return 0;
+  EBPF_IF_PID (bpf_map_update_elem (&unverified_filters, &pid, tmp, BPF_ANY)
+                   < 0,
+               pid)
+    return 0;
 
   ebpf_prog *unverified;
   EBPF_IF_PID (!(unverified = bpf_map_lookup_elem (&unverified_filters, &pid)),
                pid)
-  {
-    EBPF_LOG_IF_PID (bpf_map_delete_elem (&unverified_filters, &pid) < 0, pid);
-    return 0;
-  }
+    {
+      EBPF_LOG_IF_PID (bpf_map_delete_elem (&unverified_filters, &pid) < 0,
+                       pid);
+      return 0;
+    }
 
   unverified->flen = flen;
 
   // This shouldn't happen. Just ignore this anyway
   uint32_t read_size = (uint16_t)(flen * sizeof (struct sock_filter));
   EBPF_IF_PID (read_size > BPF_MAXINSNS * sizeof (struct sock_filter), pid)
-  return 0;
+    return 0;
 
-  EBPF_IF_PID (
-      bpf_core_read (unverified->filters, read_size & 0xffff, filter) < 0, pid)
-  EBPF_LOG_IF_PID (bpf_map_delete_elem (&unverified_filters, &pid) < 0, pid);
+  EBPF_IF_PID (bpf_core_read (unverified->filters, read_size & 0xffff, filter)
+                   < 0,
+               pid)
+    EBPF_LOG_IF_PID (bpf_map_delete_elem (&unverified_filters, &pid) < 0, pid);
 
   return 0;
 }
@@ -98,21 +102,23 @@ filter_mode (long ret, pid_t pid, global_event *event)
   struct task_struct *task = bpf_get_current_task_btf ();
   unsigned long tflags;
   EBPF_IF_PID (BPF_CORE_READ_INTO (&tflags, task, thread_info.flags) < 0, pid)
-  {
-    bpf_ringbuf_discard (event, 0);
-    EBPF_LOG_IF_PID (bpf_map_delete_elem (&unverified_filters, &pid) < 0, pid);
-    return 0;
-  }
+    {
+      bpf_ringbuf_discard (event, 0);
+      EBPF_LOG_IF_PID (bpf_map_delete_elem (&unverified_filters, &pid) < 0,
+                       pid);
+      return 0;
+    }
   event->ebpf_arch = COMPAT_ARCH (tflags);
 #elif defined(__x86_64__)
   struct task_struct *task = bpf_get_current_task_btf ();
   uint32_t status;
   EBPF_IF_PID (BPF_CORE_READ_INTO (&status, task, thread_info.status) < 0, pid)
-  {
-    bpf_ringbuf_discard (event, 0);
-    EBPF_LOG_IF_PID (bpf_map_delete_elem (&unverified_filters, &pid) < 0, pid);
-    return 0;
-  }
+    {
+      bpf_ringbuf_discard (event, 0);
+      EBPF_LOG_IF_PID (bpf_map_delete_elem (&unverified_filters, &pid) < 0,
+                       pid);
+      return 0;
+    }
   event->ebpf_arch = COMPAT_ARCH (status);
 #else
   event->ebpf_arch = PROC_ARCH_OTHERS;
@@ -120,18 +126,20 @@ filter_mode (long ret, pid_t pid, global_event *event)
 
   ebpf_prog *prog;
   EBPF_IF_PID (!(prog = bpf_map_lookup_elem (&unverified_filters, &pid)), pid)
-  {
-    bpf_ringbuf_discard (event, 0);
-    EBPF_LOG_IF_PID (bpf_map_delete_elem (&unverified_filters, &pid) < 0, pid);
-    return 0;
-  }
+    {
+      bpf_ringbuf_discard (event, 0);
+      EBPF_LOG_IF_PID (bpf_map_delete_elem (&unverified_filters, &pid) < 0,
+                       pid);
+      return 0;
+    }
 
   EBPF_IF_PID (bpf_core_read (&event->prog, sizeof (ebpf_prog), prog) < 0, pid)
-  {
-    bpf_ringbuf_discard (event, 0);
-    EBPF_LOG_IF_PID (bpf_map_delete_elem (&unverified_filters, &pid) < 0, pid);
-    return 0;
-  }
+    {
+      bpf_ringbuf_discard (event, 0);
+      EBPF_LOG_IF_PID (bpf_map_delete_elem (&unverified_filters, &pid) < 0,
+                       pid);
+      return 0;
+    }
 
   bpf_ringbuf_submit (event, 0);
   EBPF_LOG_IF_PID (bpf_map_delete_elem (&unverified_filters, &pid) < 0, pid);
@@ -152,13 +160,14 @@ BPF_PROG (seccomp_ret, uint32_t op, uint32_t flags, void *uargs, long ret)
 
   global_event *event;
   bool tmp_cond;
-  EBPF_IF_PID (
-      !(event = bpf_ringbuf_reserve (&scmp_events, sizeof (global_event), 0)),
-      pid)
-  {
-    EBPF_LOG_IF_PID (bpf_map_delete_elem (&unverified_filters, &pid) < 0, pid);
-    return 0;
-  }
+  EBPF_IF_PID (!(event = bpf_ringbuf_reserve (&scmp_events,
+                                              sizeof (global_event), 0)),
+               pid)
+    {
+      EBPF_LOG_IF_PID (bpf_map_delete_elem (&unverified_filters, &pid) < 0,
+                       pid);
+      return 0;
+    }
 
   event->pid = pid;
   event->op = op;

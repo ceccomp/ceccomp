@@ -49,7 +49,7 @@ dump_chunk (uint32_t chunk_index, void *data)
   pid_event *event;
   bool tmp_cond;
   EBPF_IF (!(event = bpf_ringbuf_reserve (&scmp_events, sizeof (*event), 0)))
-  return 1;
+    return 1;
 
   event->ebpf_arch = ctx->arch;
   event->status = ctx->status;
@@ -62,11 +62,11 @@ dump_chunk (uint32_t chunk_index, void *data)
                        + bpf_core_field_offset (struct bpf_prog, insnsi)
                        + chunk_start_offset * sizeof (struct bpf_insn);
   EBPF_IF (bpf_core_read (event->prog.filters, leftover & 0x3fff, insnsi) < 0)
-  {
-    event->status = PROG_ABORTED;
-    bpf_ringbuf_submit (event, 0);
-    return 1;
-  }
+    {
+      event->status = PROG_ABORTED;
+      bpf_ringbuf_submit (event, 0);
+      return 1;
+    }
 
   bpf_ringbuf_submit (event, 0);
   return 0;
@@ -85,40 +85,40 @@ BPF_PROG (capture_pid, uint32_t op, uint32_t flags, void *uargs)
   pid_t trigger_pid = bpf_get_current_pid_tgid ();
   pid_config *config = bpf_map_lookup_elem (&scmp_config, &zero);
   EBPF_IF (config == NULL || config->trigger_pid != trigger_pid)
-  return 0;
+    return 0;
 
   struct task_struct *task;
   pid_event_status event_status = ALL_DONE;
   EBPF_IF (!(task = bpf_task_from_pid (config->target_pid)))
-  {
-    event_status = PID_NOT_FOUND;
-    goto end_null;
-  }
+    {
+      event_status = PID_NOT_FOUND;
+      goto end_null;
+    }
 
   struct seccomp_filter *filter = NULL;
   EBPF_IF (BPF_CORE_READ_INTO (&filter, task, seccomp.filter) < 0)
-  {
-    event_status = TASK_ABORTED;
-    goto end;
-  }
+    {
+      event_status = TASK_ABORTED;
+      goto end;
+    }
 
   ebpf_arch arch;
 #if defined(__aarch64__)
   unsigned long tflags;
   EBPF_IF (BPF_CORE_READ_INTO (&tflags, task, thread_info.flags) < 0)
-  {
-    event_status = TASK_ABORTED;
-    goto end;
-  }
+    {
+      event_status = TASK_ABORTED;
+      goto end;
+    }
 
   arch = COMPAT_ARCH (tflags);
 #elif defined(__x86_64__)
   uint32_t status;
   EBPF_IF (BPF_CORE_READ_INTO (&status, task, thread_info.status) < 0)
-  {
-    event_status = TASK_ABORTED;
-    goto end;
-  }
+    {
+      event_status = TASK_ABORTED;
+      goto end;
+    }
 
   arch = COMPAT_ARCH (status);
 #else
@@ -132,24 +132,28 @@ BPF_PROG (capture_pid, uint32_t op, uint32_t flags, void *uargs)
       uint32_t flen;
       struct bpf_prog *prog;
 
-      EBPF_IF (BPF_CORE_READ_INTO (&prog, filter, prog) < 0) goto next;
+      EBPF_IF (BPF_CORE_READ_INTO (&prog, filter, prog) < 0)
+        goto next;
 
       // This shouldn't happen, but it's necessary for ebpf loader
-      EBPF_IF (prog == NULL) goto next;
+      EBPF_IF (prog == NULL)
+        goto next;
 
-      EBPF_IF (BPF_CORE_READ_INTO (&flen, prog, len) < 0) goto next;
+      EBPF_IF (BPF_CORE_READ_INTO (&flen, prog, len) < 0)
+        goto next;
 
       dump_ctx ctx
           = { .prog = prog, .flen = flen, .failed = false, .arch = arch };
       uint32_t loop_times = (ctx.flen + CHUNK_INSN_SIZE - 1) / CHUNK_INSN_SIZE;
-      EBPF_IF (bpf_loop (loop_times, dump_chunk, &ctx, 0) < 0) goto next;
+      EBPF_IF (bpf_loop (loop_times, dump_chunk, &ctx, 0) < 0)
+        goto next;
 
     next:
       EBPF_IF (BPF_CORE_READ_INTO (&next, filter, prev) < 0)
-      {
-        event_status = TASK_ABORTED;
-        break;
-      }
+        {
+          event_status = TASK_ABORTED;
+          break;
+        }
       filter = next;
     }
 
@@ -159,7 +163,7 @@ end:
   pid_event *event;
 end_null:
   EBPF_IF (!(event = bpf_ringbuf_reserve (&scmp_events, sizeof (*event), 0)))
-  return 0;
+    return 0;
 
   if (event_status == TASK_ABORTED)
     event->status = TASK_ABORTED;

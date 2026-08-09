@@ -1,1 +1,2 @@
 BasedOnStyle: GNU
+IfMacros: [EBPF_IF, EBPF_IF_PID]
