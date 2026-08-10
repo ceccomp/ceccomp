@@ -111,7 +111,7 @@ the basic example above). The default value on your system is {ARCH}.
 -e, --ebpf::
 Treat _RAW_ as eBPF insn bytes instead of cBPF filter bytes. This flag is designed to
 test whether eBPF-to-cBPF conversion is working or not. To use this function, please
-dump installed eBPF insns migrated from seccomp filters in a process via eBPF or a
+dump installed eBPF insns migrated from seccomp filters in a thread via eBPF or a
 kernel module.
 
 RAW::
@@ -223,14 +223,14 @@ behavior to attach to *PID* and keep tracing for seccomp filter loading like
 trace prog mode. _This flag was introduced in version 4.0._
 
 -q, --quiet::
-Set to suppress the extra *[INFO]* prints when detect process forking, exiting or
+Set to suppress the extra *[INFO]* prints when detect thread forking, exiting or
 seccomp filter loading. _This flag was introduced in version 4.0._
 
 NOTE: To extract filters from *PID*, `CAP_SYS_ADMIN` is needed (without `-s` flag)
 and `CAP_SYS_PTRACE` may also be needed, the easiest way to acquire
 them is calling `ceccomp` with `sudo`.
 
-NOTE: Since _version 3.1_, multiple process tracing is introduced, and when tracee
+NOTE: Since _version 3.1_, multiple thread tracing is introduced, and when tracee
 forking/resolving/exiting, an extra INFO message is printed. You can discard
 it by running command like `ceccomp trace -q PROG 2>/dev/null`.
 

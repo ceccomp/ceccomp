@@ -6,8 +6,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: ceccomp docs\n"
-"POT-Creation-Date: 2026-08-08 22:27+0800\n"
-"PO-Revision-Date: 2026-08-08 22:32+0800\n"
+"POT-Creation-Date: 2026-08-10 12:44+0800\n"
+"PO-Revision-Date: 2026-08-10 12:37+0800\n"
 "Last-Translator: Rocket Ma <marocketbd@gmail.com>\n"
 "Language-Team: RocketDev\n"
 "Language: zh_CN\n"
@@ -146,7 +146,7 @@ msgstr ""
 
 #. type: Labeled list
 #: ceccomp.adoc:52 ceccomp.adoc:101 ceccomp.adoc:150 ceccomp.adoc:200
-#: ceccomp.adoc:313
+#: ceccomp.adoc:315
 #, no-wrap
 msgid "WHEN"
 msgstr "WHEN"
@@ -326,10 +326,10 @@ msgid ""
 "Treat _RAW_ as eBPF insn bytes instead of cBPF filter bytes. This flag is "
 "designed to test whether eBPF-to-cBPF conversion is working or not. To use "
 "this function, please dump installed eBPF insns migrated from seccomp "
-"filters in a process via eBPF or a kernel module."
+"filters in a thread via eBPF or a kernel module."
 msgstr ""
 "认为 _RAW_ 是 eBPF 指令字节而非 cBPF 过滤器字节。这个标志被设计用于测试 eBPF "
-"到 cBPF 的转换是否正常工作。要使用这个功能，请使用 eBPF 或内核模块导出进程内"
+"到 cBPF 的转换是否正常工作。要使用这个功能，请使用 eBPF 或内核模块导出线程内"
 "安装的从 seccomp 过滤器转换过来的 eBPF 指令。"
 
 #. type: Labeled list
@@ -472,7 +472,7 @@ msgstr ""
 "0。"
 
 #. type: Plain text
-#: ceccomp.adoc:167 ceccomp.adoc:315
+#: ceccomp.adoc:167 ceccomp.adoc:317
 msgid "Argument description can be found in <<asm - ASSEMBLE>> section."
 msgstr "参数描述可以在 <<asm - 汇编>> 一节中找到。"
 
@@ -603,7 +603,7 @@ msgstr ""
 "就像运行 shell 命令 `exec PROGRAM program-args` 。"
 
 #. type: Labeled list
-#: ceccomp.adoc:214 ceccomp.adoc:316
+#: ceccomp.adoc:214 ceccomp.adoc:318
 #, no-wrap
 msgid "PID"
 msgstr "PID"
@@ -643,14 +643,22 @@ msgstr ""
 #. type: Plain text
 #: ceccomp.adoc:228
 msgid ""
-"Set to suppress the extra *[INFO]* prints when detect process forking, "
+"Set to suppress the extra *[INFO]* prints when detect thread forking, "
 "exiting or seccomp filter loading. _This flag was introduced in version 4.0._"
 msgstr ""
-"设置这个标志将会在检测到进程分叉、退出或加载 seccomp 过滤器时抑制多余的 "
+"设置这个标志将会在检测到线程分叉、退出或加载 seccomp 过滤器时抑制多余的 "
 "*[INFO]* 输出。 _这个标志引入于 4.0 版本。_"
 
 #. type: Plain text
-#: ceccomp.adoc:232
+#: ceccomp.adoc:230
+msgid ""
+"In the documentation, *PID* denotes the thread ID. The parameters for PID "
+"mode were finalized before we identified that "
+"ptrace(PTRACE_SECCOMP_GET_FILTER) supports thread-ID-level granularity."
+msgstr ""
+
+#. type: Plain text
+#: ceccomp.adoc:234
 msgid ""
 "To extract filters from *PID*, `CAP_SYS_ADMIN` is needed (without `-s` "
 "flag)  and `CAP_SYS_PTRACE` may also be needed, the easiest way to acquire "
@@ -661,19 +669,19 @@ msgstr ""
 "`CAP_SYS_PTRACE` ，最简单的获取它们的方法是用 `sudo` 运行 `ceccomp` 。"
 
 #. type: Plain text
-#: ceccomp.adoc:236
+#: ceccomp.adoc:238
 msgid ""
-"Since _version 3.1_, multiple process tracing is introduced, and when tracee "
+"Since _version 3.1_, multiple thread tracing is introduced, and when tracee "
 "forking/resolving/exiting, an extra INFO message is printed. You can discard "
 "it by running command like `ceccomp trace -q PROG 2>/dev/null`."
 msgstr ""
-"从 _3.1 版本_ 开始引入了多进程支持，并且当被调试进程 fork/resolve/exit\n"
+"从 _3.1 版本_ 开始引入了多线程支持，并且当被调试进程 fork/resolve/exit\n"
 "时，将会打印一条额外的 INFO 信息。你可以使用像 `ceccomp trace -q PROG 2>/dev/"
 "null`\n"
 "这样的命令丢弃它。"
 
 #. type: Plain text
-#: ceccomp.adoc:239
+#: ceccomp.adoc:241
 msgid ""
 "Since _version 4.2_, `dump` sub command is added as an alias of `trace`, to "
 "keep compatibility with `seccomp-tools`."
@@ -682,7 +690,7 @@ msgstr ""
 "`seccomp-tools` 的兼容性。"
 
 #. type: Table
-#: ceccomp.adoc:252
+#: ceccomp.adoc:254
 #, no-wrap
 msgid ""
 "|Command|Difference\n"
@@ -708,19 +716,19 @@ msgstr ""
 "所以不需要 `./` ；当 fork 时，显式打印事件；能够附加调试器到 pid 上动态捕捉 seccomp 过滤器\n"
 
 #. type: Title ===
-#: ceccomp.adoc:254
+#: ceccomp.adoc:256
 #, no-wrap
 msgid "probe - TEST COMMON SYSCALLS INSTANTLY"
 msgstr "probe - 快速测试常见的系统调用"
 
 #. type: Plain text
-#: ceccomp.adoc:257
+#: ceccomp.adoc:259
 #, no-wrap
 msgid "    ceccomp probe [-c WHEN] [-o FILE] [-q] PROGRAM [program-args]\n"
 msgstr "    ceccomp probe [-c WHEN] [-o FILE] [-q] PROGRAM [program-args]\n"
 
 #. type: Plain text
-#: ceccomp.adoc:261
+#: ceccomp.adoc:263
 msgid ""
 "Run *PROGRAM* with *program-args* to captures *FIRST* seccomp filter, and "
 "then kill all children. Use it when a quick check against a program is "
@@ -731,14 +739,14 @@ msgstr ""
 "规则问题。"
 
 #. type: Plain text
-#: ceccomp.adoc:263
+#: ceccomp.adoc:265
 msgid ""
 "All argument descriptions can be found in <<trace - TRACE FILTER IN "
 "RUNTIME>> section."
 msgstr "所有参数描述都可以在 <<trace - 运行时捕获过滤器>> 一节中找到。"
 
 #. type: Plain text
-#: ceccomp.adoc:267
+#: ceccomp.adoc:269
 msgid ""
 "The output for this subcommand is the emulating result of common syscalls "
 "like `execve`, `open` and so on. If the filter itself is not capable of "
@@ -749,7 +757,7 @@ msgstr ""
 "如果过滤器本身并不能阻拦系统调用，那你一眼就能看出来。"
 
 #. type: Plain text
-#: ceccomp.adoc:270
+#: ceccomp.adoc:272
 msgid ""
 "Typical output for this subcommand is described below, more detailed example "
 "could be found in <<EXAMPLES>> section."
@@ -758,7 +766,7 @@ msgstr ""
 "到。"
 
 #. type: Plain text
-#: ceccomp.adoc:282
+#: ceccomp.adoc:284
 #, no-wrap
 msgid ""
 "    open      -> ALLOW\n"
@@ -786,24 +794,24 @@ msgstr ""
 "    fork      -> ALLOW\n"
 
 #. type: Plain text
-#: ceccomp.adoc:284
+#: ceccomp.adoc:286
 msgid "`seccomp-tools` don't have this subcommand."
 msgstr "`seccomp-tools` 没有等价的子命令。"
 
 #. type: Title ===
-#: ceccomp.adoc:285
+#: ceccomp.adoc:287
 #, no-wrap
 msgid "capture - CAPTURE FILTERS WITH EBPF"
 msgstr "capture - 用 eBPF 捕获过滤器"
 
 #. type: Plain text
-#: ceccomp.adoc:288
+#: ceccomp.adoc:290
 #, no-wrap
 msgid "    ceccomp capture [-c WHEN] [-p PID]\n"
 msgstr "    ceccomp capture [-c WHEN] [-p PID]\n"
 
 #. type: Plain text
-#: ceccomp.adoc:296
+#: ceccomp.adoc:298
 msgid ""
 "Capture seccomp filters in global scope if *PID* not set. The eBPF program "
 "will trace `seccomp_check_filter` kernel function, reliably intercepting "
@@ -819,7 +827,7 @@ msgstr ""
 "捕获”。在 _x86_64_ 上，Linux 5.15 是运行该功能的最低推荐内核版本。"
 
 #. type: Plain text
-#: ceccomp.adoc:306
+#: ceccomp.adoc:308
 msgid ""
 "If *PID* is set, an eBPF program to extract installed seccomp filters in the "
 "corresponding thread will be installed. Note that inside kernel, `pid` is "
@@ -840,7 +848,7 @@ msgstr ""
 "入。"
 
 #. type: Plain text
-#: ceccomp.adoc:312
+#: ceccomp.adoc:314
 msgid ""
 "Currently, compat task detection is only supported on _x86_64_ and "
 "_aarch64_.  With this feature, `ceccomp` can identify whether a task is "
@@ -854,12 +862,12 @@ msgstr ""
 "的 seccomp 过滤器中的系统调用的名字。"
 
 #. type: Plain text
-#: ceccomp.adoc:318
+#: ceccomp.adoc:320
 msgid "Which *thread* to extract seccomp filter insns from."
 msgstr "从哪个 *线程* 中提取 seccomp 过滤器指令。"
 
 #. type: Plain text
-#: ceccomp.adoc:322
+#: ceccomp.adoc:324
 msgid ""
 "All *PID* presented in either \"global capture\" or \"capture pid\" are "
 "*INITIAL NAMESPACE PID*, not PID in current namespace. It's recommended that "
@@ -869,25 +877,25 @@ msgstr ""
 "命名空间中的 PID。推荐只在初始命名空间中运行 `ceccomp capture`。"
 
 #. type: Plain text
-#: ceccomp.adoc:325
+#: ceccomp.adoc:327
 msgid ""
 "This module is optional, you can opt it out during configuration. This "
 "module require libbpf to work."
 msgstr "此模块是可选的，您可以在配置阶段将其禁用。此模块需要 libbpf 才能工作。"
 
 #. type: Plain text
-#: ceccomp.adoc:327
+#: ceccomp.adoc:329
 msgid "This subcommand was introduced in _version 4.3_."
 msgstr "此子命令在 _4.3 版本_ 中被引入。"
 
 #. type: Title ==
-#: ceccomp.adoc:328
+#: ceccomp.adoc:330
 #, no-wrap
 msgid "TEXT GRAMMAR REFERENCE"
 msgstr "TEXT 语法参考"
 
 #. type: Plain text
-#: ceccomp.adoc:335
+#: ceccomp.adoc:337
 msgid ""
 "The grammar changed greatly since _version 4.0_ as we refactored lexer for "
 "better human readability. The wrapper now prefixed by `#` as it's a comment "
@@ -899,7 +907,7 @@ msgstr ""
 "跳转到哪里，而不是根据 _TEXT_ 文件中的行号。"
 
 #. type: Plain text
-#: ceccomp.adoc:340
+#: ceccomp.adoc:342
 msgid ""
 "A valid _TEXT_ format is described in EBNF-like declaration here: https://"
 "github.com/ceccomp/ceccomp/issues/17#issuecomment-3610531705 .  If you have "
@@ -910,25 +918,25 @@ msgstr ""
 "没兴趣了解 EBNF？请继续阅读以下的例子。"
 
 #. type: Plain text
-#: ceccomp.adoc:342
+#: ceccomp.adoc:344
 msgid "BPF ops which are not described below are banned by kernel."
 msgstr "其余未描述到的BPF操作都被内核禁止了。"
 
 #. type: Title ===
-#: ceccomp.adoc:343
+#: ceccomp.adoc:345
 #, no-wrap
 msgid "Comment and Label"
 msgstr "注释与标签"
 
 #. type: Plain text
-#: ceccomp.adoc:347
+#: ceccomp.adoc:349
 msgid ""
 "`ceccomp disasm` displays a lot of things, but some of them are optional for "
 "asm."
 msgstr "`ceccomp disasm` 展示了很多东西，但对于 asm 来说有些是可选的。"
 
 #. type: Plain text
-#: ceccomp.adoc:352
+#: ceccomp.adoc:354
 #, no-wrap
 msgid ""
 "    #Label  CODE  JT   JF      K\n"
@@ -943,17 +951,17 @@ msgstr ""
 "\n"
 
 #. type: Plain text
-#: ceccomp.adoc:354
+#: ceccomp.adoc:356
 msgid "Any text after `#` will be discarded by asm like some script languages."
 msgstr "任何在 `#` 之后的文本将被 asm 丢弃，就像一些脚本语言一样。"
 
 #. type: Plain text
-#: ceccomp.adoc:356
+#: ceccomp.adoc:358
 msgid "Empty lines are accepted."
 msgstr "允许空行。"
 
 #. type: Plain text
-#: ceccomp.adoc:364
+#: ceccomp.adoc:366
 msgid ""
 "Label declaration is an identifier at the beginning of line and suffixed by "
 "`:` like `L0001`. An identifier is a string starts with alpha and contains "
@@ -970,7 +978,7 @@ msgstr ""
 "明可以单独占据一行，也可以放置在伪代码的前面。"
 
 #. type: Plain text
-#: ceccomp.adoc:367
+#: ceccomp.adoc:369
 msgid ""
 "The `CODE`, `JT`, `JF` and `K` value generated by disasm will be discarded "
 "by asm, asm only parse the effective statement after `K`."
@@ -979,7 +987,7 @@ msgstr ""
 "后的有效伪代码。"
 
 #. type: Plain text
-#: ceccomp.adoc:372
+#: ceccomp.adoc:374
 msgid ""
 "There are some slight difference between `ceccomp disasm` and `seccomp-tools "
 "disasm`, down below is a general example. And some statements are different, "
@@ -991,7 +999,7 @@ msgstr ""
 "的输出管道给 ceccomp。"
 
 #. type: Plain text
-#: ceccomp.adoc:376
+#: ceccomp.adoc:378
 #, no-wrap
 msgid ""
 "    line  CODE  JT   JF      K\n"
@@ -1003,13 +1011,13 @@ msgstr ""
 "    0000: 0x06 0x00 0x00 0x7fff0000  return ALLOW\n"
 
 #. type: Title ===
-#: ceccomp.adoc:377
+#: ceccomp.adoc:379
 #, no-wrap
 msgid "Assignment"
 msgstr "赋值"
 
 #. type: Plain text
-#: ceccomp.adoc:381
+#: ceccomp.adoc:383
 msgid ""
 "`A` can be set to seccomp attributes directly. But `X` can not be assigned "
 "with seccomp attributes directly due to kernel limit."
@@ -1018,7 +1026,7 @@ msgstr ""
 "性。"
 
 #. type: Plain text
-#: ceccomp.adoc:384
+#: ceccomp.adoc:386
 #, no-wrap
 msgid ""
 "    $A = $arch\n"
@@ -1028,14 +1036,14 @@ msgstr ""
 "    $A = $syscall_nr\n"
 
 #. type: Plain text
-#: ceccomp.adoc:386
+#: ceccomp.adoc:388
 msgid ""
 "To assign `A` with those 64-bit long fields, `low_` or `high_` prefix is "
 "needed."
 msgstr "要给 `A` 赋值为这些64位长的字段，必须使用 `low_` 或者 `high_` 的前缀。"
 
 #. type: Plain text
-#: ceccomp.adoc:394
+#: ceccomp.adoc:396
 #, no-wrap
 msgid ""
 "    $A = $low_pc\n"
@@ -1055,7 +1063,7 @@ msgstr ""
 "    $A = $high_args[5]\n"
 
 #. type: Plain text
-#: ceccomp.adoc:397
+#: ceccomp.adoc:399
 msgid ""
 "A special attribute is `sizeof(struct seccomp_data)`, that can be assigned "
 "to `A` or `X` directly."
@@ -1064,7 +1072,7 @@ msgstr ""
 "`X` 。"
 
 #. type: Plain text
-#: ceccomp.adoc:400
+#: ceccomp.adoc:402
 #, no-wrap
 msgid ""
 "    $A = $scmp_data_len\n"
@@ -1074,7 +1082,7 @@ msgstr ""
 "    $X = $scmp_data_len\n"
 
 #. type: Plain text
-#: ceccomp.adoc:404
+#: ceccomp.adoc:406
 msgid ""
 "Temporary memory is 32-bit, to access them, you could use hex or dec as "
 "index.  Both `A` and `X` is assignable. Assigning immediate values to `A` or "
@@ -1086,7 +1094,7 @@ msgstr ""
 "使用 \"0x\" 或者 \"0b\" 等前缀正确表达数字是几进制的。"
 
 #. type: Plain text
-#: ceccomp.adoc:412
+#: ceccomp.adoc:414
 #, no-wrap
 msgid ""
 "    $X = $mem[0]\n"
@@ -1106,7 +1114,7 @@ msgstr ""
 "    $A = 0333\n"
 
 #. type: Plain text
-#: ceccomp.adoc:415
+#: ceccomp.adoc:417
 msgid ""
 "You could also assign `X` to `A` or in the reverse order. Assign `X` or `A` "
 "to temporary memory is definitely okay."
@@ -1114,7 +1122,7 @@ msgstr ""
 "你还可以将 `X` 赋值给 `A` 或者反过来。将 `X` 或 `A` 赋值给临时内存当然可以。"
 
 #. type: Plain text
-#: ceccomp.adoc:420
+#: ceccomp.adoc:422
 #, no-wrap
 msgid ""
 "    $A = $X\n"
@@ -1128,18 +1136,18 @@ msgstr ""
 "    $mem[0x4] = $A\n"
 
 #. type: Title ===
-#: ceccomp.adoc:421
+#: ceccomp.adoc:423
 #, no-wrap
 msgid "Arithmetic Operations"
 msgstr "数学运算"
 
 #. type: Plain text
-#: ceccomp.adoc:424
+#: ceccomp.adoc:426
 msgid "Various operations can be applied to `A`."
 msgstr "你可以以多种方式操作 `A` 。"
 
 #. type: Plain text
-#: ceccomp.adoc:431
+#: ceccomp.adoc:433
 #, no-wrap
 msgid ""
 "    $A += 30\n"
@@ -1157,12 +1165,12 @@ msgstr ""
 "    $A >>= 6\n"
 
 #. type: Plain text
-#: ceccomp.adoc:433
+#: ceccomp.adoc:435
 msgid "The right value can be `X`."
 msgstr "右值也可以是 `X` 。"
 
 #. type: Plain text
-#: ceccomp.adoc:438
+#: ceccomp.adoc:440
 #, no-wrap
 msgid ""
 "    $A &= $X\n"
@@ -1176,40 +1184,40 @@ msgstr ""
 "    $A <<= $X\n"
 
 #. type: Plain text
-#: ceccomp.adoc:440
+#: ceccomp.adoc:442
 msgid "And there is a way to negativate `A`."
 msgstr "想要对 `A` 取反可以这么做。"
 
 #. type: Plain text
-#: ceccomp.adoc:442
+#: ceccomp.adoc:444
 #, no-wrap
 msgid "    $A = -$A\n"
 msgstr "    $A = -$A\n"
 
 #. type: Title ===
-#: ceccomp.adoc:443
+#: ceccomp.adoc:445
 #, no-wrap
 msgid "Jump Downwards If ..."
 msgstr "当...时向下跳转"
 
 #. type: Plain text
-#: ceccomp.adoc:446
+#: ceccomp.adoc:448
 msgid "Unconditional jump:"
 msgstr "无条件跳转："
 
 #. type: Plain text
-#: ceccomp.adoc:448
+#: ceccomp.adoc:450
 #, no-wrap
 msgid "    goto L3\n"
 msgstr "    goto L3\n"
 
 #. type: Plain text
-#: ceccomp.adoc:450
+#: ceccomp.adoc:452
 msgid "Jump if:"
 msgstr "当...跳转："
 
 #. type: Plain text
-#: ceccomp.adoc:456
+#: ceccomp.adoc:458
 #, no-wrap
 msgid ""
 "    if ($A == execve) goto L3\n"
@@ -1225,12 +1233,12 @@ msgstr ""
 "    if ($A <= $X) goto L7\n"
 
 #. type: Plain text
-#: ceccomp.adoc:458
+#: ceccomp.adoc:460
 msgid "If true jump to ... if false jump to...:"
 msgstr "当条件为真时跳转到...，条件为假时跳转到...："
 
 #. type: Plain text
-#: ceccomp.adoc:461
+#: ceccomp.adoc:463
 #, no-wrap
 msgid ""
 "    if ($A > $X) goto L3, else goto L4\n"
@@ -1240,7 +1248,7 @@ msgstr ""
 "    if ($A >= 4567) goto L5, else goto L6\n"
 
 #. type: Plain text
-#: ceccomp.adoc:468
+#: ceccomp.adoc:470
 msgid ""
 "ONLY in conditions, you CAN replace number with syscall name or arch name.  "
 "In example above, `0x3b` is replaced by `execve`. All the syscall name will "
@@ -1257,13 +1265,13 @@ msgstr ""
 "_aarch64_ 架构的规则，请这样写："
 
 #. type: Plain text
-#: ceccomp.adoc:470
+#: ceccomp.adoc:472
 #, no-wrap
 msgid "    if ($A == aarch64.read) goto 5\n"
 msgstr "    if ($A == aarch64.read) goto 5\n"
 
 #. type: Plain text
-#: ceccomp.adoc:473
+#: ceccomp.adoc:475
 msgid ""
 "Note that if you manually set arch to _aarch64_ with `-a aarch64`, you can "
 "omit `aarch64.` in statement."
@@ -1272,24 +1280,24 @@ msgstr ""
 "你可以在伪代码中忽略 `aarch64.` 。"
 
 #. type: Title ===
-#: ceccomp.adoc:474
+#: ceccomp.adoc:476
 #, no-wrap
 msgid "Return Code"
 msgstr "返回码"
 
 #. type: Plain text
-#: ceccomp.adoc:477
+#: ceccomp.adoc:479
 msgid "Return value of register `A`:"
 msgstr "返回寄存器 `A` 的值："
 
 #. type: Plain text
-#: ceccomp.adoc:479
+#: ceccomp.adoc:481
 #, no-wrap
 msgid "    return $A\n"
 msgstr "    return $A\n"
 
 #. type: Plain text
-#: ceccomp.adoc:483
+#: ceccomp.adoc:485
 msgid ""
 "Or return a immediate value, with extra field in `()`. Actions including "
 "`TRACE`, `TRAP` and `ERRNO` accept an extra field, without `()`, they are "
@@ -1299,7 +1307,7 @@ msgstr ""
 "接受一个额外的字段，如果没有 `()` ，它们将被视为 `行为(0)` 。"
 
 #. type: Plain text
-#: ceccomp.adoc:493
+#: ceccomp.adoc:495
 #, no-wrap
 msgid ""
 "    return 0x13371337\n"
@@ -1323,13 +1331,13 @@ msgstr ""
 "    return NOTIFY\n"
 
 #. type: Title ===
-#: ceccomp.adoc:494
+#: ceccomp.adoc:496
 #, no-wrap
 msgid "Short Example"
 msgstr "简短的例子"
 
 #. type: Plain text
-#: ceccomp.adoc:498
+#: ceccomp.adoc:500
 msgid ""
 "The following _TEXT_ is valid for asm, which blocks `execve` and `execveat` "
 "for amd64 syscalls:"
@@ -1338,7 +1346,7 @@ msgstr ""
 "`execveat` 系统调用："
 
 #. type: Plain text
-#: ceccomp.adoc:504
+#: ceccomp.adoc:506
 #, no-wrap
 msgid ""
 "    $A = $syscall_nr\n"
@@ -1354,38 +1362,38 @@ msgstr ""
 "    forbid: return KILL\n"
 
 #. type: Title ==
-#: ceccomp.adoc:505
+#: ceccomp.adoc:507
 #, no-wrap
 msgid "RESTRICTIONS"
 msgstr "限制"
 
 #. type: Plain text
-#: ceccomp.adoc:508
+#: ceccomp.adoc:510
 msgid "Ceccomp asm put some restrictions on _TEXT_ for better performance."
 msgstr "为了更好的性能，Ceccomp asm 对 _TEXT_ 有一些限制。"
 
 #. type: Plain text
-#: ceccomp.adoc:510
+#: ceccomp.adoc:512
 msgid "`'\\0'` must not be found in _TEXT_ since it's a text file."
 msgstr "由于 _TEXT_ 是个文本文件，`'\\0'` 不能出现在 _TEXT_ 中。"
 
 #. type: Plain text
-#: ceccomp.adoc:511
+#: ceccomp.adoc:513
 msgid "A line must be shorter than 384 *bytes*."
 msgstr "一行必须短于 384 *字节*。"
 
 #. type: Plain text
-#: ceccomp.adoc:512
+#: ceccomp.adoc:514
 msgid "A _TEXT_ file must have less than 16384 lines."
 msgstr "一个 _TEXT_ 文件必须短于 16384 行。"
 
 #. type: Plain text
-#: ceccomp.adoc:513
+#: ceccomp.adoc:515
 msgid "A _TEXT_ file must be smaller than 4 MiB."
 msgstr "一个 _TEXT_ 文件必须小于 4 MiB。"
 
 #. type: Plain text
-#: ceccomp.adoc:516
+#: ceccomp.adoc:518
 msgid ""
 "And for both asm and disasm, effective statements (that can be encoded or "
 "decoded into BPF) must be less or equal than 4096, this is enforced by "
@@ -1395,7 +1403,7 @@ msgstr ""
 "等于 4096 条，这是内核规定的。"
 
 #. type: Plain text
-#: ceccomp.adoc:519
+#: ceccomp.adoc:521
 msgid ""
 "A fun fact about ceccomp asm: any basic ANSI color in _TEXT_ file, e.g., "
 "`\\x1b[31m`, will be discarded when processing."
@@ -1404,163 +1412,163 @@ msgstr ""
 "`\\x1b[31m`，会在处理时被丢弃。"
 
 #. type: Title ==
-#: ceccomp.adoc:520
+#: ceccomp.adoc:522
 #, no-wrap
 msgid "EXAMPLES"
 msgstr "ceccomp 示例"
 
 #. type: Plain text
-#: ceccomp.adoc:525
+#: ceccomp.adoc:527
 msgid ""
 "Manpage can not display images, so please check out html version of this "
 "page to see examples."
 msgstr "手册不能显示图片，因此如果想看示例请参阅html版本。"
 
 #. type: Title ===
-#: ceccomp.adoc:528
+#: ceccomp.adoc:530
 #, no-wrap
 msgid "asm example"
 msgstr "asm 示例"
 
 #. type: Target for macro image
-#: ceccomp.adoc:529
+#: ceccomp.adoc:531
 #, no-wrap
 msgid "asm.webp"
 msgstr "asm.webp"
 
 #. type: Title ===
-#: ceccomp.adoc:530
+#: ceccomp.adoc:532
 #, no-wrap
 msgid "disasm example"
 msgstr "disasm 示例"
 
 #. type: Target for macro image
-#: ceccomp.adoc:531
+#: ceccomp.adoc:533
 #, no-wrap
 msgid "disasm.webp"
 msgstr "disasm.webp"
 
 #. type: Title ===
-#: ceccomp.adoc:532
+#: ceccomp.adoc:534
 #, no-wrap
 msgid "emu example"
 msgstr "emu 示例"
 
 #. type: Target for macro image
-#: ceccomp.adoc:533
+#: ceccomp.adoc:535
 #, no-wrap
 msgid "emu.webp"
 msgstr "emu.webp"
 
 #. type: Title ===
-#: ceccomp.adoc:534
+#: ceccomp.adoc:536
 #, no-wrap
 msgid "trace example"
 msgstr "trace 示例"
 
 #. type: Plain text
-#: ceccomp.adoc:536
+#: ceccomp.adoc:538
 msgid "Running program:"
 msgstr "运行程序："
 
 #. type: Target for macro image
-#: ceccomp.adoc:537
+#: ceccomp.adoc:539
 #, no-wrap
 msgid "trace.webp"
 msgstr "trace.webp"
 
 #. type: Plain text
-#: ceccomp.adoc:540
+#: ceccomp.adoc:542
 msgid "If set `-o FILE`:"
 msgstr "如果设置了 `-o FILE` ："
 
 #. type: Target for macro image
-#: ceccomp.adoc:541
+#: ceccomp.adoc:543
 #, no-wrap
 msgid "output_trick.webp"
 msgstr "output_trick.webp"
 
 #. type: Plain text
-#: ceccomp.adoc:544
+#: ceccomp.adoc:546
 msgid "Trace pid mode:"
 msgstr "PID 模式："
 
 #. type: Target for macro image
-#: ceccomp.adoc:545
+#: ceccomp.adoc:547
 #, no-wrap
 msgid "trace_pid.webp"
 msgstr "trace_pid.webp"
 
 #. type: Plain text
-#: ceccomp.adoc:548
+#: ceccomp.adoc:550
 msgid "Seize pid mode:"
 msgstr "跟踪 PID 模式："
 
 #. type: Target for macro image
-#: ceccomp.adoc:549
+#: ceccomp.adoc:551
 #, no-wrap
 msgid "trace_seize.webp"
 msgstr "trace_seize.webp"
 
 #. type: Plain text
-#: ceccomp.adoc:552
+#: ceccomp.adoc:554
 msgid "Completion for pid mode is available under zsh:"
 msgstr "zsh下PID模式可以使用补全："
 
 #. type: Target for macro image
-#: ceccomp.adoc:553
+#: ceccomp.adoc:555
 #, no-wrap
 msgid "trace_completion.webp"
 msgstr "trace_completion.webp"
 
 #. type: Title ===
-#: ceccomp.adoc:555
+#: ceccomp.adoc:557
 #, no-wrap
 msgid "probe example"
 msgstr "probe 示例"
 
 #. type: Target for macro image
-#: ceccomp.adoc:556
+#: ceccomp.adoc:558
 #, no-wrap
 msgid "probe.webp"
 msgstr "probe.webp"
 
 #. type: Title ===
-#: ceccomp.adoc:558
+#: ceccomp.adoc:560
 #, no-wrap
 msgid "capture example"
 msgstr "capture 示例"
 
 #. type: Plain text
-#: ceccomp.adoc:560
+#: ceccomp.adoc:562
 msgid "Globally capture:"
 msgstr "全局捕获："
 
 #. type: Target for macro image
-#: ceccomp.adoc:561
+#: ceccomp.adoc:563
 #, no-wrap
 msgid "capture.webp"
 msgstr "capture.webp"
 
 #. type: Plain text
-#: ceccomp.adoc:564
+#: ceccomp.adoc:566
 msgid "Capture filters in a thread:"
 msgstr "捕获线程中的过滤器："
 
 #. type: Target for macro image
-#: ceccomp.adoc:565
+#: ceccomp.adoc:567
 #, no-wrap
 msgid "capture_pid.webp"
 msgstr "capture_pid.webp"
 
 #. type: Title ==
-#: ceccomp.adoc:568
+#: ceccomp.adoc:570
 #, no-wrap
 msgid "REPO"
 msgstr "仓库"
 
 #. type: Plain text
-#: ceccomp.adoc:572
+#: ceccomp.adoc:574
 msgid ""
 "Visit https://github.com/ceccomp/ceccomp to find the code.  Pull Requests "
 "and Issues are welcome!"
@@ -1569,6 +1577,6 @@ msgstr ""
 "欢迎提交 Pull Requests 和 Issues ！"
 
 #. type: Plain text
-#: ceccomp.adoc:573
+#: ceccomp.adoc:575
 msgid "Copyright (C) 2025-present, distributed under GPLv3 or later."
 msgstr "Copyright (C) 2025-现在，基于 GPLv3 或更新版本分发。"
