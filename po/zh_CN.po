@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ceccomp 4.3\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-08 12:27+0800\n"
-"PO-Revision-Date: 2026-08-08 12:27+0800\n"
+"POT-Creation-Date: 2026-08-10 12:08+0800\n"
+"PO-Revision-Date: 2026-08-10 12:10+0800\n"
 "Last-Translator: Rocket Ma <marocketbd@gmail.com>\n"
 "Language-Team: Chinese <ma2014119@outlook.com>\n"
 "Language: zh_CN\n"
@@ -29,10 +29,6 @@ msgstr ""
 "ceccomp %s\n"
 "在 %s 发布\n"
 "由 %s 构建\n"
-
-#: ../include/config.h:13
-msgid "Dependencies:\n"
-msgstr "依赖：\n"
 
 #: ../include/help.h:5
 msgid "Usage: ceccomp <subcommand> <args> <options>\n"
@@ -549,53 +545,58 @@ msgstr ""
 msgid "Failed to convert eBPF back to cBPF"
 msgstr "无法把 eBPF 转换回 cBPF"
 
-#: ../include/utils/error.h:172
+#: ../include/utils/error.h:171
+#, c-format
+msgid "Thread %d has %d seccomp_filters"
+msgstr "线程 %d 有 %d 条seccomp_filters"
+
+#: ../include/utils/error.h:173
 #, c-format
 msgid "eBPF program failed to locate seccomp filters, %s"
 msgstr "eBPF 程序无法定位 seccomp 过滤器，%s"
 
-#: ../include/utils/error.h:174
+#: ../include/utils/error.h:175
 #, c-format
 msgid "eBPF program failed to retrieve seccomp filter in a task, %s"
 msgstr "eBPF 程序无法从 task 中取得 seccomp 过滤器，%s"
 
-#: ../include/utils/error.h:175
+#: ../include/utils/error.h:176
 #, c-format
 msgid "Thread %d does not exist"
 msgstr "线程 %d 不存在"
 
-#: ../include/utils/error.h:177
+#: ../include/utils/error.h:178
 msgid ""
 "please read output from /sys/kernel/debug/tracing/trace_pipe for details."
 msgstr "请从 /sys/kernel/debug/tracing/trace_pipe 读取详细输出"
 
-#: ../include/utils/error.h:180
+#: ../include/utils/error.h:181
 msgid "Too many seccomp filters (> 32) in a task! The rest are truncated."
 msgstr "Task 里的 seccomp 过滤器太多了 (> 32)！剩下的将被截断。"
 
-#: ../include/utils/error.h:181
+#: ../include/utils/error.h:182
 #, c-format
 msgid "Failed to open or load eBPF prog %s"
 msgstr "无法打开或加载 eBPF 程序 %s"
 
-#: ../include/utils/error.h:182
+#: ../include/utils/error.h:183
 msgid "Failed to update eBPF map"
 msgstr "无法更新 eBPF map"
 
-#: ../include/utils/error.h:183
+#: ../include/utils/error.h:184
 msgid "Failed to create ring buffer"
 msgstr "无法创建环形缓冲区"
 
-#: ../include/utils/error.h:184
+#: ../include/utils/error.h:185
 msgid "Failed to attach eBPF prog"
 msgstr "无法附加到 eBPF 程序"
 
-#: ../include/utils/error.h:185
+#: ../include/utils/error.h:186
 #, c-format
 msgid "Capturing new seccomp filter in thread %d"
 msgstr "在线程 %d 中捕获新 seccomp 过滤器"
 
-#: ../include/utils/error.h:187
+#: ../include/utils/error.h:188
 msgid ""
 "Capture is disabled during configuration, probably due to absence of libbpf. "
 "You may rebuild it with libbpf support."
@@ -603,7 +604,7 @@ msgstr ""
 "捕获功能在配置过程中被禁用，可能是因为缺少 libbpf。您需要在有 libbpf 支持下重"
 "新编译 ceccomp。"
 
-#: ../include/utils/error.h:190
+#: ../include/utils/error.h:191
 msgid ""
 "Loading eBPF program require CAP_SYS_ADMIN || (CAP_BPF && CAP_PERFMON), you "
 "may rerun ceccomp with sudo."
@@ -611,7 +612,10 @@ msgstr ""
 "加载 eBPF 程序需要 CAP_SYS_ADMIN || (CAP_BPF && CAP_PERFMON)，您可能需要用 "
 "sudo 重新运行 ceccomp。"
 
-#: ../include/utils/error.h:193
+#: ../include/utils/error.h:194
 #, c-format
 msgid "Your kernel (%d.%d) is so old that task_from_pid is not available."
 msgstr "您的内核 (%d.%d) 太老，以致 task_from_pid 不可用。"
+
+#~ msgid "Dependencies:\n"
+#~ msgstr "依赖：\n"

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-08 12:27+0800\n"
+"POT-Creation-Date: 2026-08-10 12:08+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -23,10 +23,6 @@ msgid ""
 "ceccomp %s\n"
 "Tagged on %s\n"
 "Built by %s\n"
-msgstr ""
-
-#: ../include/config.h:13
-msgid "Dependencies:\n"
 msgstr ""
 
 #: ../include/help.h:5
@@ -502,65 +498,70 @@ msgstr ""
 msgid "Failed to convert eBPF back to cBPF"
 msgstr ""
 
-#: ../include/utils/error.h:172
+#: ../include/utils/error.h:171
+#, c-format
+msgid "Thread %d has %d seccomp_filters"
+msgstr ""
+
+#: ../include/utils/error.h:173
 #, c-format
 msgid "eBPF program failed to locate seccomp filters, %s"
 msgstr ""
 
-#: ../include/utils/error.h:174
+#: ../include/utils/error.h:175
 #, c-format
 msgid "eBPF program failed to retrieve seccomp filter in a task, %s"
 msgstr ""
 
-#: ../include/utils/error.h:175
+#: ../include/utils/error.h:176
 #, c-format
 msgid "Thread %d does not exist"
 msgstr ""
 
-#: ../include/utils/error.h:177
+#: ../include/utils/error.h:178
 msgid ""
 "please read output from /sys/kernel/debug/tracing/trace_pipe for details."
 msgstr ""
 
-#: ../include/utils/error.h:180
+#: ../include/utils/error.h:181
 msgid "Too many seccomp filters (> 32) in a task! The rest are truncated."
 msgstr ""
 
-#: ../include/utils/error.h:181
+#: ../include/utils/error.h:182
 #, c-format
 msgid "Failed to open or load eBPF prog %s"
 msgstr ""
 
-#: ../include/utils/error.h:182
+#: ../include/utils/error.h:183
 msgid "Failed to update eBPF map"
 msgstr ""
 
-#: ../include/utils/error.h:183
+#: ../include/utils/error.h:184
 msgid "Failed to create ring buffer"
 msgstr ""
 
-#: ../include/utils/error.h:184
+#: ../include/utils/error.h:185
 msgid "Failed to attach eBPF prog"
 msgstr ""
 
-#: ../include/utils/error.h:185
+#: ../include/utils/error.h:186
 #, c-format
 msgid "Capturing new seccomp filter in thread %d"
 msgstr ""
 
-#: ../include/utils/error.h:187
+#: ../include/utils/error.h:188
 msgid ""
 "Capture is disabled during configuration, probably due to absence of libbpf. "
 "You may rebuild it with libbpf support."
 msgstr ""
 
-#: ../include/utils/error.h:190
+#: ../include/utils/error.h:191
 msgid ""
 "Loading eBPF program require CAP_SYS_ADMIN || (CAP_BPF && CAP_PERFMON), you "
 "may rerun ceccomp with sudo."
 msgstr ""
 
-#: ../include/utils/error.h:193
+#: ../include/utils/error.h:194
 #, c-format
 msgid "Your kernel (%d.%d) is so old that task_from_pid is not available."
 msgstr ""

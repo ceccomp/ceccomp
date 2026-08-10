@@ -26,9 +26,9 @@ typedef struct
 {
   pid_event_status status;
   struct bpf_prog *prog;
+  uint32_t filter_count;
   uint32_t flen;
   ebpf_arch arch;
-  bool failed;
 } dump_ctx;
 
 static long
@@ -55,6 +55,7 @@ dump_chunk (uint32_t chunk_index, void *data)
   event->status = ctx->status;
   event->prog.flen = remaining_insns;
   event->flen_total = ctx->flen;
+  event->filter_count = ctx->filter_count;
 
   uint16_t leftover = remaining_insns * sizeof (struct bpf_insn);
 
@@ -102,6 +103,13 @@ BPF_PROG (capture_pid, uint32_t op, uint32_t flags, void *uargs)
       goto end;
     }
 
+  uint32_t filter_count = 0;
+  EBPF_IF (BPF_CORE_READ_INTO (&filter_count, task, seccomp.filter_count) < 0)
+  {
+    event_status = TASK_ABORTED;
+    goto end;
+  }
+
   ebpf_arch arch;
 #if defined(__aarch64__)
   unsigned long tflags;
@@ -142,8 +150,9 @@ BPF_PROG (capture_pid, uint32_t op, uint32_t flags, void *uargs)
       EBPF_IF (BPF_CORE_READ_INTO (&flen, prog, len) < 0)
         goto next;
 
-      dump_ctx ctx
-          = { .prog = prog, .flen = flen, .failed = false, .arch = arch };
+      dump_ctx ctx = {
+        .prog = prog, .flen = flen, .arch = arch, .filter_count = filter_count
+      };
       uint32_t loop_times = (ctx.flen + CHUNK_INSN_SIZE - 1) / CHUNK_INSN_SIZE;
       EBPF_IF (bpf_loop (loop_times, dump_chunk, &ctx, 0) < 0)
         goto next;
