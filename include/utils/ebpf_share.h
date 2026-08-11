@@ -96,7 +96,7 @@ typedef struct
 //     (flags & TSYNC_ESRCH)
 //         ret >= 0 -> success, return fd
 //         ret < 0  -> fail, return -errno
-static bool
+static inline bool
 load_success (long ret, uint32_t flags)
 {
 #define SECCOMP_FILTER_FLAG_TSYNC (1UL << 0)
