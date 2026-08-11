@@ -139,7 +139,7 @@ on_pid_events (void *ctx, void *data, unsigned long size)
   static uint32_t insn_offset = 0;
   static bool count_printed = false;
   if (!count_printed)
-    info (M_THREAD_HAS_FILTER_COUNT, c->target_pid, event->filter_count);
+    info (M_PROCESS_HAS_FILTER_COUNT, c->target_pid, event->filter_count);
 
   switch (event->status)
     {

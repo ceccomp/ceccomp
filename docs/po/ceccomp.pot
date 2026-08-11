@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2026-08-08 22:27+0800\n"
+"POT-Creation-Date: 2026-08-11 17:40+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -659,7 +659,7 @@ msgstr ""
 #: ceccomp.adoc:306
 msgid ""
 "If *PID* is set, an eBPF program to extract installed seccomp filters in the "
-"corresponding thread will be installed. Note that inside kernel, `pid` is "
+"corresponding process will be installed. Note that inside kernel, `pid` is "
 "referred thread id and `tgid` is referred to process id. The eBPF program "
 "directly pulls eBPF insns migrated from original seccomp filters out and "
 "converts them back to perform <<disasm - DISASSEMBLE>>. This function does "
@@ -681,7 +681,7 @@ msgstr ""
 
 #. type: Plain text
 #: ceccomp.adoc:318
-msgid "Which *thread* to extract seccomp filter insns from."
+msgid "Which *process* to extract seccomp filter insns from."
 msgstr ""
 
 #. type: Plain text
@@ -1266,7 +1266,7 @@ msgstr ""
 
 #. type: Plain text
 #: ceccomp.adoc:564
-msgid "Capture filters in a thread:"
+msgid "Capture filters in a process:"
 msgstr ""
 
 #. type: Target for macro image

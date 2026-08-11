@@ -6,8 +6,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: ceccomp docs\n"
-"POT-Creation-Date: 2026-08-08 22:27+0800\n"
-"PO-Revision-Date: 2026-08-08 22:32+0800\n"
+"POT-Creation-Date: 2026-08-11 17:40+0800\n"
+"PO-Revision-Date: 2026-08-11 17:41+0800\n"
 "Last-Translator: Rocket Ma <marocketbd@gmail.com>\n"
 "Language-Team: RocketDev\n"
 "Language: zh_CN\n"
@@ -822,7 +822,7 @@ msgstr ""
 #: ceccomp.adoc:306
 msgid ""
 "If *PID* is set, an eBPF program to extract installed seccomp filters in the "
-"corresponding thread will be installed. Note that inside kernel, `pid` is "
+"corresponding process will be installed. Note that inside kernel, `pid` is "
 "referred thread id and `tgid` is referred to process id. The eBPF program "
 "directly pulls eBPF insns migrated from original seccomp filters out and "
 "converts them back to perform <<disasm - DISASSEMBLE>>. This function does "
@@ -831,7 +831,7 @@ msgid ""
 "pid\" below. Linux 6.2 is the lowest kernel version to run this function, as "
 "`bpf_task_from_pid` was introduced then."
 msgstr ""
-"当设置了 *PID* 时，将安装用来从对应线程中提取已安装过的 seccomp 过滤器的 "
+"当设置了 *PID* 时，将安装用来从对应进程中提取已安装过的 seccomp 过滤器的 "
 "eBPF 程序。注意在内核中，`pid` 指线程 id，而 `tgid` 指进程 id。eBPF 程序会直"
 "接把由原始 seccomp 过滤器转换后的 eBPF 指令抽取出来并转换回去，用以执行 "
 "<<disasm - 反汇编>>。这个功能不需要 `CONFIG_CHECKPOINT_RESTORE` 内核配置，甚"
@@ -855,8 +855,8 @@ msgstr ""
 
 #. type: Plain text
 #: ceccomp.adoc:318
-msgid "Which *thread* to extract seccomp filter insns from."
-msgstr "从哪个 *线程* 中提取 seccomp 过滤器指令。"
+msgid "Which *process* to extract seccomp filter insns from."
+msgstr "从哪个 *进程* 中提取 seccomp 过滤器指令。"
 
 #. type: Plain text
 #: ceccomp.adoc:322
@@ -1544,8 +1544,8 @@ msgstr "capture.webp"
 
 #. type: Plain text
 #: ceccomp.adoc:564
-msgid "Capture filters in a thread:"
-msgstr "捕获线程中的过滤器："
+msgid "Capture filters in a process:"
+msgstr "捕获进程中的过滤器："
 
 #. type: Target for macro image
 #: ceccomp.adoc:565

@@ -40,7 +40,7 @@
 #define M_BPF_FAIL_UNKNOWN _ ("Unknown reason")
 #define M_PROCFS_NOT_ACCESSIBLE _ ("Procfs not accessible, unable to perform")
 #define M_NOT_AN_CBPF _ ("Found unresolvable non-classic BPF, skipping")
-#define M_SEIZING_KERNEL_THREAD _ ("Kernel thread can not be seized")
+#define M_SEIZING_KERNEL_PROCESS _ ("Kernel process can not be seized")
 #define M_NO_FILTER_FOUND _ ("No seccomp filters found in process %d")
 #define M_TARGET_TRACED_BY                                                    \
   _ ("Target process is already being traced by process %d")
@@ -57,8 +57,8 @@
   _ ("Unexpected race condition detected when reading seccomp filters, "      \
      "please consider use eBPF-based trace in next version")
 
-#define M_CAP_SYS_PTRACE_OR_KTHREAD                                           \
-  _ ("perhaps seizing kthread or lacking CAP_SYS_PTRACE")
+#define M_CAP_SYS_PTRACE_OR_KPROCESS                                          \
+  _ ("perhaps seizing kprocess or lacking CAP_SYS_PTRACE")
 #define M_REQUIRE_CAP_SYS_ADMIN                                               \
   _ ("Run with CAP_SYS_ADMIN capability to fetch seccomp filters")
 #define M_REQUIRE_CAP_SYS_PTRACE                                              \
@@ -72,8 +72,8 @@
 #define M_GET_FILTER_UNSUPPORTED                                              \
   _ ("PTRACE_GET_SECCOMP_FILTER is not supported on your system")
 #define M_CECCOMP_IN_SECCOMP                                                  \
-_ ("Ceccomp is in seccomp mode, fetching seccomp filters of other process " \
-   "is not permitted")
+  _ ("Ceccomp is in seccomp mode, fetching seccomp filters of other process " \
+     "is not permitted")
 #define M_GET_FILTER_UNSUPPORTED_OR_NO_FILTER                                 \
   _ ("perhaps PTRACE_GET_SECCOMP_FILTER is not supported or no seccomp "      \
      "filter in target process")
@@ -168,12 +168,12 @@ _ ("Ceccomp is in seccomp mode, fetching seccomp filters of other process " \
 #define M_EBPF_INPUT_ERROR                                                    \
   _ ("#%u: Input eBPF insn does not meet assertion at %s#L%d: %s\n%s")
 #define M_FAILED_EBPF_CONVERSION _ ("Failed to convert eBPF back to cBPF")
-#define M_THREAD_HAS_FILTER_COUNT _ ("Thread %d has %d seccomp_filters")
+#define M_PROCESS_HAS_FILTER_COUNT _ ("Process %d has %d seccomp_filters")
 #define M_UNKNOWN_PROG_ABORTED                                                \
   _ ("eBPF program failed to locate seccomp filters, %s")
 #define M_UNKNOWN_TASK_ABORTED                                                \
   _ ("eBPF program failed to retrieve seccomp filter in a task, %s")
-#define M_PID_NOT_FOUND _ ("Thread %d does not exist")
+#define M_PID_NOT_FOUND _ ("Process %d does not exist")
 #define M_CAPTURE_PID_HELP                                                    \
   _ ("please read output from /sys/kernel/debug/tracing/trace_pipe for "      \
      "details.")
@@ -184,7 +184,7 @@ _ ("Ceccomp is in seccomp mode, fetching seccomp filters of other process " \
 #define M_FAILED_CREATE_RINGBUF _ ("Failed to create ring buffer")
 #define M_FAILED_ATTACH _ ("Failed to attach eBPF prog")
 #define M_CAPTURE_EBPF_IN_TASK                                                \
-  _ ("Capturing new seccomp filter in thread %d: %s")
+  _ ("Capturing new seccomp filter in process %d: %s")
 #define M_CAPTURE_DISABLED                                                    \
   _ ("Capture is disabled during configuration, probably due to absence of "  \
      "libbpf. You may rebuild it with libbpf support.")

@@ -431,9 +431,9 @@ eperm_seize (pid_t pid)
   kthread_mode mode = is_proc_kthread (pid);
   if ((int)mode == PROCFS_ERROR)
     error ("%s %s, %s", M_PROCFS_NOT_ACCESSIBLE, ACTION_PTRACE_SEIZE,
-           M_CAP_SYS_PTRACE_OR_KTHREAD);
+           M_CAP_SYS_PTRACE_OR_KPROCESS);
   if (mode == STATUS_KTHREAD)
-    error ("%s", M_SEIZING_KERNEL_THREAD);
+    error ("%s", M_SEIZING_KERNEL_PROCESS);
 
   pid_t tracer = get_tracer_pid (pid);
   assert (tracer != PROCFS_ERROR);

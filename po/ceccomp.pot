@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-10 12:08+0800\n"
+"POT-Creation-Date: 2026-08-11 17:35+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -504,7 +504,7 @@ msgstr ""
 
 #: ../include/utils/error.h:171
 #, c-format
-msgid "Thread %d has %d seccomp_filters"
+msgid "Process %d has %d seccomp_filters"
 msgstr ""
 
 #: ../include/utils/error.h:173
@@ -519,7 +519,7 @@ msgstr ""
 
 #: ../include/utils/error.h:176
 #, c-format
-msgid "Thread %d does not exist"
+msgid "Process %d does not exist"
 msgstr ""
 
 #: ../include/utils/error.h:178
@@ -548,24 +548,24 @@ msgstr ""
 msgid "Failed to attach eBPF prog"
 msgstr ""
 
-#: ../include/utils/error.h:186
+#: ../include/utils/error.h:187
 #, c-format
-msgid "Capturing new seccomp filter in thread %d: %s"
+msgid "Capturing new seccomp filter in process %d: %s"
 msgstr ""
 
-#: ../include/utils/error.h:188
+#: ../include/utils/error.h:189
 msgid ""
 "Capture is disabled during configuration, probably due to absence of libbpf. "
 "You may rebuild it with libbpf support."
 msgstr ""
 
-#: ../include/utils/error.h:191
+#: ../include/utils/error.h:192
 msgid ""
 "Loading eBPF program require CAP_SYS_ADMIN || (CAP_BPF && CAP_PERFMON), you "
 "may rerun ceccomp with sudo."
 msgstr ""
 
-#: ../include/utils/error.h:194
+#: ../include/utils/error.h:195
 #, c-format
 msgid "Your kernel (%d.%d) is so old that task_from_pid is not available."
 msgstr ""

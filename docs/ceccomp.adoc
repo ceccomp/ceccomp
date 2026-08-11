@@ -295,7 +295,7 @@ on _x86_64_, other architecture may require higher kernel version to run this
 function.
 
 If *PID* is set, an eBPF program to extract installed seccomp filters in the
-corresponding thread will be installed. Note that inside kernel, `pid` is
+corresponding process will be installed. Note that inside kernel, `pid` is
 referred thread id and `tgid` is referred to process id. The eBPF program
 directly pulls eBPF insns migrated from original seccomp filters out and
 converts them back to perform <<disasm - DISASSEMBLE>>. This function does
@@ -314,7 +314,7 @@ WHEN::
 Argument description can be found in <<asm - ASSEMBLE>> section.
 
 PID::
-Which *thread* to extract seccomp filter insns from.
+Which *process* to extract seccomp filter insns from.
 
 NOTE: All *PID* presented in either "global capture" or "capture pid" are
 *INITIAL NAMESPACE PID*, not PID in current namespace. It's recommended that
@@ -560,7 +560,7 @@ Globally capture:
 
 image::capture.webp[]
 
-Capture filters in a thread:
+Capture filters in a process:
 
 image::capture_pid.webp[]
 endif::[]
