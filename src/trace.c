@@ -4,6 +4,8 @@
 #include "main.h"
 #include "utils/error.h"
 #include "utils/logger.h"
+#define _NO_VMLINUX_
+#include "utils/ebpf_share.h"
 #include "utils/proc_status.h"
 #include <assert.h>
 #include <errno.h>
@@ -69,19 +71,28 @@ check_scmp_mode (const syscall_info *info, int pid, long *rval)
   uint64_t nr = info->entry.nr;
   uint64_t arg0 = info->entry.args[0];
   uint64_t arg1 = info->entry.args[1];
+  uint32_t flags;
 
   if (nr == seccomp_nr
       && (arg0 == SECCOMP_SET_MODE_FILTER || arg0 == SECCOMP_SET_MODE_STRICT))
-    seccomp_mode = arg0;
+    {
+      seccomp_mode = arg0;
+      flags = arg1;
+    }
   else if (nr == prctl_nr && arg0 == PR_SET_SECCOMP)
     {
+      // prctl use different macros
+      // transfer it to seccomp macros
       if (arg1 == SECCOMP_MODE_STRICT)
         arg1 = SECCOMP_SET_MODE_STRICT;
       else if (arg1 == SECCOMP_MODE_FILTER)
         arg1 = SECCOMP_SET_MODE_FILTER;
-      // prctl use different macros
-      // transfer it to seccomp macros
+      else
+        return LOAD_ELSE;
+
       seccomp_mode = arg1;
+      // prctl doesn't have seccomp flags
+      flags = 0;
     }
   else
     return LOAD_ELSE;
@@ -97,18 +108,10 @@ check_scmp_mode (const syscall_info *info, int pid, long *rval)
   assert (exit_info.op == PTRACE_SYSCALL_INFO_EXIT);
 
   *rval = exit_info.exit.rval;
-  if (*rval < 0)
-    seccomp_mode = LOAD_FAIL;
-  if (*rval > 0 && !may_be_listener_fd (pid, *rval))
-    seccomp_mode = LOAD_FAIL;
-  // clang-format off
-  // if rval > 0, it could be SECCOMP_FILTER_FLAG_NEW_LISTENER return a
-  // fd(success) or fail due to other reasons.
-  // if rval < 0, seccomp failed
-  // if rval == 0, seccomp succeed. seccomp set failed, nothing happened
-  // clang-format on
+  if (load_success (*rval, flags))
+    return seccomp_mode;
 
-  return seccomp_mode;
+  return LOAD_FAIL;
 }
 
 static size_t
@@ -274,8 +277,7 @@ handle_syscall (pid_t pid, FILE *output_fp, bool quiet, bool oneshot)
   else if (seccomp_mode == SECCOMP_SET_MODE_FILTER)
     mode_filter (&info, pid, &prog, output_fp);
 
-  if (!oneshot || seccomp_mode == LOAD_FAIL || seccomp_mode == LOAD_ELSE
-      || seccomp_mode < 0)
+  if (!oneshot || seccomp_mode == LOAD_FAIL || seccomp_mode == LOAD_ELSE)
     return false;
 
   return true;

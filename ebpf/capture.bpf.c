@@ -83,55 +83,6 @@ strict_mode (long ret, global_event *event)
   return 0;
 }
 
-// (flags & NEW_LISTENER) && !(flags & TSYNC)
-//     ret >= 0  -> success
-//     ret < 0   -> fail
-//
-// (flags & TSYNC) && !(flags & NEW_LISTENER)
-//     ret == 0  -> success
-//     ret > 0   -> fail, return TID
-//     ret < 0   -> fail
-//
-// !(flags & TSYNC) && !(flags & NEW_LISTENER)
-//     ret > 0   -> unexpected
-//     ret == 0  -> success
-//     ret < 0   -> fail
-//
-// (flags & TSYNC) && (flags & NEW_LISTENER)
-//     !(flags & TSYNC_ESRCH)
-//         ret >= 0 -> unexpected
-//         ret < 0  -> fail
-//     (flags & TSYNC_ESRCH)
-//         ret >= 0 -> success, return fd
-//         ret < 0  -> fail, return -errno
-static bool
-load_success (long ret, uint32_t flags)
-{
-#define SECCOMP_FILTER_FLAG_TSYNC (1UL << 0)
-#define SECCOMP_FILTER_FLAG_NEW_LISTENER (1UL << 3)
-#define SECCOMP_FILTER_FLAG_TSYNC_ESRCH (1UL << 4)
-  if (ret < 0)
-    return false;
-
-  if (ret == 0)
-    return true;
-
-  // ret > 0
-  if (!(flags & SECCOMP_FILTER_FLAG_NEW_LISTENER))
-    return false;
-
-  // ret > 0 and flags & SECCOMP_FILTER_FLAG_NEW_LISTENER
-  if (!(flags & SECCOMP_FILTER_FLAG_TSYNC))
-    return true;
-
-  // ret > 0 and flags & SECCOMP_FILTER_FLAG_NEW_LISTENER
-  // and flags & SECCOMP_FILTER_FLAG_TSYNC
-  if (flags & SECCOMP_FILTER_FLAG_TSYNC_ESRCH)
-    return true;
-
-  return false;
-}
-
 // caller called `prog = bpf_map_lookup_elem(&unverified_filters, &pid)`
 // So unverified_filters[pid] is not empty
 // we can use EBPF_LOG_IF_PID(bpf_map_delete_elem)
@@ -141,7 +92,7 @@ filter_mode (long ret, uint32_t flags, pid_t pid, global_event *event,
 {
   bool tmp_cond;
 
-  if (!load_success (ret, flags) != 0)
+  if (!load_success (ret, flags))
     goto failed;
 
 #if defined(__aarch64__)

@@ -56,6 +56,12 @@ typedef enum
   PROC_ARCH_OTHERS,
 } ebpf_arch;
 
+typedef struct
+{
+  pid_t target_pid;
+  pid_t trigger_pid;
+} pid_config;
+
 #if defined(__aarch64__)
 #define TIF_32BIT 22
 #define COMPAT_ARCH(tflags)                                                   \
@@ -69,10 +75,53 @@ typedef enum
 #define CHUNK_SIZE (4096 * sizeof (struct bpf_insn))
 #define CHUNK_INSN_SIZE (CHUNK_SIZE / sizeof (struct bpf_insn))
 
-typedef struct
+// (flags & NEW_LISTENER) && !(flags & TSYNC)
+//     ret >= 0  -> success
+//     ret < 0   -> fail
+//
+// (flags & TSYNC) && !(flags & NEW_LISTENER)
+//     ret == 0  -> success
+//     ret > 0   -> fail, return TID
+//     ret < 0   -> fail
+//
+// !(flags & TSYNC) && !(flags & NEW_LISTENER)
+//     ret > 0   -> unexpected
+//     ret == 0  -> success
+//     ret < 0   -> fail
+//
+// (flags & TSYNC) && (flags & NEW_LISTENER)
+//     !(flags & TSYNC_ESRCH)
+//         ret >= 0 -> unexpected
+//         ret < 0  -> fail
+//     (flags & TSYNC_ESRCH)
+//         ret >= 0 -> success, return fd
+//         ret < 0  -> fail, return -errno
+static bool
+load_success (long ret, uint32_t flags)
 {
-  pid_t target_pid;
-  pid_t trigger_pid;
-} pid_config;
+#define SECCOMP_FILTER_FLAG_TSYNC (1UL << 0)
+#define SECCOMP_FILTER_FLAG_NEW_LISTENER (1UL << 3)
+#define SECCOMP_FILTER_FLAG_TSYNC_ESRCH (1UL << 4)
+  if (ret < 0)
+    return false;
+
+  if (ret == 0)
+    return true;
+
+  // ret > 0
+  if (!(flags & SECCOMP_FILTER_FLAG_NEW_LISTENER))
+    return false;
+
+  // ret > 0 and flags & SECCOMP_FILTER_FLAG_NEW_LISTENER
+  if (!(flags & SECCOMP_FILTER_FLAG_TSYNC))
+    return true;
+
+  // ret > 0 and flags & SECCOMP_FILTER_FLAG_NEW_LISTENER
+  // and flags & SECCOMP_FILTER_FLAG_TSYNC
+  if (flags & SECCOMP_FILTER_FLAG_TSYNC_ESRCH)
+    return true;
+
+  return false;
+}
 
 #endif
