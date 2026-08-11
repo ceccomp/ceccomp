@@ -45,7 +45,7 @@
 #define M_TARGET_TRACED_BY                                                    \
   _ ("Target thread is already being traced by thread %d")
 #define M_FOUND_STRICT_MODE                                                   \
-  _ ("Thread %d loaded strict seccomp mode, which only allows read, "        \
+  _ ("Thread %d loaded strict seccomp mode, which only allows read, "         \
      "write, exit_group and sigreturn!")
 #define M_UNKNOWN_GETFILTER_ERR _ ("Unknown error when get filter: %s")
 #define M_UNKNOWN_SEIZE_ERR _ ("Unknown error when seizing thread: %s")
@@ -72,7 +72,7 @@
 #define M_GET_FILTER_UNSUPPORTED                                              \
   _ ("PTRACE_GET_SECCOMP_FILTER is not supported on your system")
 #define M_CECCOMP_IN_SECCOMP                                                  \
-  _ ("Ceccomp is in seccomp mode, fetching seccomp filters of other thread " \
+  _ ("Ceccomp is in seccomp mode, fetching seccomp filters of other thread "  \
      "is not permitted")
 #define M_GET_FILTER_UNSUPPORTED_OR_NO_FILTER                                 \
   _ ("perhaps PTRACE_GET_SECCOMP_FILTER is not supported or no seccomp "      \
@@ -183,7 +183,8 @@
 #define M_FAILED_UPDATE_MAP _ ("Failed to update eBPF map")
 #define M_FAILED_CREATE_RINGBUF _ ("Failed to create ring buffer")
 #define M_FAILED_ATTACH _ ("Failed to attach eBPF prog")
-#define M_CAPTURE_EBPF_IN_TASK _ ("Capturing new seccomp filter in thread %d: %s")
+#define M_CAPTURE_EBPF_IN_TASK                                                \
+  _ ("Capturing new seccomp filter in thread %d: %s")
 #define M_CAPTURE_DISABLED                                                    \
   _ ("Capture is disabled during configuration, probably due to absence of "  \
      "libbpf. You may rebuild it with libbpf support.")

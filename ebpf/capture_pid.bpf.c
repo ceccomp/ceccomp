@@ -105,10 +105,10 @@ BPF_PROG (capture_pid, uint32_t op, uint32_t flags, void *uargs)
 
   uint32_t filter_count = 0;
   EBPF_IF (BPF_CORE_READ_INTO (&filter_count, task, seccomp.filter_count) < 0)
-  {
-    event_status = TASK_ABORTED;
-    goto end;
-  }
+    {
+      event_status = TASK_ABORTED;
+      goto end;
+    }
 
   ebpf_arch arch;
 #if defined(__aarch64__)
