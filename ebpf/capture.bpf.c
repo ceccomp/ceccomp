@@ -4,6 +4,7 @@
 #include <bpf/bpf_core_read.h>
 #include <bpf/bpf_helpers.h>
 #include <bpf/bpf_tracing.h>
+#include <linux/seccomp.h>
 #include <vmlinux.h>
 
 struct
@@ -83,17 +84,62 @@ strict_mode (long ret, global_event *event)
   return 0;
 }
 
-// use 'ret == 0' to determine seccomp execute success temporaily
-// TODO: fix this
+// (flags & NEW_LISTENER) && !(flags & TSYNC)
+//     ret >= 0  -> success
+//     ret < 0   -> fail
+//
+// (flags & TSYNC) && !(flags & NEW_LISTENER)
+//     ret == 0  -> success
+//     ret > 0   -> fail, return TID
+//     ret < 0   -> fail
+//
+// !(flags & TSYNC) && !(flags & NEW_LISTENER)
+//     ret > 0   -> unexpected
+//     ret == 0  -> success
+//     ret < 0   -> fail
+//
+// (flags & TSYNC) && (flags & NEW_LISTENER)
+//     !(flags & TSYNC_ESRCH)
+//         ret >= 0 -> unexpected
+//         ret < 0  -> fail
+//     (flags & TSYNC_ESRCH)
+//         ret >= 0 -> success, return fd
+//         ret < 0  -> fail, return -errno
+static bool
+load_success (long ret, uint32_t flags)
+{
+  if (ret < 0)
+    return false;
+
+  if (ret == 0)
+    return true;
+
+  // ret > 0
+  if (!(flags & SECCOMP_FILTER_FLAG_NEW_LISTENER))
+    return false;
+
+  // ret > 0 and flags & SECCOMP_FILTER_FLAG_NEW_LISTENER
+  if (!(flags & SECCOMP_FILTER_FLAG_TSYNC))
+    return true;
+
+  // ret > 0 and flags & SECCOMP_FILTER_FLAG_NEW_LISTENER
+  // and flags & SECCOMP_FILTER_FLAG_TSYNC
+  if (flags & SECCOMP_FILTER_FLAG_TSYNC_ESRCH)
+    return true;
+
+  return false;
+}
+
 // caller called `prog = bpf_map_lookup_elem(&unverified_filters, &pid)`
 // So unverified_filters[pid] is not empty
 // we can use EBPF_LOG_IF_PID(bpf_map_delete_elem)
 static inline int
-filter_mode (long ret, pid_t pid, global_event *event, ebpf_prog *prog)
+filter_mode (long ret, uint32_t flags, pid_t pid, global_event *event,
+             ebpf_prog *prog)
 {
   bool tmp_cond;
 
-  if (ret != 0)
+  if (!load_success (ret, flags) != 0)
     goto failed;
 
 #if defined(__aarch64__)
@@ -170,7 +216,7 @@ BPF_PROG (seccomp_ret, uint32_t op, uint32_t flags, void *uargs, long ret)
     return strict_mode (ret, event);
 
   if (prog)
-    filter_mode (ret, pid, event, prog);
+    filter_mode (ret, flags, pid, event, prog);
   else
     bpf_ringbuf_discard (event, 0);
 
