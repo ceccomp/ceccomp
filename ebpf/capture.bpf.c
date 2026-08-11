@@ -4,7 +4,6 @@
 #include <bpf/bpf_core_read.h>
 #include <bpf/bpf_helpers.h>
 #include <bpf/bpf_tracing.h>
-#include <linux/seccomp.h>
 #include <vmlinux.h>
 
 struct
@@ -108,6 +107,9 @@ strict_mode (long ret, global_event *event)
 static bool
 load_success (long ret, uint32_t flags)
 {
+#define SECCOMP_FILTER_FLAG_TSYNC (1UL << 0)
+#define SECCOMP_FILTER_FLAG_NEW_LISTENER (1UL << 3)
+#define SECCOMP_FILTER_FLAG_TSYNC_ESRCH (1UL << 4)
   if (ret < 0)
     return false;
 
