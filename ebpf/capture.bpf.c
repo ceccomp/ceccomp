@@ -91,36 +91,24 @@ strict_mode (long ret, global_event *event)
 static inline int
 filter_mode (long ret, pid_t pid, global_event *event, ebpf_prog *prog)
 {
-  if (ret != 0)
-    {
-      bpf_ringbuf_discard (event, 0);
-      EBPF_LOG_IF_PID (bpf_map_delete_elem (&unverified_filters, &pid) < 0,
-                       pid);
-      return 0;
-    }
-
   bool tmp_cond;
+
+  if (ret != 0)
+    goto failed;
+
 #if defined(__aarch64__)
   struct task_struct *task = bpf_get_current_task_btf ();
   unsigned long tflags;
   EBPF_IF_PID (BPF_CORE_READ_INTO (&tflags, task, thread_info.flags) < 0, pid)
-    {
-      bpf_ringbuf_discard (event, 0);
-      EBPF_LOG_IF_PID (bpf_map_delete_elem (&unverified_filters, &pid) < 0,
-                       pid);
-      return 0;
-    }
+    goto failed;
+
   event->ebpf_arch = COMPAT_ARCH (tflags);
 #elif defined(__x86_64__)
   struct task_struct *task = bpf_get_current_task_btf ();
   uint32_t status;
   EBPF_IF_PID (BPF_CORE_READ_INTO (&status, task, thread_info.status) < 0, pid)
-    {
-      bpf_ringbuf_discard (event, 0);
-      EBPF_LOG_IF_PID (bpf_map_delete_elem (&unverified_filters, &pid) < 0,
-                       pid);
-      return 0;
-    }
+    goto failed;
+
   event->ebpf_arch = COMPAT_ARCH (status);
 #else
   event->ebpf_arch = PROC_ARCH_OTHERS;
@@ -128,22 +116,17 @@ filter_mode (long ret, pid_t pid, global_event *event, ebpf_prog *prog)
 
   EBPF_IF_PID (bpf_get_current_comm (event->comm, sizeof (event->comm)) < 0,
                pid)
-    {
-      bpf_ringbuf_discard (event, 0);
-      EBPF_LOG_IF_PID (bpf_map_delete_elem (&unverified_filters, &pid) < 0,
-                       pid);
-      return 0;
-    }
+    goto failed;
 
   EBPF_IF_PID (bpf_core_read (&event->prog, sizeof (ebpf_prog), prog) < 0, pid)
-    {
-      bpf_ringbuf_discard (event, 0);
-      EBPF_LOG_IF_PID (bpf_map_delete_elem (&unverified_filters, &pid) < 0,
-                       pid);
-      return 0;
-    }
+    goto failed;
 
   bpf_ringbuf_submit (event, 0);
+  EBPF_LOG_IF_PID (bpf_map_delete_elem (&unverified_filters, &pid) < 0, pid);
+  return 0;
+
+failed:
+  bpf_ringbuf_discard (event, 0);
   EBPF_LOG_IF_PID (bpf_map_delete_elem (&unverified_filters, &pid) < 0, pid);
   return 0;
 }
