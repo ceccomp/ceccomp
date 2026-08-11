@@ -108,7 +108,16 @@ check_scmp_mode (const syscall_info *info, int pid, long *rval)
   assert (exit_info.op == PTRACE_SYSCALL_INFO_EXIT);
 
   *rval = exit_info.exit.rval;
-  if (load_success (*rval, flags))
+  bool succeed = load_success (*rval, flags);
+  if ((flags & SECCOMP_FILTER_FLAG_NEW_LISTENER)
+      && (flags & SECCOMP_FILTER_FLAG_TSYNC)
+      && (flags & SECCOMP_FILTER_FLAG_TSYNC_ESRCH))
+    succeed = may_be_listener_fd (pid, *rval);
+  else if ((flags & SECCOMP_FILTER_FLAG_NEW_LISTENER)
+           && !(flags & SECCOMP_FILTER_FLAG_TSYNC))
+    succeed = may_be_listener_fd (pid, *rval);
+
+  if (succeed)
     return seccomp_mode;
 
   return LOAD_FAIL;
