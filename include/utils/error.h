@@ -28,28 +28,28 @@
   _ ("%u byte(s) at the end of input could not fit into a filter")
 
 // trace
-#define M_START_TRACING _ ("Start tracing thread %d")
+#define M_START_TRACING _ ("Start tracing process %d")
 #define M_PEEKDATA_FAILED_ADR _ ("Peekdata failed at %p")
 #define M_EXECV_ERR _ ("Failed to execute new program")
-#define M_PROCESS_FORK _ ("Thread %d spawned a new pid %d")
-#define M_PROCESS_EXIT _ ("Thread %d exited")
-#define M_PID_BPF_SECCOMP _ ("Thread %d invoked seccomp (%s, %s, &prog)")
+#define M_PROCESS_FORK _ ("Process %d spawned a new pid %d")
+#define M_PROCESS_EXIT _ ("Process %d exited")
+#define M_PID_BPF_SECCOMP _ ("Process %d invoked seccomp (%s, %s, &prog)")
 #define M_PID_BPF_PRCTL                                                       \
-  _ ("Thread %d invoked prctl (PR_SET_SECCOMP, %s, &prog)")
-#define M_PID_BPF_LOAD_FAIL _ ("Thread %d failed to load seccomp filter: %s")
+  _ ("Process %d invoked prctl (PR_SET_SECCOMP, %s, &prog)")
+#define M_PID_BPF_LOAD_FAIL _ ("Process %d failed to load seccomp filter: %s")
 #define M_BPF_FAIL_UNKNOWN _ ("Unknown reason")
 #define M_PROCFS_NOT_ACCESSIBLE _ ("Procfs not accessible, unable to perform")
 #define M_NOT_AN_CBPF _ ("Found unresolvable non-classic BPF, skipping")
 #define M_SEIZING_KERNEL_THREAD _ ("Kernel thread can not be seized")
-#define M_NO_FILTER_FOUND _ ("No seccomp filters found in thread %d")
+#define M_NO_FILTER_FOUND _ ("No seccomp filters found in process %d")
 #define M_TARGET_TRACED_BY                                                    \
-  _ ("Target thread is already being traced by thread %d")
+  _ ("Target process is already being traced by process %d")
 #define M_FOUND_STRICT_MODE                                                   \
-  _ ("Thread %d loaded strict seccomp mode, which only allows read, "         \
+  _ ("Process %d loaded strict seccomp mode, which only allows read, "        \
      "write, exit_group and sigreturn!")
 #define M_UNKNOWN_GETFILTER_ERR _ ("Unknown error when get filter: %s")
-#define M_UNKNOWN_SEIZE_ERR _ ("Unknown error when seizing thread: %s")
-#define M_SEIZE_NONEXIST_PROC _ ("The thread to seize does not exist")
+#define M_UNKNOWN_SEIZE_ERR _ ("Unknown error when seizing process: %s")
+#define M_SEIZE_NONEXIST_PROC _ ("The process to seize does not exist")
 // no translation due to terms
 #define ACTION_GET_FILTER "ptrace get seccomp filters"
 #define ACTION_PTRACE_SEIZE "ptrace seizing"
@@ -62,7 +62,7 @@
 #define M_REQUIRE_CAP_SYS_ADMIN                                               \
   _ ("Run with CAP_SYS_ADMIN capability to fetch seccomp filters")
 #define M_REQUIRE_CAP_SYS_PTRACE                                              \
-  _ ("Run with CAP_SYS_PTRACE capability to seize a foreign thread")
+  _ ("Run with CAP_SYS_PTRACE capability to seize a foreign process")
 #define M_CANNOT_WORK_FROM_32_TO_64                                           \
   _ ("32-bit tracer can not ptrace 64-bit tracee")
 #define M_TRACEE_ARCH_NOT_SUPPORTED                                           \
@@ -72,11 +72,11 @@
 #define M_GET_FILTER_UNSUPPORTED                                              \
   _ ("PTRACE_GET_SECCOMP_FILTER is not supported on your system")
 #define M_CECCOMP_IN_SECCOMP                                                  \
-  _ ("Ceccomp is in seccomp mode, fetching seccomp filters of other thread "  \
-     "is not permitted")
+_ ("Ceccomp is in seccomp mode, fetching seccomp filters of other process " \
+   "is not permitted")
 #define M_GET_FILTER_UNSUPPORTED_OR_NO_FILTER                                 \
   _ ("perhaps PTRACE_GET_SECCOMP_FILTER is not supported or no seccomp "      \
-     "filter in target thread")
+     "filter in target process")
 
 // parse_args
 #define M_INVALID_COLOR_MODE _ ("Invalid color mode")

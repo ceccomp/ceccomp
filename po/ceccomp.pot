@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-11 14:33+0800\n"
+"POT-Creation-Date: 2026-08-10 12:08+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -125,7 +125,7 @@ msgstr ""
 
 #: ../include/utils/error.h:31
 #, c-format
-msgid "Start tracing thread %d"
+msgid "Start tracing process %d"
 msgstr ""
 
 #: ../include/utils/error.h:32
@@ -139,27 +139,27 @@ msgstr ""
 
 #: ../include/utils/error.h:34
 #, c-format
-msgid "Thread %d spawned a new pid %d"
+msgid "Process %d spawned a new pid %d"
 msgstr ""
 
 #: ../include/utils/error.h:35
 #, c-format
-msgid "Thread %d exited"
+msgid "Process %d exited"
 msgstr ""
 
 #: ../include/utils/error.h:36
 #, c-format
-msgid "Thread %d invoked seccomp (%s, %s, &prog)"
+msgid "Process %d invoked seccomp (%s, %s, &prog)"
 msgstr ""
 
 #: ../include/utils/error.h:38
 #, c-format
-msgid "Thread %d invoked prctl (PR_SET_SECCOMP, %s, &prog)"
+msgid "Process %d invoked prctl (PR_SET_SECCOMP, %s, &prog)"
 msgstr ""
 
 #: ../include/utils/error.h:39
 #, c-format
-msgid "Thread %d failed to load seccomp filter: %s"
+msgid "Process %d failed to load seccomp filter: %s"
 msgstr ""
 
 #: ../include/utils/error.h:40
@@ -180,18 +180,18 @@ msgstr ""
 
 #: ../include/utils/error.h:44
 #, c-format
-msgid "No seccomp filters found in thread %d"
+msgid "No seccomp filters found in process %d"
 msgstr ""
 
 #: ../include/utils/error.h:46
 #, c-format
-msgid "Target thread is already being traced by thread %d"
+msgid "Target process is already being traced by process %d"
 msgstr ""
 
 #: ../include/utils/error.h:48
 #, c-format
 msgid ""
-"Thread %d loaded strict seccomp mode, which only allows read, write, "
+"Process %d loaded strict seccomp mode, which only allows read, write, "
 "exit_group and sigreturn!"
 msgstr ""
 
@@ -202,11 +202,11 @@ msgstr ""
 
 #: ../include/utils/error.h:51
 #, c-format
-msgid "Unknown error when seizing thread: %s"
+msgid "Unknown error when seizing process: %s"
 msgstr ""
 
 #: ../include/utils/error.h:52
-msgid "The thread to seize does not exist"
+msgid "The process to seize does not exist"
 msgstr ""
 
 #: ../include/utils/error.h:57
@@ -224,7 +224,7 @@ msgid "Run with CAP_SYS_ADMIN capability to fetch seccomp filters"
 msgstr ""
 
 #: ../include/utils/error.h:65
-msgid "Run with CAP_SYS_PTRACE capability to seize a foreign thread"
+msgid "Run with CAP_SYS_PTRACE capability to seize a foreign process"
 msgstr ""
 
 #: ../include/utils/error.h:67
@@ -246,14 +246,14 @@ msgstr ""
 
 #: ../include/utils/error.h:75
 msgid ""
-"Ceccomp is in seccomp mode, fetching seccomp filters of other thread is not "
+"Ceccomp is in seccomp mode, fetching seccomp filters of other process is not "
 "permitted"
 msgstr ""
 
 #: ../include/utils/error.h:78
 msgid ""
 "perhaps PTRACE_GET_SECCOMP_FILTER is not supported or no seccomp filter in "
-"target thread"
+"target process"
 msgstr ""
 
 #: ../include/utils/error.h:82
