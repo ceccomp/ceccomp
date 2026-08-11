@@ -1,5 +1,6 @@
 #include "utils/ebpf_logger.h"
 #include "utils/ebpf_share.h"
+#include <asm-generic/errno-base.h>
 #include <bpf/bpf_core_read.h>
 #include <bpf/bpf_helpers.h>
 #include <bpf/bpf_tracing.h>
@@ -14,7 +15,7 @@ struct
 struct
 {
   __uint (type, BPF_MAP_TYPE_HASH);
-  __uint (max_entries, 8);
+  __uint (max_entries, 16);
   __type (key, pid_t);
   __type (value, ebpf_prog);
 } unverified_filters SEC (".maps");
@@ -48,11 +49,7 @@ BPF_PROG (seccomp_check_filter_entry, struct sock_filter *filter,
   ebpf_prog *unverified;
   EBPF_IF_PID (!(unverified = bpf_map_lookup_elem (&unverified_filters, &pid)),
                pid)
-    {
-      EBPF_LOG_IF_PID (bpf_map_delete_elem (&unverified_filters, &pid) < 0,
-                       pid);
-      return 0;
-    }
+    return 0;
 
   unverified->flen = flen;
 
@@ -86,8 +83,13 @@ strict_mode (long ret, global_event *event)
   return 0;
 }
 
+// use 'ret == 0' to determine seccomp execute success temporaily
+// TODO: fix this
+// caller called `prog = bpf_map_lookup_elem(&unverified_filters, &pid)`
+// So unverified_filters[pid] is not empty
+// we can use EBPF_LOG_IF_PID(bpf_map_delete_elem)
 static inline int
-filter_mode (long ret, pid_t pid, global_event *event)
+filter_mode (long ret, pid_t pid, global_event *event, ebpf_prog *prog)
 {
   if (ret != 0)
     {
@@ -124,8 +126,8 @@ filter_mode (long ret, pid_t pid, global_event *event)
   event->ebpf_arch = PROC_ARCH_OTHERS;
 #endif
 
-  ebpf_prog *prog;
-  EBPF_IF_PID (!(prog = bpf_map_lookup_elem (&unverified_filters, &pid)), pid)
+  EBPF_IF_PID (bpf_get_current_comm (event->comm, sizeof (event->comm)) < 0,
+               pid)
     {
       bpf_ringbuf_discard (event, 0);
       EBPF_LOG_IF_PID (bpf_map_delete_elem (&unverified_filters, &pid) < 0,
@@ -146,7 +148,6 @@ filter_mode (long ret, pid_t pid, global_event *event)
   return 0;
 }
 
-// use 'ret == 0' to determine seccomp execute success temporaily
 SEC ("fexit/do_seccomp")
 int
 BPF_PROG (seccomp_ret, uint32_t op, uint32_t flags, void *uargs, long ret)
@@ -157,15 +158,25 @@ BPF_PROG (seccomp_ret, uint32_t op, uint32_t flags, void *uargs, long ret)
   uint32_t pid = bpf_get_current_pid_tgid ();
   if (op == SECCOMP_GET_ACTION_AVAIL || op == SECCOMP_GET_NOTIF_SIZES)
     return 0;
+  if (op != SECCOMP_SET_MODE_STRICT && op != SECCOMP_SET_MODE_FILTER)
+    return 0;
 
   global_event *event;
+  ebpf_prog *prog;
   bool tmp_cond;
+
+  // If kernel drop filter before seccomp_check_filter,
+  // unverified_filters[pid] should be empty.
+  // bpf_map_lookup_elem would fail, and this is expected
+  prog = bpf_map_lookup_elem (&unverified_filters, &pid);
+
   EBPF_IF_PID (!(event = bpf_ringbuf_reserve (&scmp_events,
                                               sizeof (global_event), 0)),
                pid)
     {
-      EBPF_LOG_IF_PID (bpf_map_delete_elem (&unverified_filters, &pid) < 0,
-                       pid);
+      if (prog)
+        EBPF_LOG_IF_PID ((bpf_map_delete_elem (&unverified_filters, &pid)) < 0,
+                         pid);
       return 0;
     }
 
@@ -175,8 +186,11 @@ BPF_PROG (seccomp_ret, uint32_t op, uint32_t flags, void *uargs, long ret)
   if (op == SECCOMP_SET_MODE_STRICT)
     return strict_mode (ret, event);
 
-  // op must be SECCOMP_SET_MODE_FILTER
-  filter_mode (ret, pid, event);
+  if (prog)
+    filter_mode (ret, pid, event, prog);
+  else
+    bpf_ringbuf_discard (event, 0);
+
   return 0;
 }
 

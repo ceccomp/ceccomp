@@ -244,7 +244,7 @@ on_events (void *ctx, void *data, unsigned long size)
       return 0;
     }
   // event->op == SECCOMP_SET_MODE_FILTER
-  info (M_CAPTURE_EBPF_IN_TASK, event->pid);
+  info (M_CAPTURE_EBPF_IN_TASK, event->pid, event->comm);
   fprog prog = { .len = event->prog.flen, .filter = event->prog.filters };
 
   c->scmp_arch = trans_ebpf_arch (event->ebpf_arch, c->scmp_arch);

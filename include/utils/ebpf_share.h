@@ -41,6 +41,7 @@ typedef struct
 typedef struct
 {
   uint32_t ebpf_arch;
+  char comm[16];
   uint32_t op;
   pid_t pid;
   ebpf_prog prog;

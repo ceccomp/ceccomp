@@ -183,7 +183,7 @@
 #define M_FAILED_UPDATE_MAP _ ("Failed to update eBPF map")
 #define M_FAILED_CREATE_RINGBUF _ ("Failed to create ring buffer")
 #define M_FAILED_ATTACH _ ("Failed to attach eBPF prog")
-#define M_CAPTURE_EBPF_IN_TASK _ ("Capturing new seccomp filter in thread %d")
+#define M_CAPTURE_EBPF_IN_TASK _ ("Capturing new seccomp filter in thread %d: %s")
 #define M_CAPTURE_DISABLED                                                    \
   _ ("Capture is disabled during configuration, probably due to absence of "  \
      "libbpf. You may rebuild it with libbpf support.")
