@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ceccomp 4.3\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-11 17:34+0800\n"
-"PO-Revision-Date: 2026-08-11 17:35+0800\n"
+"POT-Creation-Date: 2026-08-12 13:42+0800\n"
+"PO-Revision-Date: 2026-08-12 13:42+0800\n"
 "Last-Translator: Rocket Ma <marocketbd@gmail.com>\n"
 "Language-Team: Chinese <ma2014119@outlook.com>\n"
 "Language: zh_CN\n"
@@ -597,8 +597,8 @@ msgstr "无法附加到 eBPF 程序"
 
 #: ../include/utils/error.h:187
 #, c-format
-msgid "Capturing new seccomp filter in process %d: %s"
-msgstr "在进程 %d: %s 中捕获新 seccomp 过滤器"
+msgid "Capturing new seccomp filter in process %d (%s)"
+msgstr "在进程 %d (%s) 中捕获新 seccomp 过滤器"
 
 #: ../include/utils/error.h:189
 msgid ""
