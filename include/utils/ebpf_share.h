@@ -7,6 +7,7 @@
 #include <linux/bpf.h>
 #include <linux/bpf_common.h>
 #endif
+#include "attributes.h"
 
 #ifndef BPF_MAXINSNS
 #define BPF_MAXINSNS 4096
@@ -77,17 +78,12 @@ typedef struct
 
 // (flags & NEW_LISTENER) && !(flags & TSYNC)
 //     ret >= 0  -> success
-//     ret < 0   -> fail
 //
 // (flags & TSYNC) && !(flags & NEW_LISTENER)
 //     ret == 0  -> success
-//     ret > 0   -> fail, return TID
-//     ret < 0   -> fail
 //
 // !(flags & TSYNC) && !(flags & NEW_LISTENER)
-//     ret > 0   -> unexpected
 //     ret == 0  -> success
-//     ret < 0   -> fail
 //
 // (flags & TSYNC) && (flags & NEW_LISTENER)
 //     !(flags & TSYNC_ESRCH)
@@ -95,8 +91,7 @@ typedef struct
 //         ret < 0  -> fail
 //     (flags & TSYNC_ESRCH)
 //         ret >= 0 -> success, return fd
-//         ret < 0  -> fail, return -errno
-static inline bool
+AttrConst static inline bool
 load_success (long ret, uint32_t flags)
 {
 #define SECCOMP_FILTER_FLAG_TSYNC (1UL << 0)
