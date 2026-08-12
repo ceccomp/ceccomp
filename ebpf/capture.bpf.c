@@ -1,6 +1,5 @@
 #include "utils/ebpf_logger.h"
 #include "utils/ebpf_share.h"
-#include <asm-generic/errno-base.h>
 #include <bpf/bpf_core_read.h>
 #include <bpf/bpf_helpers.h>
 #include <bpf/bpf_tracing.h>
