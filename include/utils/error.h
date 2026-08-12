@@ -40,7 +40,7 @@
 #define M_BPF_FAIL_UNKNOWN _ ("Unknown reason")
 #define M_PROCFS_NOT_ACCESSIBLE _ ("Procfs not accessible, unable to perform")
 #define M_NOT_AN_CBPF _ ("Found unresolvable non-classic BPF, skipping")
-#define M_SEIZING_KERNEL_PROCESS _ ("Kernel process can not be seized")
+#define M_SEIZING_KERNEL_THREAD _ ("Kernel thread can not be seized")
 #define M_NO_FILTER_FOUND _ ("No seccomp filters found in process %d")
 #define M_TARGET_TRACED_BY                                                    \
   _ ("Target process is already being traced by process %d")
@@ -57,8 +57,8 @@
   _ ("Unexpected race condition detected when reading seccomp filters, "      \
      "please consider use eBPF-based trace in next version")
 
-#define M_CAP_SYS_PTRACE_OR_KPROCESS                                          \
-  _ ("perhaps seizing kprocess or lacking CAP_SYS_PTRACE")
+#define M_CAP_SYS_PTRACE_OR_KTHREAD                                           \
+  _ ("perhaps seizing kthread or lacking CAP_SYS_PTRACE")
 #define M_REQUIRE_CAP_SYS_ADMIN                                               \
   _ ("Run with CAP_SYS_ADMIN capability to fetch seccomp filters")
 #define M_REQUIRE_CAP_SYS_PTRACE                                              \
