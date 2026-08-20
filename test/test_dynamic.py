@@ -4,8 +4,20 @@ from subprocess import PIPE, DEVNULL
 import signal
 import time
 import select
+from enum import IntEnum
 
-def is_not_cap_sys_admin() -> str | None:
+class UnitTests(IntEnum):
+    TRACE = 0
+    PROBE = 1
+    SEIZE = 2
+    TRACE_PID = 3
+    FLAGS = 4
+    LOTS_OF_FILTERS = 5
+
+    def arg(self) -> str:
+        return str(self.value)
+
+def lookup_self_caps() -> str | int:
     try:
         with open('/proc/self/status') as f:
             for line in f:
@@ -16,10 +28,25 @@ def is_not_cap_sys_admin() -> str | None:
                 return 'Capability can not be found in status'
     except OSError:
         return 'Can not query /proc to know capability'
+    return capeff
 
+def is_not_cap_sys_admin() -> str | None:
+    capeff = lookup_self_caps()
+    if isinstance(capeff, str):
+        return capeff
     if bool(capeff & (1 << 21)): # CAP_SYS_ADMIN = 21
         return None
     return 'Lack of CAP_SYS_ADMIN capability'
+
+def is_not_cap_bpf() -> str | None:
+    capeff = lookup_self_caps()
+    if isinstance(capeff, str):
+        return capeff
+    if capeff & ((1 << 39) | (1 << 38)) == ((1 << 39) | (1 << 38)): # CAP_BPF + CAP_PERFMON
+        return None
+    if bool(capeff & (1 << 21)): # CAP_SYS_ADMIN = 21
+        return None
+    return 'Incapable of loading eBPF'
 
 TEST_BIN = PROJ_DIR / 'build' / 'test'
 TEST_SRC = PROJ_DIR / 'test' / 'unit_test.c'
@@ -64,7 +91,8 @@ def fill_pid(log: str, pid: int) -> str:
 def test_probe(errns: SimpleNamespace):
     piper, pipew = os.pipe()
     os.set_inheritable(pipew, True)
-    argv = [CECCOMP, 'probe', *COMMON_OPTS, '-o', f'/proc/self/fd/{pipew}', TEST, '1']
+    argv = [CECCOMP, 'probe', *COMMON_OPTS, '-o', f'/proc/self/fd/{pipew}',
+            TEST, UnitTests.PROBE.arg()]
     _, stdout, stderr = run_process(argv, False, pipew)
     os.close(pipew)
     errns.stderr = stderr
@@ -87,7 +115,8 @@ def test_probe(errns: SimpleNamespace):
 def test_trace(errns: SimpleNamespace):
     piper, pipew = os.pipe()
     os.set_inheritable(pipew, True)
-    argv = [CECCOMP, 'trace', *COMMON_OPTS, '-o', f'/proc/self/fd/{pipew}', TEST, '0']
+    argv = [CECCOMP, 'trace', *COMMON_OPTS, '-o', f'/proc/self/fd/{pipew}',
+            TEST, UnitTests.TRACE.arg()]
     _, stdout, stderr = run_process(argv, False, pipew)
     os.close(pipew)
     errns.stderr = stderr
@@ -105,7 +134,7 @@ def test_trace(errns: SimpleNamespace):
 @pytest.mark.xfail(XFAIL_DYNAMIC, reason=XFAIL_REASON)
 def test_seize(errns: SimpleNamespace):
     efd = os.eventfd(0, 0)
-    tp = subprocess.Popen([TEST, '2', str(efd)],
+    tp = subprocess.Popen([TEST, UnitTests.SEIZE.arg(), str(efd)],
         stdin=DEVNULL, stdout=PIPE, stderr=DEVNULL, text=True, pass_fds=(efd,))
     pid = int(tp.stdout.readline().split('=')[1])
 
@@ -152,7 +181,7 @@ def test_trace_pid(errns: SimpleNamespace):
         pytest.skip(msg)
 
     efd = os.eventfd(0, 0)
-    tp = subprocess.Popen([TEST, '3', str(efd)],
+    tp = subprocess.Popen([TEST, UnitTests.TRACE_PID.arg(), str(efd)],
         stdin=DEVNULL, stdout=PIPE, stderr=DEVNULL, text=True, pass_fds=(efd,))
     pid = int(tp.stdout.readline().split('=')[1])
 
@@ -172,7 +201,8 @@ def test_trace_pid(errns: SimpleNamespace):
 def test_seccomp_flags(errns: SimpleNamespace):
     piper, pipew = os.pipe()
     os.set_inheritable(pipew, True)
-    argv = [CECCOMP, 'trace', *COMMON_OPTS, '-o', f'/proc/self/fd/{pipew}', TEST, '4']
+    argv = [CECCOMP, 'trace', *COMMON_OPTS, '-o', f'/proc/self/fd/{pipew}',
+            TEST, UnitTests.FLAGS.arg()]
     _, stdout, stderr = run_process(argv, False, pipew)
     os.close(pipew)
     pid = int(stdout.split('=')[1])
