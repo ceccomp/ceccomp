@@ -168,7 +168,7 @@
 #define M_EBPF_INPUT_ERROR                                                    \
   _ ("#%u: Input eBPF insn does not meet assertion at %s#L%d: %s\n%s")
 #define M_FAILED_EBPF_CONVERSION _ ("Failed to convert eBPF back to cBPF")
-#define M_PROCESS_HAS_FILTER_COUNT _ ("Process %d has %d seccomp_filters")
+#define M_PROCESS_HAS_FILTER_COUNT _ ("Process %d has %d seccomp filter(s)")
 #define M_UNKNOWN_PROG_ABORTED                                                \
   _ ("eBPF program failed to locate seccomp filters, %s")
 #define M_UNKNOWN_TASK_ABORTED                                                \

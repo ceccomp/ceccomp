@@ -139,10 +139,10 @@ on_pid_events (void *ctx, void *data, unsigned long size)
   static uint32_t insn_offset = 0;
   static bool count_printed = false;
   if (!count_printed)
-  {
-    info (M_PROCESS_HAS_FILTER_COUNT, c->target_pid, event->filter_count);
-    count_printed = true;
-  }
+    {
+      info (M_PROCESS_HAS_FILTER_COUNT, c->target_pid, event->filter_count);
+      count_printed = true;
+    }
 
   switch (event->status)
     {
@@ -194,7 +194,8 @@ capture_pid (pid_t pid, uint32_t scmp_arch)
 {
   struct capture_pid_bpf *skel;
   struct ring_buffer *rb;
-  pid_event_ctx ctx = { .ebpf_insns = NULL, .scmp_arch = scmp_arch, .target_pid = pid };
+  pid_event_ctx ctx
+      = { .ebpf_insns = NULL, .scmp_arch = scmp_arch, .target_pid = pid };
   int32_t err = 0;
   uint32_t zero = 0;
   pid_config config = { .target_pid = pid, .trigger_pid = getpid () };

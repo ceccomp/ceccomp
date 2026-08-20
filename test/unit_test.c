@@ -25,6 +25,8 @@ enum test_case
   TEST_SEIZE = 2,
   TEST_TRACE_PID = 3,
   TEST_FLAGS = 4,
+  TEST_LOTS_OF_FILTERS = 5,
+  TEST_CAPTURE = 6,
 };
 
 static const struct sock_filter filters[] = {
@@ -124,6 +126,26 @@ main (int argc, char **argv)
       syscall (SYS_seccomp, SECCOMP_SET_MODE_FILTER,
                SECCOMP_FILTER_FLAG_LOG | SECCOMP_FILTER_FLAG_NEW_LISTENER,
                &prog);
+      break;
+    case TEST_LOTS_OF_FILTERS:
+      prctl (PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0);
+      struct sock_filter stk_rules[] = {
+        BPF_STMT (BPF_LD | BPF_W | BPF_ABS,
+                  offsetof (struct seccomp_data, args[5]) + 4),
+        BPF_JUMP (BPF_JMP | BPF_JGT | BPF_K, 0, 1, 0),
+        BPF_STMT (BPF_RET | BPF_K, SECCOMP_RET_ALLOW),
+        BPF_STMT (BPF_RET | BPF_K, SECCOMP_RET_LOG),
+      };
+      struct sock_fprog stk_prog
+          = { .len = ARRAY_SIZE (stk_rules), .filter = stk_rules };
+      for (int i = 0; i < 40; i++)
+        {
+          stk_rules[1].k = 0x80000000 | i;
+          syscall (SYS_seccomp, SECCOMP_SET_MODE_FILTER, 0, &stk_prog);
+        }
+      printf ("pid=%d\n", getpid ());
+      assert (efd != 0);
+      assert (read (efd, &sem, 8) == 8);
       break;
     default:
       load_filter (true);
