@@ -1,2 +1,7 @@
+If:
+  PathMatch: .*\.(h|c)
+CompileFlags:
+  Add: [-xc]
+
 CompileFlags:
   Add: [-isystem, include/ebpf]

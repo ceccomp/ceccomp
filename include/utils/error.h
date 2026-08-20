@@ -174,9 +174,7 @@
 #define M_UNKNOWN_TASK_ABORTED                                                \
   _ ("eBPF program failed to retrieve seccomp filter in a task, %s")
 #define M_PID_NOT_FOUND _ ("Process %d does not exist")
-#define M_CAPTURE_PID_HELP                                                    \
-  _ ("please read output from /sys/kernel/debug/tracing/trace_pipe for "      \
-     "details.")
+#define M_CAPTURE_PID_HELP _ ("please run 'bpftool prog trace' for details.")
 #define M_PROG_TRUNCATED                                                      \
   _ ("Too many seccomp filters (> 32) in a task! The rest are truncated.")
 #define M_FAILED_OPEN_LOAD _ ("Failed to open or load eBPF prog %s")
