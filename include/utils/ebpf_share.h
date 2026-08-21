@@ -76,21 +76,12 @@ typedef struct
 #define CHUNK_SIZE (4096 * sizeof (struct bpf_insn))
 #define CHUNK_INSN_SIZE (CHUNK_SIZE / sizeof (struct bpf_insn))
 
-// (flags & NEW_LISTENER) && !(flags & TSYNC)
-//     ret >= 0  -> success
-//
-// (flags & TSYNC) && !(flags & NEW_LISTENER)
-//     ret == 0  -> success
-//
-// !(flags & TSYNC) && !(flags & NEW_LISTENER)
-//     ret == 0  -> success
-//
-// (flags & TSYNC) && (flags & NEW_LISTENER)
-//     !(flags & TSYNC_ESRCH)
-//         ret >= 0 -> unexpected
-//         ret < 0  -> fail
-//     (flags & TSYNC_ESRCH)
-//         ret >= 0 -> success, return fd
+// success conditions:
+// NEW_LISTENER && !TSYNC                -> ret >= 0
+// TSYNC && !NEW_LISTENER                -> ret == 0
+// !TSYNC && !NEW_LISTENER               -> ret == 0
+// TSYNC && NEW_LISTENER && TSYNC_ESRCH  -> ret >= 0
+// TSYNC && NEW_LISTENER && !TSYNC_ESRCH <- EINVAL
 AttrConst static inline bool
 load_success (long ret, uint32_t flags)
 {
