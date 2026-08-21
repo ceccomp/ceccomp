@@ -24,6 +24,9 @@
 
 ## 安装
 
+> [!IMPORTANT]
+> 本软件要求一些 Linux 的特性，因此非 Linux 的内核不受支持。
+
 - Arch Linux 用户：
 
     ceccomp 已在官方 extra 仓库可用：
@@ -44,6 +47,10 @@
 
     @tesuji 帮我们在 NixOS 提交了一个 PR，但是目前进度停滞不前...
     如果您喜欢我们的软件，请在 NixOS/nixpkgs#462592 :+1: 来帮助 ceccomp 进入 nixpkgs！
+
+- 其他 Linux 发行版：
+    
+    抱歉，您需要手动安装 ceccomp。请按照以下说明操作。
 
 # 构建
 

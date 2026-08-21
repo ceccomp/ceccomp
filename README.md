@@ -24,6 +24,9 @@ ceccomp in "C-comp" (/siːˈkɒmp/) or "seccomp" (/ˈsɛk.kɒmp/).
 
 ## Install
 
+> [!IMPORTANT]
+> This software requires features from Linux, so kernels other than Linux are not supported.
+
 - Arch Linux users:
 
     ceccomp is available in official extra repo now:
@@ -44,6 +47,10 @@ ceccomp in "C-comp" (/siːˈkɒmp/) or "seccomp" (/ˈsɛk.kɒmp/).
 
     @tesuji helps us submit a PR at NixOS, but it's blocked as currently... If you
     like our software, please :+1: in NixOS/nixpkgs#462592 to help ceccomp into nixpkgs!
+
+- Other Linux distros:
+    
+    Sorry, you may need to install ceccomp manually. Please follow instructions below.
 
 # Build
 

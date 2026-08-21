@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2026-08-08 22:27+0800\n"
+"POT-Creation-Date: 2026-08-22 02:34+0800\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Rocket Ma <marocketbd@gmail.com>\n"
 "Language-Team: \n"
@@ -100,13 +100,23 @@ msgstr "[English Version](docs/ceccomp.adoc) | [中文文档](docs/ceccomp.zh_CN
 msgid "Install"
 msgstr "安装"
 
+#. type: Plain text
+#: ../README.md:29
+#, no-wrap
+msgid ""
+"> [!IMPORTANT]\n"
+"> This software requires features from Linux, so kernels other than Linux are not supported.\n"
+msgstr ""
+"> [!IMPORTANT]\n"
+"> 本软件要求一些 Linux 的特性，因此非 Linux 的内核不受支持。\n"
+
 #. type: Bullet: '- '
-#: ../README.md:28
+#: ../README.md:31
 msgid "Arch Linux users:"
 msgstr "Arch Linux 用户："
 
 #. type: Plain text
-#: ../README.md:32
+#: ../README.md:35
 #, no-wrap
 msgid ""
 "    ceccomp is available in official extra repo now:\n"
@@ -118,18 +128,18 @@ msgstr ""
 "    [![Manjaro Stable](https://repology.org/badge/version-for-repo/manjaro_stable/ceccomp.svg?header=Manjaro%20Stable)](https://repology.org/project/ceccomp/versions)\n"
 
 #. type: Bullet: '- '
-#: ../README.md:34
+#: ../README.md:37
 msgid "Debian, Ubuntu or Kali users:"
 msgstr "Debian, Ubuntu 或 Kali 用户："
 
 #. type: Plain text
-#: ../README.md:36
+#: ../README.md:39
 #, no-wrap
 msgid "    ceccomp is available with `apt` now if you are using distros below:\n"
 msgstr "    如果您在使用如下发行版，那么 ceccomp 可以使用 `apt` 获取：\n"
 
 #. type: Plain text
-#: ../README.md:42
+#: ../README.md:45
 #, no-wrap
 msgid ""
 "    [![Debian testing](https://repology.org/badge/version-for-repo/debian_14/ceccomp.svg?header=Debian%20testing)](https://repology.org/project/ceccomp/versions)\n"
@@ -145,12 +155,12 @@ msgstr ""
 "    [![Kali Linux](https://repology.org/badge/version-for-repo/kali_rolling/ceccomp.svg?header=Kali%20Linux)](https://repology.org/project/ceccomp/versions)\n"
 
 #. type: Bullet: '- '
-#: ../README.md:44
+#: ../README.md:47
 msgid "NixOS users:"
 msgstr "NixOS 用户："
 
 #. type: Plain text
-#: ../README.md:47
+#: ../README.md:50
 #, no-wrap
 msgid ""
 "    @tesuji helps us submit a PR at NixOS, but it's blocked as currently... If you\n"
@@ -159,19 +169,30 @@ msgstr ""
 "    @tesuji 帮我们在 NixOS 提交了一个 PR，但是目前进度停滞不前...\n"
 "    如果您喜欢我们的软件，请在 NixOS/nixpkgs#462592 :+1: 来帮助 ceccomp 进入 nixpkgs！\n"
 
+#. type: Bullet: '- '
+#: ../README.md:52
+msgid "Other Linux distros:"
+msgstr "其他 Linux 发行版："
+
+#. type: Plain text
+#: ../README.md:54
+#, no-wrap
+msgid "    Sorry, you may need to install ceccomp manually. Please follow instructions below.\n"
+msgstr "    抱歉，您需要手动安装 ceccomp。请按照以下说明操作。\n"
+
 #. type: Title #
-#: ../README.md:48
+#: ../README.md:55
 #, no-wrap
 msgid "Build"
 msgstr "构建"
 
 #. type: Bullet: '- '
-#: ../README.md:51
+#: ../README.md:58
 msgid "Stable installation:"
 msgstr "稳定版安装："
 
 #. type: Plain text
-#: ../README.md:59
+#: ../README.md:66
 #, no-wrap
 msgid ""
 "    Clone the whole repo, then run `./configure`. Dependencies will be detected automatically,\n"
@@ -190,7 +211,7 @@ msgstr ""
 "    请运行 `./configure --help` 查看详情。\n"
 
 #. type: Plain text
-#: ../README.md:68
+#: ../README.md:75
 #, no-wrap
 msgid ""
 "    ```sh\n"
@@ -212,18 +233,18 @@ msgstr ""
 "    ```\n"
 
 #. type: Bullet: '- '
-#: ../README.md:70
+#: ../README.md:77
 msgid "Testing installation:"
 msgstr "测试版安装："
 
 #. type: Plain text
-#: ../README.md:72
+#: ../README.md:79
 #, no-wrap
 msgid "    Clone the whole repo, and then run `./configure --devmode`.\n"
 msgstr "   克隆完整仓库，然后运行 `./configure --devmode`。\n"
 
 #. type: Plain text
-#: ../README.md:79
+#: ../README.md:86
 #, no-wrap
 msgid ""
 "    ```sh\n"
@@ -241,7 +262,7 @@ msgstr ""
 "    ```\n"
 
 #. type: Plain text
-#: ../README.md:86
+#: ../README.md:93
 #, no-wrap
 msgid ""
 "> [!NOTE]\n"
@@ -258,13 +279,13 @@ msgstr ""
 "> * Linux >= 6.2, libbpf >= 0.6.0 (捕获 PID)\n"
 
 #. type: Title ##
-#: ../README.md:87
+#: ../README.md:94
 #, no-wrap
 msgid "Run Test"
 msgstr "运行测试"
 
 #. type: Plain text
-#: ../README.md:91
+#: ../README.md:98
 msgid ""
 "Run configure and make, then invoke `pytest test` from repo root. Trace pid case will be skipped if no CAP_SYS_ADMIN. If you find some checks failed, please submit an "
 "issue to report your case."
@@ -273,76 +294,76 @@ msgstr ""
 "例。"
 
 #. type: Plain text
-#: ../README.md:94
+#: ../README.md:101
 msgid "To run the test, you need 2 extra packages: `pkgconf` (required by `pkg-config`) and `python-pytest` (required by `pytest`)."
 msgstr "要想运行测试，您需要 2 个额外的软件包: `pkgconf` (被 `pkg-config` 需要) 和 `python-pytest` (被 `pytest` 需要)。"
 
 #. type: Title ##
-#: ../README.md:95
+#: ../README.md:102
 #, no-wrap
 msgid "CheatSheet"
 msgstr "速览表"
 
 #. type: Plain text
-#: ../README.md:98
+#: ../README.md:105
 #, no-wrap
 msgid "<img width=\"2200\" height=\"1182\" alt=\"image\" src=\"https://github.com/user-attachments/assets/74a427d6-8e26-46dc-9883-9aad818d6d64\" />\n"
 msgstr "<img width=\"2200\" height=\"1182\" alt=\"image\" src=\"https://github.com/user-attachments/assets/74a427d6-8e26-46dc-9883-9aad818d6d64\" />\n"
 
 #. type: Title ##
-#: ../README.md:99
+#: ../README.md:106
 #, no-wrap
 msgid "Credits"
 msgstr "致谢"
 
 #. type: Bullet: '- '
-#: ../README.md:108
+#: ../README.md:115
 msgid "[libseccomp](https://github.com/seccomp/libseccomp): The library to support syscall lookups"
 msgstr "[libseccomp](https://github.com/seccomp/libseccomp): 用于支持系统调用查询的软件库"
 
 #. type: Bullet: '- '
-#: ../README.md:108
+#: ../README.md:115
 msgid "[libbpf](https://docs.kernel.org/bpf/libbpf/libbpf_overview.html): The library to support eBPF functions"
 msgstr "[libbpf](https://docs.kernel.org/bpf/libbpf/libbpf_overview.html): 用来支持 eBPF 功能的软件库"
 
 #. type: Bullet: '- '
-#: ../README.md:108
+#: ../README.md:115
 msgid "[seccomp-tools](https://github.com/david942j/seccomp-tools): The tool in Ruby inspires us to write ceccomp"
 msgstr "[seccomp-tools](https://github.com/david942j/seccomp-tools): 启发我们编写 ceccomp 的 Ruby 工具"
 
 #. type: Bullet: '- '
-#: ../README.md:108
+#: ../README.md:115
 msgid "[Bootswatch](https://bootswatch.com/slate/): Provides awesome css for html doc under MIT"
 msgstr "[Bootswatch](https://bootswatch.com/slate/): 提供了基于 MIT 协议的用于 html 文档的精美 CSS"
 
 #. type: Bullet: '- '
-#: ../README.md:108
+#: ../README.md:115
 msgid "[Linux kernel](https://github.com/torvalds/linux): Port some bpf checks"
 msgstr "[Linux kernel](https://github.com/torvalds/linux): 移植了一些 BPF 的检查"
 
 #. type: Bullet: '- '
-#: ../README.md:108
+#: ../README.md:115
 msgid "[Verstable](https://github.com/JacksonAllan/Verstable): High-performance hash table implementation in C"
 msgstr "[Verstable](https://github.com/JacksonAllan/Verstable): C 语言高性能哈希表实现"
 
 #. type: Bullet: '- '
-#: ../README.md:108
+#: ../README.md:115
 msgid "[a5hash](https://github.com/avaneev/a5hash): High-performance hash implementation for short strings in C"
 msgstr "[a5hash](https://github.com/avaneev/a5hash): C 语言高性能短字符串哈希实现"
 
 #. type: Plain text
-#: ../README.md:110
+#: ../README.md:117
 msgid "Any Issue or PR are welcome! :heart: Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details."
 msgstr "欢迎任何 issue 或 PR！ :heart: 详情请阅读 [CONTRIBUTING.md](CONTRIBUTING.md)。"
 
 #. type: Title ##
-#: ../README.md:111
+#: ../README.md:118
 #, no-wrap
 msgid "License"
 msgstr "许可证"
 
 #. type: Plain text
-#: ../README.md:113
+#: ../README.md:120
 msgid "Copyright (C) 2025-present, ceccomp contributors, distributed under GNU General Public License v3.0 or Later"
 msgstr "Copyright (C) 2025-现在，ceccomp 贡献者，按 GNU General Public License v3.0 or Later 分发"
 
