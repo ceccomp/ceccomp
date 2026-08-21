@@ -311,6 +311,12 @@ task on 64-bit kernel) or "compatible" (32-bit task on 64-bit kernel), so that
 `ceccomp` can pass the correct architecture token to libseccomp to query
 syscall name in captured seccomp filters.
 
+Note that eBPF utilizes asynchronous ring buffer to send back data to user-mode
+process, so if lots of seccomp filters are loaded at the same time, the buffer
+may run out and you need to see detailed errors via `bpftool prog trace`.
+Since we can't send the errors back through full ring buffer, those overflowed
+filters are actually invisible to users without reading kernel messages.
+
 WHEN::
 Argument description can be found in <<asm - ASSEMBLE>> section.
 
