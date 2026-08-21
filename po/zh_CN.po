@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ceccomp 4.3\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-12 13:42+0800\n"
-"PO-Revision-Date: 2026-08-12 13:42+0800\n"
+"POT-Creation-Date: 2026-08-22 00:06+0800\n"
+"PO-Revision-Date: 2026-08-22 00:09+0800\n"
 "Last-Translator: Rocket Ma <marocketbd@gmail.com>\n"
 "Language-Team: Chinese <ma2014119@outlook.com>\n"
 "Language: zh_CN\n"
@@ -73,7 +73,7 @@ msgid ""
 "-f, --fmt (hexline|hexfmt|raw)   Output format, default as hexline\n"
 "-o, --output file                Print to file to avoid mixing ceccomp "
 "output and tracee program output, default as stderr\n"
-"-p, --pid system_process_id      Extract bpf filters from process (or "
+"-p, --pid task_id                Extract bpf filters from process (or "
 "thread) and print with bpf text form; CAP_SYS_ADMIN is needed to work\n"
 "-q, --quiet                      Print emulate result only or suppress the "
 "process info message in trace and probe\n"
@@ -95,7 +95,7 @@ msgstr ""
 "-f, --fmt (hexline|hexfmt|raw)   输出格式, 默认为 hexline\n"
 "-o, --output file                将结果打印到文件来避免混淆 ceccomp 输出和 "
 "tracee 程序输出，默认打印至 stderr\n"
-"-p, --pid system_process_id      从进程中提取 bpf 过滤器，并打印为 text 格"
+"-p, --pid task_id                从进程中提取 bpf 过滤器，并打印为 text 格"
 "式; 需要 CAP_SYS_ADMIN 来运作\n"
 "-q, --quiet                      只打印 emulate 结果或在 trace 和 probe 时抑"
 "制进程的 INFO 消息\n"
@@ -551,8 +551,8 @@ msgstr "无法把 eBPF 转换回 cBPF"
 
 #: ../include/utils/error.h:171
 #, c-format
-msgid "Process %d has %d seccomp_filters"
-msgstr "进程 %d 有 %d 条seccomp_filters"
+msgid "Process %d has %d seccomp filter(s)"
+msgstr "进程 %d 有 %d 个 seccomp 过滤器"
 
 #: ../include/utils/error.h:173
 #, c-format
@@ -569,38 +569,37 @@ msgstr "eBPF 程序无法从 task 中取得 seccomp 过滤器，%s"
 msgid "Process %d does not exist"
 msgstr "进程 %d 不存在"
 
-#: ../include/utils/error.h:178
-msgid ""
-"please read output from /sys/kernel/debug/tracing/trace_pipe for details."
-msgstr "请从 /sys/kernel/debug/tracing/trace_pipe 读取详细输出"
+#: ../include/utils/error.h:177
+msgid "please run 'bpftool prog trace' for details."
+msgstr "请运行 'bpftool prog trace' 以获取详情。"
 
-#: ../include/utils/error.h:181
+#: ../include/utils/error.h:179
 msgid "Too many seccomp filters (> 32) in a task! The rest are truncated."
 msgstr "Task 里的 seccomp 过滤器太多了 (> 32)！剩下的将被截断。"
 
-#: ../include/utils/error.h:182
+#: ../include/utils/error.h:180
 #, c-format
 msgid "Failed to open or load eBPF prog %s"
 msgstr "无法打开或加载 eBPF 程序 %s"
 
-#: ../include/utils/error.h:183
+#: ../include/utils/error.h:181
 msgid "Failed to update eBPF map"
 msgstr "无法更新 eBPF map"
 
-#: ../include/utils/error.h:184
+#: ../include/utils/error.h:182
 msgid "Failed to create ring buffer"
 msgstr "无法创建环形缓冲区"
 
-#: ../include/utils/error.h:185
+#: ../include/utils/error.h:183
 msgid "Failed to attach eBPF prog"
 msgstr "无法附加到 eBPF 程序"
 
-#: ../include/utils/error.h:187
+#: ../include/utils/error.h:185
 #, c-format
 msgid "Capturing new seccomp filter in process %d (%s)"
 msgstr "在进程 %d (%s) 中捕获新 seccomp 过滤器"
 
-#: ../include/utils/error.h:189
+#: ../include/utils/error.h:187
 msgid ""
 "Capture is disabled during configuration, probably due to absence of libbpf. "
 "You may rebuild it with libbpf support."
@@ -608,7 +607,7 @@ msgstr ""
 "捕获功能在配置过程中被禁用，可能是因为缺少 libbpf。您需要在有 libbpf 支持下重"
 "新编译 ceccomp。"
 
-#: ../include/utils/error.h:192
+#: ../include/utils/error.h:190
 msgid ""
 "Loading eBPF program require CAP_SYS_ADMIN || (CAP_BPF && CAP_PERFMON), you "
 "may rerun ceccomp with sudo."
@@ -616,7 +615,20 @@ msgstr ""
 "加载 eBPF 程序需要 CAP_SYS_ADMIN || (CAP_BPF && CAP_PERFMON)，您可能需要用 "
 "sudo 重新运行 ceccomp。"
 
-#: ../include/utils/error.h:195
+#: ../include/utils/error.h:193
 #, c-format
 msgid "Your kernel (%d.%d) is so old that task_from_pid is not available."
 msgstr "您的内核 (%d.%d) 太老，以致 task_from_pid 不可用。"
+
+#: ../include/utils/error.h:194
+msgid "Did not receive any message from eBPF!"
+msgstr "未从 eBPF 接收到任何消息！"
+
+#: ../include/utils/error.h:195
+#, c-format
+msgid "Did not receive any message from eBPF, due to %s"
+msgstr "由于 %s，未从 eBPF 接收到任何消息"
+
+#~ msgid ""
+#~ "please read output from /sys/kernel/debug/tracing/trace_pipe for details."
+#~ msgstr "请从 /sys/kernel/debug/tracing/trace_pipe 读取详细输出"

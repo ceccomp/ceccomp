@@ -82,7 +82,7 @@ ARCH::
 可以设置为任何 libseccomp 支持的架构。它将被用于决定 _RAW_ 中的系统调用号如何被翻译为系统调用名。 例如，在 x86_64 上，在比较系统调用号时，数字 `0x3b` 将被翻译为 `execve` ，可以看上面的基本示例。 你的系统上的默认值是 {ARCH} 。
 
 -e, --ebpf::
-认为 _RAW_ 是 eBPF 指令字节而非 cBPF 过滤器字节。这个标志被设计用于测试 eBPF 到 cBPF 的转换是否正常工作。要使用这个功能，请使用 eBPF 或内核模块导出进程内安装的从 seccomp 过滤器转换过来的 eBPF 指令。
+认为 _RAW_ 是 eBPF 指令字节而非 cBPF 过滤器字节。这个标志被设计用于测试 eBPF 到 cBPF 的转换是否正常工作。要使用这个功能，请使用 eBPF 或内核模块导出进程内安装的从 seccomp 过滤器转换过来的 eBPF 指令。任何不是由内核生成的输入都可能产生未定义行为。
 
 RAW::
 包含原始 BPF 代码的二进制文件。如果不设置则将 _标准输入_ 作为输入。`-` 被视作 _标准输入_。这个文件是与架构有关的，所以它在不同架构之间可能不是通用的。
@@ -153,7 +153,7 @@ PROGRAM::
 设置为你想运行的程序，并且 *program-args* 将作为它的参数， 就像运行 shell 命令 `exec PROGRAM program-args` 。
 
 PID::
-设置为你想检查的 pid。 *PID* 和 *PROGRAM* 相冲突；你只能在一条命令中动态运行一个程序， 或者检查一个 pid。没有 `-s` 标志，trace pid 会尝试使用 `ptrace(PTRACE_SECCOMP_GET_FILTER)` 从 *PID* 中提取 seccomp 过滤器，这个操作在一些系统上可能不可用。
+设置为你想检查的 pid。 *PID* 和 *PROGRAM* 相冲突；你只能在一条命令中动态运行一个程序，或者检查一个 pid。没有 `-s` 标志，trace pid 会尝试使用 `ptrace(PTRACE_SECCOMP_GET_FILTER)` 从 *PID* 中提取 seccomp 过滤器，这个操作在一些系统上可能不可用。这里的 pid 其实是进程（线程）ID，你可以追踪一个线程或进程。
 
 -s, --seize::
 *只适用于 TRACE PID 模式。* 设置这个标志将会覆盖 trace pid 的行为为像 trace prog 模式一样把调试器挂到 *PID* 上并持续跟踪 seccomp 过滤器的加载。_这个标志引入于 4.0 版本。_
@@ -211,7 +211,7 @@ NOTE: `seccomp-tools` 没有等价的子命令。
 
 未设置 *PID* 时在全局范围内捕获 seccomp 过滤器。eBPF 程序将追踪 `seccomp_check_filter` 内核函数，可靠地拦截内核将加载的 seccomp 过滤器，而相比 <<trace - 运行时捕获过滤器>> 没有条件竞争的风险。这个功能在下方被称为“全局捕获”。在 _x86_64_ 上，Linux 5.15 是运行该功能的最低推荐内核版本。
 
-当设置了 *PID* 时，将安装用来从对应线程中提取已安装过的 seccomp 过滤器的 eBPF 程序。注意在内核中，`pid` 指线程 id，而 `tgid` 指进程 id。eBPF 程序会直接把由原始 seccomp 过滤器转换后的 eBPF 指令抽取出来并转换回去，用以执行 <<disasm - 反汇编>>。这个功能不需要 `CONFIG_CHECKPOINT_RESTORE` 内核配置，甚至在 `ceccomp` 处在 seccomp 状态时仍能工作。这个功能在下方被称为“捕获 PID”。Linux 6.2 是运行该功能的最低内核版本，因为这时 `bpf_task_from_pid` 函数才被引入。
+当设置了 *PID* 时，将安装用来从对应进程（其实是线程）中提取已安装过的 seccomp 过滤器的 eBPF 程序。注意在内核中，`pid` 指线程 id，而 `tgid` 指进程 id。eBPF 程序会直接把由原始 seccomp 过滤器转换后的 eBPF 指令抽取出来并转换回去，用以执行 <<disasm - 反汇编>>。这个功能不需要 `CONFIG_CHECKPOINT_RESTORE` 内核配置，甚至在 `ceccomp` 处在 seccomp 状态时仍能工作。这个功能在下方被称为“捕获 PID”。Linux 6.2 是运行该功能的最低内核版本，因为这时 `bpf_task_from_pid` 函数才被引入。
 
 目前，compat task 检测只支持 _x86_64_ 和 _aarch64_。 这个功能允许 `ceccomp` 识别一个任务是原生的 (64 位内核上的 64 位任务)，还是“兼容的” (64 位内核上的 32 位任务)，由此 `ceccomp` 才能把正确的架构标识传给 libseccomp 来查询捕获到的 seccomp 过滤器中的系统调用的名字。
 
@@ -219,7 +219,7 @@ WHEN::
 参数描述可以在 <<asm - 汇编>> 一节中找到。
 
 PID::
-从哪个 *线程* 中提取 seccomp 过滤器指令。
+从哪个 *进程* (线程) 中提取 seccomp 过滤器指令。
 
 NOTE: 所有出现在“全局捕获”或“捕获 PID”中的 *PID* 是 *初始命名空间 PID*，而不是当前命名空间中的 PID。推荐只在初始命名空间中运行 `ceccomp capture`。
 
@@ -428,7 +428,7 @@ image::probe.webp[]
 
 image::capture.webp[]
 
-捕获线程中的过滤器：
+捕获进程中的过滤器：
 
 image::capture_pid.webp[]
 endif::[]
