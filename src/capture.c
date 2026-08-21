@@ -1,6 +1,7 @@
 #include "attributes.h"
 #include "config.h"
 #include "utils/proc_status.h"
+#include <errno.h>
 #include <stdint.h>
 #include <sys/types.h>
 #include <sys/utsname.h>
@@ -226,10 +227,16 @@ capture_pid (pid_t pid, uint32_t scmp_arch)
 
   uint32_t action = SECCOMP_RET_ALLOW;
   syscall (SYS_seccomp, SECCOMP_GET_ACTION_AVAIL, 0, &action);
+  int rc;
   while ((ctx.event.status != ALL_DONE && ctx.event.status != TRUNCATED
           && ctx.event.status != TASK_ABORTED))
-    if (ring_buffer__poll (rb, 1000) <= 0)
-      break;
+    if ((rc = ring_buffer__poll (rb, 3000)) <= 0)
+      {
+        if (rc)
+          error (M_CAPTURE_POLL_ERROR, strerror (errno));
+        else
+          error ("%s", M_CAPTURE_POLL_FAIL);
+      }
 
   ring_buffer__free (rb);
   capture_pid_bpf__destroy (skel);
@@ -286,6 +293,7 @@ global_capture (uint32_t scmp_arch)
 
   ring_buffer__free (rb);
   capture_bpf__destroy (skel);
+  error (M_CAPTURE_POLL_ERROR, strerror (errno));
 }
 
 void

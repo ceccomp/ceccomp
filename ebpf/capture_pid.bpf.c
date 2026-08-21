@@ -176,6 +176,8 @@ end_null:
   EBPF_IF (!(event = bpf_ringbuf_reserve (&scmp_events, sizeof (*event), 0)))
     return 0;
 
+  event->filter_count = 0;
+
   if (event_status == TASK_ABORTED)
     event->status = TASK_ABORTED;
   else if (event_status == PID_NOT_FOUND)

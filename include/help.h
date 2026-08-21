@@ -53,7 +53,7 @@
      "-o, --output file                Print to file to avoid mixing "        \
      "ceccomp output and tracee program output, default as stderr\n"          \
                                                                               \
-     "-p, --pid system_process_id      Extract bpf filters from process (or " \
+     "-p, --pid task_id                Extract bpf filters from process (or " \
      "thread) and print with bpf text form; CAP_SYS_ADMIN is needed to "      \
      "work\n"                                                                 \
                                                                               \
