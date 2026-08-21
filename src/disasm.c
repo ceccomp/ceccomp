@@ -182,6 +182,8 @@ disasm (FILE *fp, uint32_t scmp_arch, bool ebpf)
     {
       uint32_t count, map_size;
       struct bpf_insn *insns = read_insns (fp, &count, &map_size);
+      if (count == 0)
+        goto no_filter;
       assert (insns);
 
       if (need_reverse_endian (scmp_arch))
@@ -207,6 +209,7 @@ disasm (FILE *fp, uint32_t scmp_arch, bool ebpf)
   prog.filter = g_filters;
   if (prog.len == 0)
     {
+    no_filter:
       warn ("%s", M_NO_FILTER);
       return;
     }

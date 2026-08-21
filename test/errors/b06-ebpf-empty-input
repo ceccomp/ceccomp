@@ -1,0 +1,8 @@
+Test empty input with some leftover but in ebpf mode
+CLI
+disasm -e
+STDIN
+31 32 33 34 35
+STDERR
+[WARN]: 5 byte(s) at the end of input could not fit into a filter
+[WARN]: The input is empty
