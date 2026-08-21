@@ -235,7 +235,7 @@ capture_pid (pid_t pid, uint32_t scmp_arch)
     if ((rc = ring_buffer__poll (rb, 3000)) <= 0)
       {
         if (rc)
-          error (M_CAPTURE_POLL_ERROR, strerror (errno));
+          error (M_CAPTURE_POLL_ERROR, strerror (-rc));
         else
           error ("%s", M_CAPTURE_POLL_FAIL);
       }
@@ -290,12 +290,13 @@ global_capture (uint32_t scmp_arch)
   if (err < 0)
     error ("%s", M_FAILED_ATTACH);
 
-  while (ring_buffer__poll (rb, -1) >= 0)
+  int rc;
+  while ((rc = ring_buffer__poll (rb, -1)) >= 0)
     ;
 
   ring_buffer__free (rb);
   capture_bpf__destroy (skel);
-  error (M_CAPTURE_POLL_ERROR, strerror (errno));
+  error (M_CAPTURE_POLL_ERROR, strerror (-rc));
 }
 
 void

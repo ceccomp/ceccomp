@@ -491,8 +491,8 @@ ebpf2cbpf (struct bpf_insn *restrict ebpfs, uint32_t ebpf_len,
       else
         {
           // JA case
-          patch = countbits (i, i + 1 + ebpfs[i].off);
-          f->k = ebpfs[i].off - patch;
+          patch = countbits (i, i + 1 + ebpfs[ebpf_idx].off);
+          f->k = ebpfs[ebpf_idx].off - patch;
         }
     }
 
