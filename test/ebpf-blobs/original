@@ -1,0 +1,38 @@
+$A = $high_args[5]
+$X = 1
+$A /= $X
+goto next
+if ($A > 0x1111) goto conj
+if ($A < 0x2222) goto label2
+if ($A & $X) goto label2
+if !($A & 0x4444) goto label2
+if ($A > 0x1111) goto label2, else goto label3
+if ($A < $X) goto label2, else goto label3
+if ($A & 0x3333) goto label2, else goto label3
+if !($A & 0x4444) goto label2, else goto label3
+label3:
+goto next
+if ($A > 0x87654321) goto label2
+if ($A == 0) goto next
+next:
+$A = 0
+$A += 32
+return ALLOW
+return $A
+$A = 0x7fff0000
+label2:
+return $A
+$A = $scmp_data_len
+$X = $scmp_data_len
+$mem[1] = $X
+$mem[15] = $A
+$A = $mem[1]
+$X = $mem[15]
+$A = $X
+$X = $A
+if ($A == 0) goto conj
+conj:
+goto label1
+$X = 0
+label1:
+return LOG
