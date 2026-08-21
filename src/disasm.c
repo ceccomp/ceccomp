@@ -180,11 +180,11 @@ disasm (FILE *fp, uint32_t scmp_arch, bool ebpf)
   fprog prog;
   if (ebpf)
     {
-      uint32_t count, map_size;
+      uint32_t count = 0, map_size;
       struct bpf_insn *insns = read_insns (fp, &count, &map_size);
+      assert (insns);
       if (count == 0)
         goto no_filter;
-      assert (insns);
 
       if (need_reverse_endian (scmp_arch))
         for (uint32_t i = 0; i < count; i++)

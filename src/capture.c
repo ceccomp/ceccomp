@@ -138,6 +138,8 @@ on_pid_events (void *ctx, void *data, unsigned long size)
   pid_event_ctx *c = ctx;
   static uint32_t insn_offset = 0;
   static bool count_printed = false;
+  if (event->status == PID_NOT_FOUND)
+    error (M_PID_NOT_FOUND, c->target_pid);
   if (!count_printed)
     {
       info (M_PROCESS_HAS_FILTER_COUNT, c->target_pid, event->filter_count);
@@ -169,7 +171,6 @@ on_pid_events (void *ctx, void *data, unsigned long size)
       free (c->ebpf_insns);
       c->ebpf_insns = NULL;
       break;
-    case PID_NOT_FOUND:
     case TRUNCATED:
     case TASK_ABORTED:
     case ALL_DONE:
@@ -178,8 +179,6 @@ on_pid_events (void *ctx, void *data, unsigned long size)
         warn ("%s", M_PROG_TRUNCATED);
       else if (event->status == TASK_ABORTED)
         warn (M_UNKNOWN_TASK_ABORTED, M_CAPTURE_PID_HELP);
-      else if (event->status == TASK_ABORTED)
-        error (M_PID_NOT_FOUND, c->target_pid);
       break;
     default:
       assert (!"Unexpected status received from ebpf");
