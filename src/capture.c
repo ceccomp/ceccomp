@@ -121,6 +121,7 @@ do_ebpf_disasm (const pid_event_ctx *c, uint32_t default_scmp_arch)
 #endif
 
   filter *cbpf_buf = malloc (c->flen * sizeof (filter));
+  assert (cbpf_buf);
   int32_t cbpf_len = ebpf2cbpf (c->ebpf_insns, c->flen, cbpf_buf, true);
   if (UNLIKELY (cbpf_len == -1))
     error ("%s", M_FAILED_EBPF_CONVERSION);
@@ -153,6 +154,7 @@ on_pid_events (void *ctx, void *data, unsigned long size)
     case PROG_DONE:
       if (c->ebpf_insns == NULL)
         c->ebpf_insns = malloc (event->flen_total * sizeof (struct bpf_insn));
+      assert (c->ebpf_insns);
       memcpy (c->ebpf_insns + insn_offset, event->prog.filters,
               event->prog.flen * sizeof (struct bpf_insn));
       insn_offset += event->prog.flen;

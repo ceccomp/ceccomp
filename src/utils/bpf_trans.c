@@ -381,8 +381,9 @@ ebpf2cbpf (struct bpf_insn *restrict ebpfs, uint32_t ebpf_len,
   ASSERT_JMP (BPF_CLASS (ebpfs[2].code) == BPF_ALU64
               && BPF_OP (ebpfs[2].code) == BPF_MOV);
 
-  bitmap = calloc (ebpf_len / U32BITS + 1, sizeof (uint32_t));
-  flags = calloc (ebpf_len, sizeof (*flags));
+  // allocate 1 more word for untrusted source
+  bitmap = calloc (ebpf_len / U32BITS + 2, sizeof (uint32_t));
+  flags = calloc (ebpf_len + 10, sizeof (*flags));
   assert (bitmap && flags);
   bitmap[0] = 7; // mark prologue to be deleted
 

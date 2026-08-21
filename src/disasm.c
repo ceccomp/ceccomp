@@ -107,21 +107,33 @@ read_insns (FILE *from, uint32_t *count, uint32_t *map_sizep)
       if (todo == 0)
         {
           // read BLK_SIZE? enlarge buffer if some more bytes to read
-          void *old_base = base;
-          base = mremap (base, map_size, map_size + BLK_SIZE, MREMAP_MAYMOVE);
-          if (UNLIKELY (base == MAP_FAILED))
-            {
-              munmap (old_base, map_size);
-              return NULL;
-            }
+#define LOCAL_REMAP(size)                                                     \
+  do                                                                          \
+    {                                                                         \
+      void *old_base = base;                                                  \
+      base = mremap (base, map_size, map_size + size, MREMAP_MAYMOVE);        \
+      if (UNLIKELY (base == MAP_FAILED))                                      \
+        {                                                                     \
+          munmap (old_base, map_size);                                        \
+          return NULL;                                                        \
+        }                                                                     \
+      map_size += size;                                                       \
+    }                                                                         \
+  while (0)
+
+          LOCAL_REMAP (BLK_SIZE);
           todo = BLK_SIZE;
-          map_size += BLK_SIZE;
         }
     }
 
   uint32_t leftover = offset % sizeof (struct bpf_insn);
   if (leftover)
     warn (M_INPUT_HAS_LEFTOVER, leftover);
+
+  // allocate some safe area to r/w
+  if (map_size - offset < 0x50)
+    LOCAL_REMAP (0x1000);
+
 #ifdef PR_SET_VMA
   prctl (PR_SET_VMA, PR_SET_VMA_ANON_NAME, base, map_size, "user eBPF insns");
 #endif
