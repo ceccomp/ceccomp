@@ -156,7 +156,7 @@ BPF_PROG (capture_pid, uint32_t op, uint32_t flags, void *uargs)
         .prog = prog, .flen = flen, .arch = arch, .filter_count = filter_count
       };
       uint32_t loop_times = (ctx.flen + CHUNK_INSN_SIZE - 1) / CHUNK_INSN_SIZE;
-      EBPF_IF (bpf_loop (loop_times, dump_chunk, &ctx, 0) < 0)
+      EBPF_IF (bpf_loop (loop_times, dump_chunk, &ctx, 0) != loop_times)
         goto next;
 
     next:
