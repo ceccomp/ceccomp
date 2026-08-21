@@ -10,8 +10,8 @@ for filename in FILENAMES:
 @pytest.mark.parametrize('filename, suffix', EMU_TARGETS)
 def test_emu(filename: str, suffix: str, errns: SimpleNamespace):
     maybe_skip(filename)
-    input_file = TXT_DIR / filename
-    expect_file = EMU_DIR / f'{filename}.{suffix}'
+    input_file = TXT_DIR / f'{filename}.casm'
+    expect_file = EMU_DIR / f'{filename}.{suffix}.casm'
     emu_args = [suffix, '1', '2', '3', '4', '5', '6']
     _, stdout, stderr = run_process(
         [CECCOMP, 'emu', *COMMON_OPTS, str(input_file), *emu_args],
@@ -22,8 +22,8 @@ def test_emu(filename: str, suffix: str, errns: SimpleNamespace):
         assert stdout == expect.read()
 
 def test_s390x_emu(errns: SimpleNamespace):
-    input_file = BE_DIR / 's390x.text'
-    expect_file = BE_DIR / 's390x.text.mmap'
+    input_file = BE_DIR / 's390x.casm'
+    expect_file = BE_DIR / 's390x.mmap.casm'
     _, stdout, stderr = run_process(
         [CECCOMP, 'emu', str(input_file), 'mmap', '-a', 's390x'],
     )

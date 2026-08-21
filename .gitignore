@@ -19,6 +19,6 @@ py-temp/wheelhouse
 py-temp/ceccomp/ceccomp
 include/ebpf
 test_prog
-text
+/text
 gdb_scripts
 *.mo
