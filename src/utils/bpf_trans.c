@@ -175,6 +175,7 @@ jmp_insn (const struct bpf_insn *ebpfp, check_path path, uint32_t large_k,
        */
       ++*ate; // consume MOV TMP K
       flag->fold++;
+      ASSERT_JMP (BPF_CLASS (ebpfp[1].code) == BPF_JMP);
       return jmp_insn (ebpfp + 1, NOT_CHECK, ebpfp->imm, ate, flag);
     case CHECK_RET_K:
       /* MOV A K
