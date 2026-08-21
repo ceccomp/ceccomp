@@ -128,7 +128,11 @@ read_insns (FILE *from, uint32_t *count, uint32_t *map_sizep)
 
   uint32_t leftover = offset % sizeof (struct bpf_insn);
   if (leftover)
-    warn (M_INPUT_HAS_LEFTOVER, leftover);
+    {
+      warn (M_INPUT_HAS_LEFTOVER, leftover);
+      offset -= leftover;
+      memset ((uint8_t *)base + offset, 0, leftover);
+    }
 
   // allocate some safe area to r/w
   if (map_size - offset < 0x50)
