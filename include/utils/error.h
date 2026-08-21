@@ -192,6 +192,7 @@
 #define M_LINUX_NO_TASK_FROM_PID                                              \
   _ ("Your kernel (%d.%d) is so old that task_from_pid is not available.")
 #define M_CAPTURE_POLL_FAIL _ ("Did not receive any message from eBPF!")
-#define M_CAPTURE_POLL_ERROR _ ("Did not receive any message from eBPF, due to %s")
+#define M_CAPTURE_POLL_ERROR                                                  \
+  _ ("Did not receive any message from eBPF, due to %s")
 
 #endif
