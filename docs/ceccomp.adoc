@@ -60,14 +60,10 @@ the actual syscall number behind the name (for example, on x86_64, you could wri
 `"execve"` instead of `59` like the basic example above). Your system arch will be
 taken if not set via `uname`. The default value on your system is {ARCH}.
 
-NOTE: Since _version 4.0_, endianness is considered. If target endianness *ARCH* is
-different from machine endianness, the filters will be reversed (CODE and K) before
-outputting.
-
 -f, --format *FMT*::
 Determines how `ceccomp` produces binary-format bpf code. Can be _hexfmt_,
-_hexline_ or _raw_. You could find sample output in <<EXAMPLES>> section.
-The default value is _hexline_.
+_hexline_, _raw_ or _c-macro_. You could find sample output in <<EXAMPLES>>
+section. The default value is _hexline_.
 
 *TEXT*::
 Take a optional filename to determine which file containing _TEXT_ will
@@ -78,6 +74,13 @@ please checkout grammar reference below!
 
 Please check out <<TEXT GRAMMAR REFERENCE>> section to see how to write a rule by
 hand. Some examples will be displayed in <<EXAMPLES>> section.
+
+NOTE: Since _version 4.0_, endianness is considered. If target endianness *ARCH* is
+different from machine endianness, the filters will be reversed (CODE and K) before
+outputting.
+
+NOTE: Since _version 4.3_, a new *FMT* _c-macro_ is added to port seccomp rules
+to other architectures easily.
 
 |===
 |Command|Difference

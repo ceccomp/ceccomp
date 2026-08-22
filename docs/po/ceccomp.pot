@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2026-08-22 14:36+0800\n"
+"POT-Creation-Date: 2026-08-22 20:10+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -128,8 +128,8 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ceccomp.adoc:52 ceccomp.adoc:101 ceccomp.adoc:150 ceccomp.adoc:200
-#: ceccomp.adoc:326
+#: ceccomp.adoc:52 ceccomp.adoc:104 ceccomp.adoc:153 ceccomp.adoc:203
+#: ceccomp.adoc:329
 #, no-wrap
 msgid "-c, --color *WHEN*"
 msgstr ""
@@ -143,7 +143,7 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ceccomp.adoc:57 ceccomp.adoc:105 ceccomp.adoc:165
+#: ceccomp.adoc:57 ceccomp.adoc:108 ceccomp.adoc:168
 #, no-wrap
 msgid "-a, --arch *ARCH*"
 msgstr ""
@@ -158,57 +158,64 @@ msgid ""
 "system is {ARCH}."
 msgstr ""
 
-#. type: Plain text
-#: ceccomp.adoc:66
-msgid ""
-"Since _version 4.0_, endianness is considered. If target endianness *ARCH* "
-"is different from machine endianness, the filters will be reversed (CODE and "
-"K) before outputting."
-msgstr ""
-
 #. type: Labeled list
-#: ceccomp.adoc:67
+#: ceccomp.adoc:63
 #, no-wrap
 msgid "-f, --format *FMT*"
 msgstr ""
 
 #. type: Plain text
-#: ceccomp.adoc:71
+#: ceccomp.adoc:67
 msgid ""
 "Determines how `ceccomp` produces binary-format bpf code. Can be _hexfmt_, "
-"_hexline_ or _raw_. You could find sample output in <<EXAMPLES>> section.  "
-"The default value is _hexline_."
+"_hexline_, _raw_ or _c-macro_. You could find sample output in <<EXAMPLES>> "
+"section. The default value is _hexline_."
 msgstr ""
 
 #. type: Labeled list
-#: ceccomp.adoc:72 ceccomp.adoc:168
+#: ceccomp.adoc:68 ceccomp.adoc:171
 #, no-wrap
 msgid "*TEXT*"
 msgstr ""
 
 #. type: Plain text
-#: ceccomp.adoc:75
+#: ceccomp.adoc:71
 msgid ""
 "Take a optional filename to determine which file containing _TEXT_ will be "
 "assembled. Will read from _stdin_ if not set. `-` is treated as _stdin_."
 msgstr ""
 
 #. type: Plain text
-#: ceccomp.adoc:78
+#: ceccomp.adoc:74
 msgid ""
 "The assembly syntax was changed greatly since _version 4.0_, please checkout "
 "grammar reference below!"
 msgstr ""
 
 #. type: Plain text
-#: ceccomp.adoc:81
+#: ceccomp.adoc:77
 msgid ""
 "Please check out <<TEXT GRAMMAR REFERENCE>> section to see how to write a "
 "rule by hand. Some examples will be displayed in <<EXAMPLES>> section."
 msgstr ""
 
+#. type: Plain text
+#: ceccomp.adoc:81
+msgid ""
+"Since _version 4.0_, endianness is considered. If target endianness *ARCH* "
+"is different from machine endianness, the filters will be reversed (CODE and "
+"K) before outputting."
+msgstr ""
+
+#. type: Plain text
+#: ceccomp.adoc:84
+msgid ""
+"Since _version 4.3_, a new *FMT* _c-macro_ is added to port seccomp rules to "
+"other architectures easily."
+msgstr ""
+
 #. type: Table
-#: ceccomp.adoc:92
+#: ceccomp.adoc:95
 #, no-wrap
 msgid ""
 "|Command|Difference\n"
@@ -225,19 +232,19 @@ msgid ""
 msgstr ""
 
 #. type: Title ===
-#: ceccomp.adoc:94
+#: ceccomp.adoc:97
 #, no-wrap
 msgid "disasm - DISASSEMBLE"
 msgstr ""
 
 #. type: Plain text
-#: ceccomp.adoc:97
+#: ceccomp.adoc:100
 #, no-wrap
 msgid "    ceccomp disasm [-c WHEN] [-a ARCH] [-e] [RAW]\n"
 msgstr ""
 
 #. type: Plain text
-#: ceccomp.adoc:100
+#: ceccomp.adoc:103
 msgid ""
 "Disassemble _RAW_ to _TEXT_. Use it to see what does a filter do if you "
 "could not access filter via `trace` and have to manually extract the filter "
@@ -245,14 +252,14 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ceccomp.adoc:104
+#: ceccomp.adoc:107
 msgid ""
 "Argument description can be found in <<asm - ASSEMBLE>> section. `disasm` "
 "may print more text in color including syntax highlighting for _TEXT_."
 msgstr ""
 
 #. type: Plain text
-#: ceccomp.adoc:110
+#: ceccomp.adoc:113
 msgid ""
 "Set to any architecture libseccomp supports. Will be used to determine how "
 "filtered syscall number in _RAW_ filter is translated to syscall name (for "
@@ -262,13 +269,13 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ceccomp.adoc:111
+#: ceccomp.adoc:114
 #, no-wrap
 msgid "-e, --ebpf"
 msgstr ""
 
 #. type: Plain text
-#: ceccomp.adoc:116
+#: ceccomp.adoc:119
 msgid ""
 "Treat _RAW_ as eBPF insn bytes instead of cBPF filter bytes. This flag is "
 "designed to test whether eBPF-to-cBPF conversion is working or not. To use "
@@ -278,13 +285,13 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ceccomp.adoc:117
+#: ceccomp.adoc:120
 #, no-wrap
 msgid "*RAW*"
 msgstr ""
 
 #. type: Plain text
-#: ceccomp.adoc:120
+#: ceccomp.adoc:123
 msgid ""
 "A binary file with raw BPF codes. Takes _stdin_ as input if not set. Treat "
 "`-` as _stdin_.  The file is arch-revelent, so it may not be portable on "
@@ -292,7 +299,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ceccomp.adoc:124
+#: ceccomp.adoc:127
 msgid ""
 "Since _version 4.0_, endianness is considered. If target endianness *ARCH* "
 "is different from machine endianness, the filters will be reversed (CODE and "
@@ -300,7 +307,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ceccomp.adoc:129
+#: ceccomp.adoc:132
 msgid ""
 "ceccomp will try to resolve syscall number under an arch ONLY IF that at "
 "that line, arch can be determined. On foreign arch (not equal to the arch "
@@ -310,7 +317,7 @@ msgid ""
 msgstr ""
 
 #. type: Table
-#: ceccomp.adoc:139
+#: ceccomp.adoc:142
 #, no-wrap
 msgid ""
 "|Command|Difference\n"
@@ -325,13 +332,13 @@ msgid ""
 msgstr ""
 
 #. type: Title ===
-#: ceccomp.adoc:141
+#: ceccomp.adoc:144
 #, no-wrap
 msgid "emu - EMULATE"
 msgstr ""
 
 #. type: Plain text
-#: ceccomp.adoc:144
+#: ceccomp.adoc:147
 #, no-wrap
 msgid ""
 "    ceccomp emu [-c WHEN] [-a ARCH] [-q] TEXT SYSCALL_NAME/SYSCALL_NR "
@@ -339,7 +346,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ceccomp.adoc:149
+#: ceccomp.adoc:152
 msgid ""
 "Emulate what will happen if `syscall(SYSCALL_NR, ARGS[0], ARGS[1], ..., "
 "ARGS[5])` from `PC` is called following rules described in _TEXT_. Use it to "
@@ -349,7 +356,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ceccomp.adoc:153
+#: ceccomp.adoc:156
 msgid ""
 "Argument description can be found in <<asm - ASSEMBLE>> section. `emu` may "
 "print more text in color including syntax highlighting for _TEXT_ and "
@@ -357,13 +364,13 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ceccomp.adoc:154
+#: ceccomp.adoc:157
 #, no-wrap
 msgid "*SYSCALL_NAME/SYSCALL_NR*"
 msgstr ""
 
 #. type: Plain text
-#: ceccomp.adoc:159
+#: ceccomp.adoc:162
 msgid ""
 "If you set *SYSCALL_NAME* (like `execve`), it will be translated to "
 "*SYSCALL_NR* under *ARCH* first. Or else set *SYSCALL_NR* directly (like "
@@ -372,13 +379,13 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ceccomp.adoc:160
+#: ceccomp.adoc:163
 #, no-wrap
 msgid "*ARGS[0-5]* and *PC*"
 msgstr ""
 
 #. type: Plain text
-#: ceccomp.adoc:164
+#: ceccomp.adoc:167
 msgid ""
 "Register values when calling syscall. For example, on x86_64, these are "
 "equivalent to `rdi`, `rsi`, `rdx`, `r10`, `r8`, `r9` and `rip`. Their "
@@ -386,12 +393,12 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ceccomp.adoc:167 ceccomp.adoc:328
+#: ceccomp.adoc:170 ceccomp.adoc:331
 msgid "Argument description can be found in <<asm - ASSEMBLE>> section."
 msgstr ""
 
 #. type: Plain text
-#: ceccomp.adoc:172
+#: ceccomp.adoc:175
 msgid ""
 "Take a filename to determine which file containing _TEXT_ rule will be "
 "tested.  Note that filename CAN NOT be ignored as ceccomp can not determine "
@@ -400,20 +407,20 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ceccomp.adoc:173 ceccomp.adoc:226
+#: ceccomp.adoc:176 ceccomp.adoc:229
 #, no-wrap
 msgid "-q, --quiet"
 msgstr ""
 
 #. type: Plain text
-#: ceccomp.adoc:176
+#: ceccomp.adoc:179
 msgid ""
 "Only print the eval result of the filter. For example, if last statement "
 "emulated is `return KILL`, then `KILL` is printed."
 msgstr ""
 
 #. type: Table
-#: ceccomp.adoc:186
+#: ceccomp.adoc:189
 #, no-wrap
 msgid ""
 "|Command|Difference\n"
@@ -427,13 +434,13 @@ msgid ""
 msgstr ""
 
 #. type: Title ===
-#: ceccomp.adoc:188
+#: ceccomp.adoc:191
 #, no-wrap
 msgid "trace - TRACE FILTER IN RUNTIME"
 msgstr ""
 
 #. type: Plain text
-#: ceccomp.adoc:192
+#: ceccomp.adoc:195
 #, no-wrap
 msgid ""
 "    ceccomp trace [-c WHEN] [-q] [-o FILE] PROGRAM [program-args]\n"
@@ -441,7 +448,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ceccomp.adoc:199
+#: ceccomp.adoc:202
 msgid ""
 "The first line captures filters *PROGRAM* loads in runtime by tracing it; "
 "the second line extract seccomp filters from *PID*, or trace *PID* to "
@@ -452,20 +459,20 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ceccomp.adoc:203
+#: ceccomp.adoc:206
 msgid ""
 "Argument description can be found in <<asm - ASSEMBLE>> section. `trace` may "
 "print more text in color including syntax highlighting for _TEXT_."
 msgstr ""
 
 #. type: Labeled list
-#: ceccomp.adoc:204
+#: ceccomp.adoc:207
 #, no-wrap
 msgid "-o, --output *FILE*"
 msgstr ""
 
 #. type: Plain text
-#: ceccomp.adoc:209
+#: ceccomp.adoc:212
 msgid ""
 "May be useful when *PROGRAM* produces quite a lot output in _stderr_.  "
 "`ceccomp` allow user to close _stdin_ and _stdout_ to limit *PROGRAM* input "
@@ -475,26 +482,26 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ceccomp.adoc:210
+#: ceccomp.adoc:213
 #, no-wrap
 msgid "*PROGRAM*"
 msgstr ""
 
 #. type: Plain text
-#: ceccomp.adoc:213
+#: ceccomp.adoc:216
 msgid ""
 "Set to the program you want to run, and *program-args* are its arguments "
 "just like running shell command `exec PROGRAM program-args`."
 msgstr ""
 
 #. type: Labeled list
-#: ceccomp.adoc:214 ceccomp.adoc:329
+#: ceccomp.adoc:217 ceccomp.adoc:332
 #, no-wrap
 msgid "-p, --pid *PID*"
 msgstr ""
 
 #. type: Plain text
-#: ceccomp.adoc:220
+#: ceccomp.adoc:223
 msgid ""
 "Set to the pid you want to inspect. *PID* is conflict with *PROGRAM*; you "
 "could either run a program dynamically or examine a pid in one command.  "
@@ -505,13 +512,13 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ceccomp.adoc:221
+#: ceccomp.adoc:224
 #, no-wrap
 msgid "-s, --seize"
 msgstr ""
 
 #. type: Plain text
-#: ceccomp.adoc:225
+#: ceccomp.adoc:228
 msgid ""
 "*ONLY AVAILABLE FOR TRACE PID MODE.* Set this flag will override trace pid "
 "behavior to attach to *PID* and keep tracing for seccomp filter loading like "
@@ -519,7 +526,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ceccomp.adoc:229
+#: ceccomp.adoc:232
 msgid ""
 "Set to suppress the extra *[INFO]* prints when detect process forking, "
 "exiting or seccomp filter loading. _This flag was introduced in version "
@@ -527,7 +534,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ceccomp.adoc:233
+#: ceccomp.adoc:236
 msgid ""
 "To extract filters from *PID*, `CAP_SYS_ADMIN` is needed (without `-s` flag)  "
 "and `CAP_SYS_PTRACE` may also be needed, the easiest way to acquire them is "
@@ -535,7 +542,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ceccomp.adoc:237
+#: ceccomp.adoc:240
 msgid ""
 "Since _version 3.1_, multiple process tracing is introduced, and when tracee "
 "forking/resolving/exiting, an extra INFO message is printed. You can discard "
@@ -543,14 +550,14 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ceccomp.adoc:240
+#: ceccomp.adoc:243
 msgid ""
 "Since _version 4.2_, `dump` sub command is added as an alias of `trace`, to "
 "keep compatibility with `seccomp-tools`."
 msgstr ""
 
 #. type: Table
-#: ceccomp.adoc:253
+#: ceccomp.adoc:256
 #, no-wrap
 msgid ""
 "|Command|Difference\n"
@@ -570,19 +577,19 @@ msgid ""
 msgstr ""
 
 #. type: Title ===
-#: ceccomp.adoc:255
+#: ceccomp.adoc:258
 #, no-wrap
 msgid "probe - TEST COMMON SYSCALLS INSTANTLY"
 msgstr ""
 
 #. type: Plain text
-#: ceccomp.adoc:258
+#: ceccomp.adoc:261
 #, no-wrap
 msgid "    ceccomp probe [-c WHEN] [-o FILE] [-q] PROGRAM [program-args]\n"
 msgstr ""
 
 #. type: Plain text
-#: ceccomp.adoc:262
+#: ceccomp.adoc:265
 msgid ""
 "Run *PROGRAM* with *program-args* to captures *FIRST* seccomp filter, and "
 "then kill all children. Use it when a quick check against a program is "
@@ -590,14 +597,14 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ceccomp.adoc:264
+#: ceccomp.adoc:267
 msgid ""
 "All argument descriptions can be found in <<trace - TRACE FILTER IN "
 "RUNTIME>> section."
 msgstr ""
 
 #. type: Plain text
-#: ceccomp.adoc:268
+#: ceccomp.adoc:271
 msgid ""
 "The output for this subcommand is the emulating result of common syscalls "
 "like `execve`, `open` and so on. If the filter itself is not capable of "
@@ -605,14 +612,14 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ceccomp.adoc:271
+#: ceccomp.adoc:274
 msgid ""
 "Typical output for this subcommand is described below, more detailed example "
 "could be found in <<EXAMPLES>> section."
 msgstr ""
 
 #. type: Plain text
-#: ceccomp.adoc:283
+#: ceccomp.adoc:286
 #, no-wrap
 msgid ""
 "    open      -> ALLOW\n"
@@ -629,24 +636,24 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ceccomp.adoc:285
+#: ceccomp.adoc:288
 msgid "`seccomp-tools` don't have this subcommand."
 msgstr ""
 
 #. type: Title ===
-#: ceccomp.adoc:286
+#: ceccomp.adoc:289
 #, no-wrap
 msgid "capture - CAPTURE FILTERS WITH EBPF"
 msgstr ""
 
 #. type: Plain text
-#: ceccomp.adoc:289
+#: ceccomp.adoc:292
 #, no-wrap
 msgid "    ceccomp capture [-c WHEN] [-p PID]\n"
 msgstr ""
 
 #. type: Plain text
-#: ceccomp.adoc:297
+#: ceccomp.adoc:300
 msgid ""
 "Capture seccomp filters in global scope if *PID* not set. The eBPF program "
 "will trace `seccomp_check_filter` kernel function, reliably intercepting "
@@ -658,7 +665,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ceccomp.adoc:307
+#: ceccomp.adoc:310
 msgid ""
 "If *PID* is set, an eBPF program to extract installed seccomp filters in the "
 "corresponding process (actually thread) will be installed. Note that inside "
@@ -672,7 +679,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ceccomp.adoc:313
+#: ceccomp.adoc:316
 msgid ""
 "When the kernel migrates seccomp filters, the conversion from cBPF to eBPF "
 "is lossy because several distinct cBPF instructions can be mapped to the "
@@ -682,7 +689,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ceccomp.adoc:319
+#: ceccomp.adoc:322
 msgid ""
 "Currently, compat task detection is only supported on _x86_64_ and "
 "_aarch64_.  With this feature, `ceccomp` can identify whether a task is "
@@ -692,7 +699,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ceccomp.adoc:325
+#: ceccomp.adoc:328
 msgid ""
 "Note that eBPF utilizes asynchronous ring buffer to send back data to "
 "user-mode process, so if lots of seccomp filters are loaded at the same "
@@ -703,12 +710,12 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ceccomp.adoc:331
+#: ceccomp.adoc:334
 msgid "Which *process* (thread) to extract seccomp filter insns from."
 msgstr ""
 
 #. type: Plain text
-#: ceccomp.adoc:335
+#: ceccomp.adoc:338
 msgid ""
 "All *PID* presented in either \"global capture\" or \"capture pid\" are "
 "*INITIAL NAMESPACE PID*, not PID in current namespace. It's recommended that "
@@ -716,25 +723,25 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ceccomp.adoc:338
+#: ceccomp.adoc:341
 msgid ""
 "This module is optional, you can opt it out during configuration. This "
 "module require libbpf to work."
 msgstr ""
 
 #. type: Plain text
-#: ceccomp.adoc:340
+#: ceccomp.adoc:343
 msgid "This subcommand was introduced in _version 4.3_."
 msgstr ""
 
 #. type: Title ==
-#: ceccomp.adoc:341
+#: ceccomp.adoc:344
 #, no-wrap
 msgid "TEXT GRAMMAR REFERENCE"
 msgstr ""
 
 #. type: Plain text
-#: ceccomp.adoc:348
+#: ceccomp.adoc:351
 msgid ""
 "The grammar changed greatly since _version 4.0_ as we refactored lexer for "
 "better human readability. The wrapper now prefixed by `#` as it's a comment "
@@ -743,7 +750,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ceccomp.adoc:353
+#: ceccomp.adoc:356
 msgid ""
 "A valid _TEXT_ format is described in EBNF-like declaration here: "
 "https://github.com/ceccomp/ceccomp/issues/17#issuecomment-3610531705 .  If "
@@ -751,25 +758,25 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ceccomp.adoc:355
+#: ceccomp.adoc:358
 msgid "BPF ops which are not described below are banned by kernel."
 msgstr ""
 
 #. type: Title ===
-#: ceccomp.adoc:356
+#: ceccomp.adoc:359
 #, no-wrap
 msgid "Comment and Label"
 msgstr ""
 
 #. type: Plain text
-#: ceccomp.adoc:360
+#: ceccomp.adoc:363
 msgid ""
 "`ceccomp disasm` displays a lot of things, but some of them are optional for "
 "asm."
 msgstr ""
 
 #. type: Plain text
-#: ceccomp.adoc:365
+#: ceccomp.adoc:368
 #, no-wrap
 msgid ""
 "    #Label  CODE  JT   JF      K\n"
@@ -779,17 +786,17 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ceccomp.adoc:367
+#: ceccomp.adoc:370
 msgid "Any text after `#` will be discarded by asm like some script languages."
 msgstr ""
 
 #. type: Plain text
-#: ceccomp.adoc:369
+#: ceccomp.adoc:372
 msgid "Empty lines are accepted."
 msgstr ""
 
 #. type: Plain text
-#: ceccomp.adoc:377
+#: ceccomp.adoc:380
 msgid ""
 "Label declaration is an identifier at the beginning of line and suffixed by "
 "`:` like `L0001`. An identifier is a string starts with alpha and contains "
@@ -801,14 +808,14 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ceccomp.adoc:380
+#: ceccomp.adoc:383
 msgid ""
 "The `CODE`, `JT`, `JF` and `K` value generated by disasm will be discarded "
 "by asm, asm only parse the effective statement after `K`."
 msgstr ""
 
 #. type: Plain text
-#: ceccomp.adoc:385
+#: ceccomp.adoc:388
 msgid ""
 "There are some slight difference between `ceccomp disasm` and `seccomp-tools "
 "disasm`, down below is a general example. And some statements are different, "
@@ -816,7 +823,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ceccomp.adoc:389
+#: ceccomp.adoc:392
 #, no-wrap
 msgid ""
 "    line  CODE  JT   JF      K\n"
@@ -825,20 +832,20 @@ msgid ""
 msgstr ""
 
 #. type: Title ===
-#: ceccomp.adoc:390
+#: ceccomp.adoc:393
 #, no-wrap
 msgid "Assignment"
 msgstr ""
 
 #. type: Plain text
-#: ceccomp.adoc:394
+#: ceccomp.adoc:397
 msgid ""
 "`A` can be set to seccomp attributes directly. But `X` can not be assigned "
 "with seccomp attributes directly due to kernel limit."
 msgstr ""
 
 #. type: Plain text
-#: ceccomp.adoc:397
+#: ceccomp.adoc:400
 #, no-wrap
 msgid ""
 "    $A = $arch\n"
@@ -846,14 +853,14 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ceccomp.adoc:399
+#: ceccomp.adoc:402
 msgid ""
 "To assign `A` with those 64-bit long fields, `low_` or `high_` prefix is "
 "needed."
 msgstr ""
 
 #. type: Plain text
-#: ceccomp.adoc:407
+#: ceccomp.adoc:410
 #, no-wrap
 msgid ""
 "    $A = $low_pc\n"
@@ -866,14 +873,14 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ceccomp.adoc:410
+#: ceccomp.adoc:413
 msgid ""
 "A special attribute is `sizeof(struct seccomp_data)`, that can be assigned "
 "to `A` or `X` directly."
 msgstr ""
 
 #. type: Plain text
-#: ceccomp.adoc:413
+#: ceccomp.adoc:416
 #, no-wrap
 msgid ""
 "    $A = $scmp_data_len\n"
@@ -881,7 +888,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ceccomp.adoc:417
+#: ceccomp.adoc:420
 msgid ""
 "Temporary memory is 32-bit, to access them, you could use hex or dec as "
 "index.  Both `A` and `X` is assignable. Assigning immediate values to `A` or "
@@ -890,7 +897,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ceccomp.adoc:425
+#: ceccomp.adoc:428
 #, no-wrap
 msgid ""
 "    $X = $mem[0]\n"
@@ -903,14 +910,14 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ceccomp.adoc:428
+#: ceccomp.adoc:431
 msgid ""
 "You could also assign `X` to `A` or in the reverse order. Assign `X` or `A` "
 "to temporary memory is definitely okay."
 msgstr ""
 
 #. type: Plain text
-#: ceccomp.adoc:433
+#: ceccomp.adoc:436
 #, no-wrap
 msgid ""
 "    $A = $X\n"
@@ -920,18 +927,18 @@ msgid ""
 msgstr ""
 
 #. type: Title ===
-#: ceccomp.adoc:434
+#: ceccomp.adoc:437
 #, no-wrap
 msgid "Arithmetic Operations"
 msgstr ""
 
 #. type: Plain text
-#: ceccomp.adoc:437
+#: ceccomp.adoc:440
 msgid "Various operations can be applied to `A`."
 msgstr ""
 
 #. type: Plain text
-#: ceccomp.adoc:444
+#: ceccomp.adoc:447
 #, no-wrap
 msgid ""
 "    $A += 30\n"
@@ -943,12 +950,12 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ceccomp.adoc:446
+#: ceccomp.adoc:449
 msgid "The right value can be `X`."
 msgstr ""
 
 #. type: Plain text
-#: ceccomp.adoc:451
+#: ceccomp.adoc:454
 #, no-wrap
 msgid ""
 "    $A &= $X\n"
@@ -958,40 +965,40 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ceccomp.adoc:453
+#: ceccomp.adoc:456
 msgid "And there is a way to negativate `A`."
 msgstr ""
 
 #. type: Plain text
-#: ceccomp.adoc:455
+#: ceccomp.adoc:458
 #, no-wrap
 msgid "    $A = -$A\n"
 msgstr ""
 
 #. type: Title ===
-#: ceccomp.adoc:456
+#: ceccomp.adoc:459
 #, no-wrap
 msgid "Jump Downwards If ..."
 msgstr ""
 
 #. type: Plain text
-#: ceccomp.adoc:459
+#: ceccomp.adoc:462
 msgid "Unconditional jump:"
 msgstr ""
 
 #. type: Plain text
-#: ceccomp.adoc:461
+#: ceccomp.adoc:464
 #, no-wrap
 msgid "    goto L3\n"
 msgstr ""
 
 #. type: Plain text
-#: ceccomp.adoc:463
+#: ceccomp.adoc:466
 msgid "Jump if:"
 msgstr ""
 
 #. type: Plain text
-#: ceccomp.adoc:469
+#: ceccomp.adoc:472
 #, no-wrap
 msgid ""
 "    if ($A == execve) goto L3\n"
@@ -1002,12 +1009,12 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ceccomp.adoc:471
+#: ceccomp.adoc:474
 msgid "If true jump to ... if false jump to...:"
 msgstr ""
 
 #. type: Plain text
-#: ceccomp.adoc:474
+#: ceccomp.adoc:477
 #, no-wrap
 msgid ""
 "    if ($A > $X) goto L3, else goto L4\n"
@@ -1015,7 +1022,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ceccomp.adoc:481
+#: ceccomp.adoc:484
 msgid ""
 "ONLY in conditions, you CAN replace number with syscall name or arch name.  "
 "In example above, `0x3b` is replaced by `execve`. All the syscall name will "
@@ -1026,37 +1033,37 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ceccomp.adoc:483
+#: ceccomp.adoc:486
 #, no-wrap
 msgid "    if ($A == aarch64.read) goto 5\n"
 msgstr ""
 
 #. type: Plain text
-#: ceccomp.adoc:486
+#: ceccomp.adoc:489
 msgid ""
 "Note that if you manually set arch to _aarch64_ with `-a aarch64`, you can "
 "omit `aarch64.` in statement."
 msgstr ""
 
 #. type: Title ===
-#: ceccomp.adoc:487
+#: ceccomp.adoc:490
 #, no-wrap
 msgid "Return Code"
 msgstr ""
 
 #. type: Plain text
-#: ceccomp.adoc:490
+#: ceccomp.adoc:493
 msgid "Return value of register `A`:"
 msgstr ""
 
 #. type: Plain text
-#: ceccomp.adoc:492
+#: ceccomp.adoc:495
 #, no-wrap
 msgid "    return $A\n"
 msgstr ""
 
 #. type: Plain text
-#: ceccomp.adoc:496
+#: ceccomp.adoc:499
 msgid ""
 "Or return a immediate value, with extra field in `()`. Actions including "
 "`TRACE`, `TRAP` and `ERRNO` accept an extra field, without `()`, they are "
@@ -1064,7 +1071,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ceccomp.adoc:506
+#: ceccomp.adoc:509
 #, no-wrap
 msgid ""
 "    return 0x13371337\n"
@@ -1079,20 +1086,20 @@ msgid ""
 msgstr ""
 
 #. type: Title ===
-#: ceccomp.adoc:507
+#: ceccomp.adoc:510
 #, no-wrap
 msgid "Short Example"
 msgstr ""
 
 #. type: Plain text
-#: ceccomp.adoc:511
+#: ceccomp.adoc:514
 msgid ""
 "The following _TEXT_ is valid for asm, which blocks `execve` and `execveat` "
 "for amd64 syscalls:"
 msgstr ""
 
 #. type: Plain text
-#: ceccomp.adoc:517
+#: ceccomp.adoc:520
 #, no-wrap
 msgid ""
 "    $A = $syscall_nr\n"
@@ -1103,38 +1110,38 @@ msgid ""
 msgstr ""
 
 #. type: Title ==
-#: ceccomp.adoc:518
+#: ceccomp.adoc:521
 #, no-wrap
 msgid "RESTRICTIONS"
 msgstr ""
 
 #. type: Plain text
-#: ceccomp.adoc:521
+#: ceccomp.adoc:524
 msgid "Ceccomp asm put some restrictions on _TEXT_ for better performance."
 msgstr ""
 
 #. type: Plain text
-#: ceccomp.adoc:523
+#: ceccomp.adoc:526
 msgid "`'\\0'` must not be found in _TEXT_ since it's a text file."
 msgstr ""
 
 #. type: Plain text
-#: ceccomp.adoc:524
+#: ceccomp.adoc:527
 msgid "A line must be shorter than 384 *bytes*."
 msgstr ""
 
 #. type: Plain text
-#: ceccomp.adoc:525
+#: ceccomp.adoc:528
 msgid "A _TEXT_ file must have less than 16384 lines."
 msgstr ""
 
 #. type: Plain text
-#: ceccomp.adoc:526
+#: ceccomp.adoc:529
 msgid "A _TEXT_ file must be smaller than 4 MiB."
 msgstr ""
 
 #. type: Plain text
-#: ceccomp.adoc:529
+#: ceccomp.adoc:532
 msgid ""
 "And for both asm and disasm, effective statements (that can be encoded or "
 "decoded into BPF) must be less or equal than 4096, this is enforced by "
@@ -1142,176 +1149,176 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ceccomp.adoc:532
+#: ceccomp.adoc:535
 msgid ""
 "A fun fact about ceccomp asm: any basic ANSI color in _TEXT_ file, e.g., "
 "`\\x1b[31m`, will be discarded when processing."
 msgstr ""
 
 #. type: Title ==
-#: ceccomp.adoc:533
+#: ceccomp.adoc:536
 #, no-wrap
 msgid "EXAMPLES"
 msgstr ""
 
 #. type: Plain text
-#: ceccomp.adoc:538
+#: ceccomp.adoc:541
 msgid ""
 "Manpage can not display images, so please check out html version of this "
 "page to see examples."
 msgstr ""
 
 #. type: Title ===
-#: ceccomp.adoc:541
+#: ceccomp.adoc:544
 #, no-wrap
 msgid "asm example"
 msgstr ""
 
 #. type: Target for macro image
-#: ceccomp.adoc:542
+#: ceccomp.adoc:545
 #, no-wrap
 msgid "asm.webp"
 msgstr ""
 
 #. type: Title ===
-#: ceccomp.adoc:543
+#: ceccomp.adoc:546
 #, no-wrap
 msgid "disasm example"
 msgstr ""
 
 #. type: Target for macro image
-#: ceccomp.adoc:544
+#: ceccomp.adoc:547
 #, no-wrap
 msgid "disasm.webp"
 msgstr ""
 
 #. type: Title ===
-#: ceccomp.adoc:545
+#: ceccomp.adoc:548
 #, no-wrap
 msgid "emu example"
 msgstr ""
 
 #. type: Target for macro image
-#: ceccomp.adoc:546
+#: ceccomp.adoc:549
 #, no-wrap
 msgid "emu.webp"
 msgstr ""
 
 #. type: Title ===
-#: ceccomp.adoc:547
+#: ceccomp.adoc:550
 #, no-wrap
 msgid "trace example"
 msgstr ""
 
 #. type: Plain text
-#: ceccomp.adoc:549
+#: ceccomp.adoc:552
 msgid "Running program:"
 msgstr ""
 
 #. type: Target for macro image
-#: ceccomp.adoc:550
+#: ceccomp.adoc:553
 #, no-wrap
 msgid "trace.webp"
 msgstr ""
 
 #. type: Plain text
-#: ceccomp.adoc:553
+#: ceccomp.adoc:556
 msgid "If set `-o FILE`:"
 msgstr ""
 
 #. type: Target for macro image
-#: ceccomp.adoc:554
+#: ceccomp.adoc:557
 #, no-wrap
 msgid "output_trick.webp"
 msgstr ""
 
 #. type: Plain text
-#: ceccomp.adoc:557
+#: ceccomp.adoc:560
 msgid "Trace pid mode:"
 msgstr ""
 
 #. type: Target for macro image
-#: ceccomp.adoc:558
+#: ceccomp.adoc:561
 #, no-wrap
 msgid "trace_pid.webp"
 msgstr ""
 
 #. type: Plain text
-#: ceccomp.adoc:561
+#: ceccomp.adoc:564
 msgid "Seize pid mode:"
 msgstr ""
 
 #. type: Target for macro image
-#: ceccomp.adoc:562
+#: ceccomp.adoc:565
 #, no-wrap
 msgid "trace_seize.webp"
 msgstr ""
 
 #. type: Plain text
-#: ceccomp.adoc:565
-msgid "Completion for pid mode is available under zsh:"
-msgstr ""
-
-#. type: Target for macro image
-#: ceccomp.adoc:566
-#, no-wrap
-msgid "trace_completion.webp"
-msgstr ""
-
-#. type: Title ===
 #: ceccomp.adoc:568
-#, no-wrap
-msgid "probe example"
+msgid "Completion for pid mode is available under zsh:"
 msgstr ""
 
 #. type: Target for macro image
 #: ceccomp.adoc:569
 #, no-wrap
-msgid "probe.webp"
+msgid "trace_completion.webp"
 msgstr ""
 
 #. type: Title ===
 #: ceccomp.adoc:571
 #, no-wrap
+msgid "probe example"
+msgstr ""
+
+#. type: Target for macro image
+#: ceccomp.adoc:572
+#, no-wrap
+msgid "probe.webp"
+msgstr ""
+
+#. type: Title ===
+#: ceccomp.adoc:574
+#, no-wrap
 msgid "capture example"
 msgstr ""
 
 #. type: Plain text
-#: ceccomp.adoc:573
+#: ceccomp.adoc:576
 msgid "Globally capture:"
 msgstr ""
 
 #. type: Target for macro image
-#: ceccomp.adoc:574
+#: ceccomp.adoc:577
 #, no-wrap
 msgid "capture.webp"
 msgstr ""
 
 #. type: Plain text
-#: ceccomp.adoc:577
+#: ceccomp.adoc:580
 msgid "Capture filters in a process:"
 msgstr ""
 
 #. type: Target for macro image
-#: ceccomp.adoc:578
+#: ceccomp.adoc:581
 #, no-wrap
 msgid "capture_pid.webp"
 msgstr ""
 
 #. type: Title ==
-#: ceccomp.adoc:581
+#: ceccomp.adoc:584
 #, no-wrap
 msgid "REPO"
 msgstr ""
 
 #. type: Plain text
-#: ceccomp.adoc:585
+#: ceccomp.adoc:588
 msgid ""
 "Visit https://github.com/ceccomp/ceccomp to find the code.  Pull Requests "
 "and Issues are welcome!"
 msgstr ""
 
 #. type: Plain text
-#: ceccomp.adoc:586
+#: ceccomp.adoc:589
 msgid "Copyright (C) 2025-present, distributed under GPLv3 or later."
 msgstr ""
