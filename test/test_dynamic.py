@@ -280,6 +280,8 @@ def test_capture_global(errns: SimpleNamespace):
         cp.terminate()
         _, errns.stderr = cp.communicate()
         cp.wait(0.5)
+        if 'libbpf: failed to load BPF skeleton' in errns.stderr:
+            pytest.xfail('Can not load skeleton')
         pytest.fail('Can not see expected output after 10s')
 
     cp.terminate()
@@ -302,6 +304,8 @@ def test_capture_pid(errns: SimpleNamespace):
         [CECCOMP, 'capture', '-c', 'always', '-p', str(pid)],
     )
     errns.stderr = stderr
+    if 'libbpf: failed to load BPF skeleton' in stderr:
+        pytest.xfail('Can not load skeleton')
 
     os.eventfd_write(efd, 1)
     assert tp.wait(0.5) == 0
@@ -325,6 +329,8 @@ def test_capture_pid_too_many(errns: SimpleNamespace):
 
     _, stdout, stderr = run_process([CECCOMP, 'capture', '-p', str(pid)])
     errns.stderr = stderr
+    if 'libbpf: failed to load BPF skeleton' in stderr:
+        pytest.xfail('Can not load skeleton')
 
     os.eventfd_write(efd, 1)
     assert tp.wait(0.5) == 0
