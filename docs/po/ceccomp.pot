@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2026-08-22 14:17+0800\n"
+"POT-Creation-Date: 2026-08-22 14:36+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -131,7 +131,7 @@ msgstr ""
 #: ceccomp.adoc:52 ceccomp.adoc:101 ceccomp.adoc:150 ceccomp.adoc:200
 #: ceccomp.adoc:326
 #, no-wrap
-msgid "WHEN"
+msgid "-c, --color *WHEN*"
 msgstr ""
 
 #. type: Plain text
@@ -145,7 +145,7 @@ msgstr ""
 #. type: Labeled list
 #: ceccomp.adoc:57 ceccomp.adoc:105 ceccomp.adoc:165
 #, no-wrap
-msgid "ARCH"
+msgid "-a, --arch *ARCH*"
 msgstr ""
 
 #. type: Plain text
@@ -169,7 +169,7 @@ msgstr ""
 #. type: Labeled list
 #: ceccomp.adoc:67
 #, no-wrap
-msgid "FMT"
+msgid "-f, --format *FMT*"
 msgstr ""
 
 #. type: Plain text
@@ -183,7 +183,7 @@ msgstr ""
 #. type: Labeled list
 #: ceccomp.adoc:72 ceccomp.adoc:168
 #, no-wrap
-msgid "TEXT"
+msgid "*TEXT*"
 msgstr ""
 
 #. type: Plain text
@@ -280,7 +280,7 @@ msgstr ""
 #. type: Labeled list
 #: ceccomp.adoc:117
 #, no-wrap
-msgid "RAW"
+msgid "*RAW*"
 msgstr ""
 
 #. type: Plain text
@@ -359,7 +359,7 @@ msgstr ""
 #. type: Labeled list
 #: ceccomp.adoc:154
 #, no-wrap
-msgid "SYSCALL_NAME/SYSCALL_NR"
+msgid "*SYSCALL_NAME/SYSCALL_NR*"
 msgstr ""
 
 #. type: Plain text
@@ -374,7 +374,7 @@ msgstr ""
 #. type: Labeled list
 #: ceccomp.adoc:160
 #, no-wrap
-msgid "ARGS[0-5] and PC"
+msgid "*ARGS[0-5]* and *PC*"
 msgstr ""
 
 #. type: Plain text
@@ -461,7 +461,7 @@ msgstr ""
 #. type: Labeled list
 #: ceccomp.adoc:204
 #, no-wrap
-msgid "FILE"
+msgid "-o, --output *FILE*"
 msgstr ""
 
 #. type: Plain text
@@ -477,7 +477,7 @@ msgstr ""
 #. type: Labeled list
 #: ceccomp.adoc:210
 #, no-wrap
-msgid "PROGRAM"
+msgid "*PROGRAM*"
 msgstr ""
 
 #. type: Plain text
@@ -490,7 +490,7 @@ msgstr ""
 #. type: Labeled list
 #: ceccomp.adoc:214 ceccomp.adoc:329
 #, no-wrap
-msgid "PID"
+msgid "-p, --pid *PID*"
 msgstr ""
 
 #. type: Plain text
