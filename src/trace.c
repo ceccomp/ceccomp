@@ -184,12 +184,14 @@ mode_filter (const syscall_info *info, int pid, fprog *prog, FILE *output_fp)
 AttrNoReturn static void
 child (char *const argv[], int efd)
 {
-  eventfd_t ign;
+  eventfd_t fail = 2;
 
   // allow parent to trace us
   prctl (PR_SET_DUMPABLE, 1);
-  eventfd_read (efd, &ign); // SHOULD GET SEIZED HERE
+  eventfd_read (efd, &fail); // SHOULD GET SEIZED HERE
   close (efd);
+  if (UNLIKELY (fail == 2)) // SEIZE child failed
+    exit (1);
 
   int err = execv (argv[0], argv);
   if (err)
@@ -325,17 +327,14 @@ parent (pid_t child_pid, FILE *output_fp, uint32_t extra_flags, bool quiet,
 
   if (efd >= 0)
     {
-      // old traceme path
-      assert (rc == 0);
-      eventfd_write (efd, 1);
+      // old TRACEME path, use 2 to represent failure
+      eventfd_write (efd, rc == 0 ? 1 : 2);
       close (efd);
     }
-  else
-    // from pid_seize
-    if (rc)
-      return -1;
+  if (rc)
+    return -1;
 
-  waitpid (-1, &status, 0);
+  waitpid (child_pid, &status, 0);
 
   if (!quiet)
     // write info when we truly start tracing so that
@@ -372,7 +371,7 @@ parent (pid_t child_pid, FILE *output_fp, uint32_t extra_flags, bool quiet,
         }
       else if (sig == SIGTRAP && handle_fork (pid, status, quiet))
         ptrace (PTRACE_SYSCALL, pid, 0, 0);
-      else if (((sig >> 16) & 0xffff) == PTRACE_EVENT_STOP)
+      else if (((status >> 16) & 0xffff) == PTRACE_EVENT_STOP)
         // process group-stop
         ptrace (PTRACE_LISTEN, pid, 0, 0);
       else // any other sig, or a real SIGTRAP
@@ -395,10 +394,17 @@ program_trace (char *const argv[], FILE *output_fp, bool quiet, bool oneshot)
 
   int efd = eventfd (0, 0);
   int pid = fork ();
+  assert (efd >= 0 && pid >= 0);
   if (pid == 0)
     child (argv, efd);
   else
-    return parent (pid, output_fp, PTRACE_O_EXITKILL, quiet, oneshot, efd);
+    {
+      uint32_t token
+          = parent (pid, output_fp, PTRACE_O_EXITKILL, quiet, oneshot, efd);
+      if (UNLIKELY (token == (uint32_t)-1))
+        error (M_FAILED_SEIZE_CHILD, pid);
+      return token;
+    }
 }
 
 static void

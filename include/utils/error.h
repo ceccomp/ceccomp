@@ -55,7 +55,9 @@
 #define ACTION_PTRACE_SEIZE "ptrace seizing"
 #define M_TRACE_UNDER_ATTACK                                                  \
   _ ("Unexpected race condition detected when reading seccomp filters, "      \
-     "please consider use eBPF-based trace in next version")
+     "please consider use capture subcommand")
+#define M_FAILED_SEIZE_CHILD                                                  \
+  _ ("Can not trace child process %d, probably because it is being traced")
 
 #define M_CAP_SYS_PTRACE_OR_KTHREAD                                           \
   _ ("perhaps seizing kthread or lacking CAP_SYS_PTRACE")
