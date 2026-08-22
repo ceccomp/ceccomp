@@ -133,6 +133,85 @@ blockquote .small:before {
   content: '\2014 \00A0';
 }
 
+/* admonition blocks (NOTE, TIP, IMPORTANT, CAUTION, WARNING) */
+.admonitionblock {
+  margin: 0 0 16px;
+  padding: 8px 10px;
+  border-radius: 2px;
+}
+.admonitionblock.note {
+  background-color: rgba(159, 195, 222, 0.15);
+}
+.admonitionblock.tip {
+  background-color: rgba(169, 211, 177, 0.15);
+}
+.admonitionblock.important {
+  background-color: rgba(205, 191, 226, 0.15);
+}
+.admonitionblock.caution {
+  background-color: rgba(236, 201, 164, 0.15);
+}
+.admonitionblock.warning {
+  background-color: rgba(232, 223, 174, 0.15);
+}
+.admonitionblock table {
+  width: 100%;
+  margin-bottom: 0;
+  border-collapse: collapse;
+}
+.admonitionblock tbody > tr:nth-of-type(odd),
+.admonitionblock tbody > tr:hover {
+  background-color: transparent;
+}
+.admonitionblock td {
+  border-top: 0;
+}
+.admonitionblock td.icon {
+  width: 1%;
+  padding: 0;
+  vertical-align: top;
+  white-space: nowrap;
+}
+.admonitionblock td.icon .title {
+  display: inline-block;
+  padding: 2px 8px;
+  font-weight: 600;
+  border-radius: 4px;
+}
+.admonitionblock td.content {
+  padding: 0 0 0 12px;
+}
+.admonitionblock td.content p {
+  margin: 0 0 8px;
+  padding: 0;
+}
+.admonitionblock td.content > :last-child,
+.admonitionblock td.content p:last-child,
+.admonitionblock td.content ul:last-child,
+.admonitionblock td.content ol:last-child {
+  margin-bottom: 0;
+}
+.admonitionblock.note td.icon .title {
+  background-color: #9fc3de;
+  color: #24516f;
+}
+.admonitionblock.tip td.icon .title {
+  background-color: #a9d3b1;
+  color: #2d5c36;
+}
+.admonitionblock.important td.icon .title {
+  background-color: #cdbfe2;
+  color: #4f3f7d;
+}
+.admonitionblock.caution td.icon .title {
+  background-color: #ecc9a4;
+  color: #7d4a17;
+}
+.admonitionblock.warning td.icon .title {
+  background-color: #e8dfae;
+  color: #6f5f18;
+}
+
 /* unordered list */
 ul, ol {
   margin-top: 0;
