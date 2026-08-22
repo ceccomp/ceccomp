@@ -16,6 +16,7 @@ Items marked with :star: is the major change why we release a new version.
 * :star: Use `seccomp_arch_native` instead of `uname -m` to improve robustness
 * :star: Add tracee pid in output comment when tracing process
 * :star: Automatically disable components that are not available during configuration
+* :star: Fix group-stop trap handling during `trace`
 * Only run `make test` when `test` need to be compiled
 * New flag `-e` for `disasm` to treat input as eBPF bytes
 * Fix `trace` compilation compatibility with Linux 5.15 headers
