@@ -213,6 +213,8 @@ NOTE: `seccomp-tools` 没有等价的子命令。
 
 当设置了 *PID* 时，将安装用来从对应进程（其实是线程）中提取已安装过的 seccomp 过滤器的 eBPF 程序。注意在内核中，`pid` 指线程 id，而 `tgid` 指进程 id。eBPF 程序会直接把由原始 seccomp 过滤器转换后的 eBPF 指令抽取出来并转换回去，用以执行 <<disasm - 反汇编>>。这个功能不需要 `CONFIG_CHECKPOINT_RESTORE` 内核配置，甚至在 `ceccomp` 处在 seccomp 状态时仍能工作。这个功能在下方被称为“捕获 PID”。Linux 6.2 是运行该功能的最低内核版本，因为这时 `bpf_task_from_pid` 函数才被引入。
 
+IMPORTANT: 当内核迁移 seccomp 过滤器时，由于一些不同的 cBPF 指令会被映射到相同的 eBPF 指令序列，因此从 cBPF 到 eBPF 的转换是有损的。结果是“捕获 PID”的输出可能和原始的 seccomp 过滤器并不一致，尽管它们在功能上是等价的。
+
 目前，compat task 检测只支持 _x86_64_ 和 _aarch64_。 这个功能允许 `ceccomp` 识别一个任务是原生的 (64 位内核上的 64 位任务)，还是“兼容的” (64 位内核上的 32 位任务)，由此 `ceccomp` 才能把正确的架构标识传给 libseccomp 来查询捕获到的 seccomp 过滤器中的系统调用的名字。
 
 注意 eBPF 利用异步环形缓冲区来向用户态进程发回数据，所以如果同时加载了好多 seccomp 过滤器，缓冲区可能会耗尽并且您需要运行 `bpftool prog trace` 来看到详细错误。由于我们不能将错误通过满的缓冲区发回来，因此那些溢出的过滤器对没有阅读内核消息的用户来说实际上是不可见的。
@@ -223,7 +225,7 @@ WHEN::
 PID::
 从哪个 *进程* (线程) 中提取 seccomp 过滤器指令。
 
-NOTE: 所有出现在“全局捕获”或“捕获 PID”中的 *PID* 是 *初始命名空间 PID*，而不是当前命名空间中的 PID。推荐只在初始命名空间中运行 `ceccomp capture`。
+TIP: 所有出现在“全局捕获”或“捕获 PID”中的 *PID* 是 *初始命名空间 PID*，而不是当前命名空间中的 PID。推荐只在初始命名空间中运行 `ceccomp capture`。
 
 NOTE: 此模块是可选的，您可以在配置阶段将其禁用。此模块需要 libbpf 才能工作。
 
@@ -255,7 +257,7 @@ IMPORTANT: _4.0 版本_ 提高了词法分析器代码的可读性，伴随着�
 
 由 disasm 生成的 `CODE`、`JT`、`JF` 和 `K` 值会被 asm 丢弃，asm 之解析 `K` 之后的有效伪代码。
 
-NOTE: `ceccomp disasm` 和 `seccomp-tools disasm` 的输出之间有很多细微的差别， 以下是一个典型的输出示例。同时有些伪代码是不同的，所以不要盲目将 seccomp-tools 的输出管道给 ceccomp。
+CAUTION: `ceccomp disasm` 和 `seccomp-tools disasm` 的输出之间有很多细微的差别， 以下是一个典型的输出示例。同时有些伪代码是不同的，所以不要盲目将 seccomp-tools 的输出管道给 ceccomp。
 
     line  CODE  JT   JF      K
     =================================
