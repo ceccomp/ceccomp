@@ -31,6 +31,9 @@ reverse_ebpf_endian (struct bpf_insn *insn)
 {
   insn->off = bswap_16 (insn->off);
   insn->imm = bswap_32 (insn->imm);
+  uint8_t tmp_reg = insn->dst_reg;
+  insn->dst_reg = insn->src_reg;
+  insn->src_reg = tmp_reg;
 }
 
 #endif
