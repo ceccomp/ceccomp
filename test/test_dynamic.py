@@ -162,7 +162,6 @@ def test_trace(errns: SimpleNamespace):
 
 @pytest.mark.xfail(XFAIL_DYNAMIC, reason=XFAIL_REASON)
 def test_seize(errns: SimpleNamespace):
-    pytest.skip('t')
     efd = os.eventfd(0, 0)
     tp = subprocess.Popen([TEST, UnitTests.SEIZE.arg(), str(efd)],
         stdin=DEVNULL, stdout=PIPE, stderr=DEVNULL, text=True, pass_fds=(efd,))

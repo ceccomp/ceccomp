@@ -4,6 +4,7 @@
 #include "main.h"
 #include "utils/error.h"
 #include "utils/logger.h"
+#include <linux/prctl.h>
 #define _NO_VMLINUX_
 #include "utils/ebpf_share.h"
 #include "utils/proc_status.h"
@@ -22,6 +23,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/eventfd.h>
 #include <sys/prctl.h>
 #include <sys/ptrace.h>
 #include <sys/types.h>
@@ -180,10 +182,14 @@ mode_filter (const syscall_info *info, int pid, fprog *prog, FILE *output_fp)
 }
 
 AttrNoReturn static void
-child (char *const argv[])
+child (char *const argv[], int efd)
 {
-  ptrace (PTRACE_TRACEME, 0, 0, 0);
-  raise (SIGSTOP);
+  eventfd_t ign;
+
+  // allow parent to trace us
+  prctl (PR_SET_DUMPABLE, 1);
+  eventfd_read (efd, &ign); // SHOULD GET SEIZED HERE
+  close (efd);
 
   int err = execv (argv[0], argv);
   if (err)
@@ -191,17 +197,26 @@ child (char *const argv[])
   assert (!"exec should either succeed or fail with `error`");
 }
 
-static void
+// return true if handled fork
+static bool
 handle_fork (pid_t pid, int status, bool quiet)
 {
-  int event = (status >> 16) & 0xffff;
-  if (event == PTRACE_EVENT_FORK || event == PTRACE_EVENT_VFORK
-      || event == PTRACE_EVENT_CLONE)
+  uint64_t new_pid;
+  switch ((status >> 16) & 0xffff)
     {
-      uint64_t new_pid;
+    case PTRACE_EVENT_FORK:
+    case PTRACE_EVENT_VFORK:
+    case PTRACE_EVENT_CLONE:
+      // tracee parent send these 3 event to tracer
       ptrace (PTRACE_GETEVENTMSG, pid, NULL, &new_pid);
       if (!quiet)
         info (M_PROCESS_FORK, pid, (pid_t)new_pid);
+    // fall through
+    case PTRACE_EVENT_STOP:
+      // tracee child send this flag to tracer (PTRACE_SEIZE)
+      return true;
+    default:
+      return false;
     }
 }
 
@@ -292,27 +307,40 @@ handle_syscall (pid_t pid, FILE *output_fp, bool quiet, bool oneshot)
   return true;
 }
 
+// clang-format off
+#define PTRACE_FLAGS                                                          \
+  PTRACE_O_TRACESYSGOOD | PTRACE_O_TRACEFORK                                  \
+  | PTRACE_O_TRACEVFORK | PTRACE_O_TRACECLONE
+// clang-format on
+
 static uint32_t
-parent (pid_t child_pid, FILE *output_fp, uint32_t extra_ptrace_flags,
-        bool quiet, bool oneshot)
+parent (pid_t child_pid, FILE *output_fp, uint32_t extra_flags, bool quiet,
+        bool oneshot, int efd)
 {
   int status;
+  long rc;
 
-  waitpid (child_pid, &status, 0);
-  // child is stopped after PTRACE_TRACEME
+  if (!(rc = ptrace (PTRACE_SEIZE, child_pid, 0, PTRACE_FLAGS | extra_flags)))
+    rc = ptrace (PTRACE_INTERRUPT, child_pid, 0, 0);
+
+  if (efd >= 0)
+    {
+      // old traceme path
+      assert (rc == 0);
+      eventfd_write (efd, 1);
+      close (efd);
+    }
+  else
+    // from pid_seize
+    if (rc)
+      return -1;
+
+  waitpid (-1, &status, 0);
+
   if (!quiet)
     // write info when we truly start tracing so that
     // script can continue interacting correctly
     info (M_START_TRACING, child_pid);
-
-  // clang-format off
-  ptrace (PTRACE_SETOPTIONS, child_pid, 0,
-          PTRACE_O_TRACESYSGOOD
-          | PTRACE_O_TRACEFORK
-          | PTRACE_O_TRACEVFORK
-          | PTRACE_O_TRACECLONE
-          | extra_ptrace_flags);
-  // clang-format on
 
   ptrace (PTRACE_SYSCALL, child_pid, 0, 0);
   while (1)
@@ -342,12 +370,12 @@ parent (pid_t child_pid, FILE *output_fp, uint32_t extra_ptrace_flags,
             return saved_arch;
           ptrace (PTRACE_SYSCALL, pid, 0, 0);
         }
-      else if (sig == SIGTRAP)
-        {
-          handle_fork (pid, status, quiet);
-          ptrace (PTRACE_SYSCALL, pid, 0, 0);
-        }
-      else
+      else if (sig == SIGTRAP && handle_fork (pid, status, quiet))
+        ptrace (PTRACE_SYSCALL, pid, 0, 0);
+      else if (((sig >> 16) & 0xffff) == PTRACE_EVENT_STOP)
+        // process group-stop
+        ptrace (PTRACE_LISTEN, pid, 0, 0);
+      else // any other sig, or a real SIGTRAP
         ptrace (PTRACE_SYSCALL, pid, 0, sig);
     }
 }
@@ -364,11 +392,13 @@ program_trace (char *const argv[], FILE *output_fp, bool quiet, bool oneshot)
 {
   signal (SIGINT, exit_on_sig);
   signal (SIGTERM, exit_on_sig);
+
+  int efd = eventfd (0, 0);
   int pid = fork ();
   if (pid == 0)
-    child (argv);
+    child (argv, efd);
   else
-    return parent (pid, output_fp, PTRACE_O_EXITKILL, quiet, oneshot);
+    return parent (pid, output_fp, PTRACE_O_EXITKILL, quiet, oneshot, efd);
 }
 
 static void
@@ -466,9 +496,8 @@ pid_seize (int pid, bool quiet)
   signal (SIGINT, exit_on_sig);
   signal (SIGTERM, exit_on_sig);
 
-  if (ptrace (PTRACE_ATTACH, pid, NULL, NULL) == -1)
+  if (parent (pid, stdout, 0, quiet, false, -1) == (uint32_t)-1)
     error_seize (pid, errno);
-  parent (pid, stdout, 0, quiet, false);
 }
 
 void
