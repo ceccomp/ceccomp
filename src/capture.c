@@ -1,7 +1,7 @@
 #include "attributes.h"
 #include "config.h"
 #include "utils/proc_status.h"
-#include <errno.h>
+#include <stddef.h>
 #include <stdint.h>
 #include <sys/types.h>
 #include <sys/utsname.h>
@@ -133,7 +133,7 @@ do_ebpf_disasm (const pid_event_ctx *c, uint32_t default_scmp_arch)
 }
 
 static int
-on_pid_events (void *ctx, void *data, unsigned long size)
+on_pid_events (void *ctx, void *data, size_t size)
 {
   (void)size;
   pid_event *event = data;
@@ -245,7 +245,7 @@ capture_pid (pid_t pid, uint32_t scmp_arch)
 }
 
 static int
-on_events (void *ctx, void *data, unsigned long size)
+on_events (void *ctx, void *data, size_t size)
 {
   (void)size;
   global_event *event = data;
