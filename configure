@@ -13,8 +13,8 @@ from dataclasses import dataclass
 from pathlib import Path
 
 # constants
-VERSION = '4.3'
-TAG_TIME = '2026-9-7'
+VERSION = '4.3.1'
+TAG_TIME = '2026-10-4'
 
 # color escape code definition
 if not os.getenv('NO_COLOR'):

@@ -7,7 +7,8 @@ Items marked with :star: is the major change why we release a new version.
 <!-- write @some*user !num to reference user and PR at the same time. The order can not be -->
 <!-- reversed. Then run scripts/complete-url.py to format raw ref to URL. -->
 
-## 4.3.1 (INCOMING)
+## 4.3.1
+* :package: **GPG key is renewed!** If you are a packager, please update the gpg keys
 * :star: Fix `ring_buffer__new` callback signature on *armhf*
 * :star: Fix `configure` with `clang` and big-endian targets
 ## 4.3
