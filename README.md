@@ -43,14 +43,11 @@ ceccomp in "C-comp" (/siːˈkɒmp/) or "seccomp" (/ˈsɛk.kɒmp/).
     [![Ubuntu 26.10](https://repology.org/badge/version-for-repo/ubuntu_26_10/ceccomp.svg?header=Ubuntu%2026.10)](https://repology.org/project/ceccomp/versions)
     [![Kali Linux](https://repology.org/badge/version-for-repo/kali_rolling/ceccomp.svg?header=Kali%20Linux)](https://repology.org/project/ceccomp/versions)
 
-- NixOS users:
-
-    @tesuji helps us submit a PR at NixOS, but it's blocked as currently... If you
-    like our software, please :+1: in NixOS/nixpkgs#462592 to help ceccomp into nixpkgs!
-
 - Other Linux distros:
     
     Sorry, you may need to install ceccomp manually. Please follow instructions below.
+    If you are a package maintainer, please consider helping us contribute ceccomp in
+    Fedora, OpenSUSE, NixOS or other distros! :heart:
 
 # Build
 

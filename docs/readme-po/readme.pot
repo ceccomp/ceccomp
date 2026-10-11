@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2026-08-22 02:34+0800\n"
+"POT-Creation-Date: 2026-10-12 01:12+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -180,47 +180,34 @@ msgstr ""
 #. type: Bullet: '- '
 #: ../README.md:47
 #, markdown-text
-msgid "NixOS users:"
-msgstr ""
-
-#. type: Plain text
-#: ../README.md:50
-#, markdown-text, no-wrap
-msgid ""
-"    @tesuji helps us submit a PR at NixOS, but it's blocked as "
-"currently... If you\n"
-"    like our software, please :+1: in NixOS/nixpkgs#462592 to help ceccomp "
-"into nixpkgs!\n"
-msgstr ""
-
-#. type: Bullet: '- '
-#: ../README.md:52
-#, markdown-text
 msgid "Other Linux distros:"
 msgstr ""
 
 #. type: Plain text
-#: ../README.md:54
+#: ../README.md:51
 #, markdown-text, no-wrap
 msgid ""
 "    Sorry, you may need to install ceccomp manually. Please follow "
 "instructions below.\n"
+"    If you are a package maintainer, please consider helping us contribute "
+"ceccomp in\n"
+"    Fedora, OpenSUSE, NixOS or other distros! :heart:\n"
 msgstr ""
 
 #. type: Title #
-#: ../README.md:55
+#: ../README.md:52
 #, markdown-text, no-wrap
 msgid "Build"
 msgstr ""
 
 #. type: Bullet: '- '
-#: ../README.md:58
+#: ../README.md:55
 #, markdown-text
 msgid "Stable installation:"
 msgstr ""
 
 #. type: Plain text
-#: ../README.md:66
+#: ../README.md:63
 #, markdown-text, no-wrap
 msgid ""
 "    Clone the whole repo, then run `./configure`. Dependencies will be "
@@ -238,7 +225,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../README.md:75
+#: ../README.md:72
 #, markdown-text, no-wrap
 msgid ""
 "    ```sh\n"
@@ -252,19 +239,19 @@ msgid ""
 msgstr ""
 
 #. type: Bullet: '- '
-#: ../README.md:77
+#: ../README.md:74
 #, markdown-text
 msgid "Testing installation:"
 msgstr ""
 
 #. type: Plain text
-#: ../README.md:79
+#: ../README.md:76
 #, markdown-text, no-wrap
 msgid "    Clone the whole repo, and then run `./configure --devmode`.\n"
 msgstr ""
 
 #. type: Plain text
-#: ../README.md:86
+#: ../README.md:83
 #, markdown-text, no-wrap
 msgid ""
 "    ```sh\n"
@@ -276,7 +263,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../README.md:93
+#: ../README.md:90
 #, markdown-text, no-wrap
 msgid ""
 "> [!NOTE]\n"
@@ -290,13 +277,13 @@ msgid ""
 msgstr ""
 
 #. type: Title ##
-#: ../README.md:94
+#: ../README.md:91
 #, markdown-text, no-wrap
 msgid "Run Test"
 msgstr ""
 
 #. type: Plain text
-#: ../README.md:98
+#: ../README.md:95
 #, markdown-text
 msgid ""
 "Run configure and make, then invoke `pytest test` from repo root. Trace pid "
@@ -305,7 +292,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../README.md:101
+#: ../README.md:98
 #, markdown-text
 msgid ""
 "To run the test, you need 2 extra packages: `pkgconf` (required by "
@@ -313,13 +300,13 @@ msgid ""
 msgstr ""
 
 #. type: Title ##
-#: ../README.md:102
+#: ../README.md:99
 #, markdown-text, no-wrap
 msgid "CheatSheet"
 msgstr ""
 
 #. type: Plain text
-#: ../README.md:105
+#: ../README.md:102
 #, markdown-text, no-wrap
 msgid ""
 "<img width=\"2200\" height=\"1182\" alt=\"image\" "
@@ -328,13 +315,13 @@ msgid ""
 msgstr ""
 
 #. type: Title ##
-#: ../README.md:106
+#: ../README.md:103
 #, markdown-text, no-wrap
 msgid "Credits"
 msgstr ""
 
 #. type: Bullet: '- '
-#: ../README.md:115
+#: ../README.md:112
 #, markdown-text
 msgid ""
 "[libseccomp](https://github.com/seccomp/libseccomp): The library to support "
@@ -342,7 +329,7 @@ msgid ""
 msgstr ""
 
 #. type: Bullet: '- '
-#: ../README.md:115
+#: ../README.md:112
 #, markdown-text
 msgid ""
 "[libbpf](https://docs.kernel.org/bpf/libbpf/libbpf_overview.html): The "
@@ -350,7 +337,7 @@ msgid ""
 msgstr ""
 
 #. type: Bullet: '- '
-#: ../README.md:115
+#: ../README.md:112
 #, markdown-text
 msgid ""
 "[seccomp-tools](https://github.com/david942j/seccomp-tools): The tool in "
@@ -358,7 +345,7 @@ msgid ""
 msgstr ""
 
 #. type: Bullet: '- '
-#: ../README.md:115
+#: ../README.md:112
 #, markdown-text
 msgid ""
 "[Bootswatch](https://bootswatch.com/slate/): Provides awesome css for html "
@@ -366,13 +353,13 @@ msgid ""
 msgstr ""
 
 #. type: Bullet: '- '
-#: ../README.md:115
+#: ../README.md:112
 #, markdown-text
 msgid "[Linux kernel](https://github.com/torvalds/linux): Port some bpf checks"
 msgstr ""
 
 #. type: Bullet: '- '
-#: ../README.md:115
+#: ../README.md:112
 #, markdown-text
 msgid ""
 "[Verstable](https://github.com/JacksonAllan/Verstable): High-performance "
@@ -380,7 +367,7 @@ msgid ""
 msgstr ""
 
 #. type: Bullet: '- '
-#: ../README.md:115
+#: ../README.md:112
 #, markdown-text
 msgid ""
 "[a5hash](https://github.com/avaneev/a5hash): High-performance hash "
@@ -388,7 +375,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../README.md:117
+#: ../README.md:114
 #, markdown-text
 msgid ""
 "Any Issue or PR are welcome! :heart: Please read "
@@ -396,13 +383,13 @@ msgid ""
 msgstr ""
 
 #. type: Title ##
-#: ../README.md:118
+#: ../README.md:115
 #, markdown-text, no-wrap
 msgid "License"
 msgstr ""
 
 #. type: Plain text
-#: ../README.md:120
+#: ../README.md:117
 #, markdown-text
 msgid ""
 "Copyright (C) 2025-present, ceccomp contributors, distributed under GNU "

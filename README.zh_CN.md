@@ -43,14 +43,10 @@
     [![Ubuntu 26.10](https://repology.org/badge/version-for-repo/ubuntu_26_10/ceccomp.svg?header=Ubuntu%2026.10)](https://repology.org/project/ceccomp/versions)
     [![Kali Linux](https://repology.org/badge/version-for-repo/kali_rolling/ceccomp.svg?header=Kali%20Linux)](https://repology.org/project/ceccomp/versions)
 
-- NixOS 用户：
-
-    @tesuji 帮我们在 NixOS 提交了一个 PR，但是目前进度停滞不前...
-    如果您喜欢我们的软件，请在 NixOS/nixpkgs#462592 :+1: 来帮助 ceccomp 进入 nixpkgs！
-
 - 其他 Linux 发行版：
     
-    抱歉，您需要手动安装 ceccomp。请按照以下说明操作。
+    抱歉，您需要手动安装 ceccomp。请按照以下说明操作。如果您是软件包维护者，请考虑帮我们在
+    Fedora、OpenSUSE、NixOS 等发行版上分发 ceccomp！ :heart:
 
 # 构建
 
